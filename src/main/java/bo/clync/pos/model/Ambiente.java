@@ -8,7 +8,18 @@ package bo.clync.pos.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,10 +28,10 @@ import javax.validation.constraints.Size;
  * @author eyave
  */
 @Entity
-@Table(name = "articulo")
+@Table(name = "ambiente")
 @NamedQueries({
-    @NamedQuery(name = "Articulo.findAll", query = "SELECT a FROM Articulo a")})
-public class Articulo implements Serializable {
+    @NamedQuery(name = "Ambiente.findAll", query = "SELECT a FROM Ambiente a")})
+public class Ambiente implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -34,11 +45,12 @@ public class Articulo implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "nombre")
     private String nombre;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
-    @Column(name = "descripcion")
-    private String descripcion;
+    @Size(max = 30)
+    @Column(name = "tipo_ambiente")
+    private String tipoAmbiente;
+    @Size(max = 10)
+    @Column(name = "estado")
+    private String estado;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha_registro")
@@ -52,20 +64,17 @@ public class Articulo implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @Transient
-    private DetalleArticuloPrecio detalleArticuloPrecio;
 
-    public Articulo() {
+    public Ambiente() {
     }
 
-    public Articulo(String codigo) {
+    public Ambiente(String codigo) {
         this.codigo = codigo;
     }
 
-    public Articulo(String codigo, String nombre, String descripcion, Date fechaRegistro, String operador) {
+    public Ambiente(String codigo, String nombre, Date fechaRegistro, String operador) {
         this.codigo = codigo;
         this.nombre = nombre;
-        this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
         this.operador = operador;
     }
@@ -86,12 +95,20 @@ public class Articulo implements Serializable {
         this.nombre = nombre;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getTipoAmbiente() {
+        return tipoAmbiente;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setTipoAmbiente(String tipoAmbiente) {
+        this.tipoAmbiente = tipoAmbiente;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public Date getFechaRegistro() {
@@ -118,15 +135,6 @@ public class Articulo implements Serializable {
         this.operador = operador;
     }
 
-
-    public DetalleArticuloPrecio getDetalleArticuloPrecio() {
-        return detalleArticuloPrecio;
-    }
-
-    public void setDetalleArticuloPrecio(DetalleArticuloPrecio detalleArticuloPrecio) {
-        this.detalleArticuloPrecio = detalleArticuloPrecio;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -137,10 +145,10 @@ public class Articulo implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Articulo)) {
+        if (!(object instanceof Ambiente)) {
             return false;
         }
-        Articulo other = (Articulo) object;
+        Ambiente other = (Ambiente) object;
         if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
@@ -149,7 +157,7 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.model.Articulo[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.model.Ambiente[ codigo=" + codigo + " ]";
     }
-
+    
 }

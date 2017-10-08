@@ -7,9 +7,7 @@ import java.util.List;
 /**
  * Created by eyave on 05-10-17.
  */
-public interface ArticuloRepository extends JpaRepository<Articulo, Long> {
-
-    Articulo findByCodigo(String codigo);
+public interface ArticuloRepository extends JpaRepository<Articulo, String> {
 
     List<Articulo> findByCodigoIsLike(String codigo);
 

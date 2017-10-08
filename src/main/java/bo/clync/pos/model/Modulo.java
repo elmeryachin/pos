@@ -8,7 +8,20 @@ package bo.clync.pos.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -17,10 +30,10 @@ import javax.validation.constraints.Size;
  * @author eyave
  */
 @Entity
-@Table(name = "articulo")
+@Table(name = "modulo")
 @NamedQueries({
-    @NamedQuery(name = "Articulo.findAll", query = "SELECT a FROM Articulo a")})
-public class Articulo implements Serializable {
+    @NamedQuery(name = "Modulo.findAll", query = "SELECT m FROM Modulo m")})
+public class Modulo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -32,8 +45,8 @@ public class Articulo implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "modulo")
+    private String modulo;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -44,30 +57,25 @@ public class Articulo implements Serializable {
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
-    @Column(name = "fecha_actualizacion")
+    @Column(name = "fecha_baja")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaActualizacion;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
-    @Column(name = "operador")
-    private String operador;
-    @Transient
-    private DetalleArticuloPrecio detalleArticuloPrecio;
+    private Date fechaBaja;
+    @JoinColumn(name = "codigo_aplicacion", referencedColumnName = "codigo")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Aplicacion aplicacion;
 
-    public Articulo() {
+    public Modulo() {
     }
 
-    public Articulo(String codigo) {
+    public Modulo(String codigo) {
         this.codigo = codigo;
     }
 
-    public Articulo(String codigo, String nombre, String descripcion, Date fechaRegistro, String operador) {
+    public Modulo(String codigo, String modulo, String descripcion, Date fechaRegistro) {
         this.codigo = codigo;
-        this.nombre = nombre;
+        this.modulo = modulo;
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
-        this.operador = operador;
     }
 
     public String getCodigo() {
@@ -78,12 +86,12 @@ public class Articulo implements Serializable {
         this.codigo = codigo;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getModulo() {
+        return modulo;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setModulo(String modulo) {
+        this.modulo = modulo;
     }
 
     public String getDescripcion() {
@@ -102,29 +110,20 @@ public class Articulo implements Serializable {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Date getFechaActualizacion() {
-        return fechaActualizacion;
+    public Date getFechaBaja() {
+        return fechaBaja;
     }
 
-    public void setFechaActualizacion(Date fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
+    public void setFechaBaja(Date fechaBaja) {
+        this.fechaBaja = fechaBaja;
     }
 
-    public String getOperador() {
-        return operador;
+    public Aplicacion getAplicacion() {
+        return aplicacion;
     }
 
-    public void setOperador(String operador) {
-        this.operador = operador;
-    }
-
-
-    public DetalleArticuloPrecio getDetalleArticuloPrecio() {
-        return detalleArticuloPrecio;
-    }
-
-    public void setDetalleArticuloPrecio(DetalleArticuloPrecio detalleArticuloPrecio) {
-        this.detalleArticuloPrecio = detalleArticuloPrecio;
+    public void setAplicacion(Aplicacion aplicacion) {
+        this.aplicacion = aplicacion;
     }
 
     @Override
@@ -137,10 +136,10 @@ public class Articulo implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Articulo)) {
+        if (!(object instanceof Modulo)) {
             return false;
         }
-        Articulo other = (Articulo) object;
+        Modulo other = (Modulo) object;
         if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
@@ -149,7 +148,7 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.model.Articulo[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.model.Modulo[ codigo=" + codigo + " ]";
     }
-
+    
 }

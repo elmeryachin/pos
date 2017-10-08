@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class ArticuloUtil {
 
     public static void calculoPrecio(Articulo articulo) {
-        java.math.BigDecimal subTotalPeso = new BigDecimal(0);
+        /*java.math.BigDecimal subTotalPeso = new BigDecimal(0);
         java.math.BigDecimal subTotalPorGasto = new BigDecimal(0);
 
         if(articulo.getPeso()!=null && articulo.getPrecioKilo()!=null)
@@ -23,6 +23,6 @@ public class ArticuloUtil {
         articulo.setPrecioCompra(articulo.getGasto()
                 .multiply(articulo.getPrecioZonaLibre())
                 .add(articulo.getPrecioZonaLibre())
-                .add(subTotalPeso).add(subTotalPeso));
+                .add(subTotalPeso).add(subTotalPeso));*/
     }
 }

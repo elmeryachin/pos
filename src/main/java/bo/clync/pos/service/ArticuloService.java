@@ -1,5 +1,6 @@
 package bo.clync.pos.service;
 
+import bo.clync.pos.entity.Entrada;
 import bo.clync.pos.model.Articulo;
 
 import java.util.List;
@@ -9,10 +10,9 @@ import java.util.List;
  */
 public interface ArticuloService {
     List<Articulo> findAll();
-    Articulo findOne(long id);
-    Articulo findByCodigo(String codigo);
-    void save(Articulo articulo);
-    void update(Long id, Articulo articulo);
-    boolean delete(long id);
+    Articulo findOne(String codigo);
+    String save(Entrada entrada);
+    void update(String codigo, Articulo articulo);
+    boolean delete(String codigo);
     void deleteAll();
 }

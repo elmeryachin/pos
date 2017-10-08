@@ -1,5 +1,7 @@
 package bo.clync.pos.rest;
 
+import bo.clync.pos.entity.Entrada;
+import bo.clync.pos.entity.Salida;
 import bo.clync.pos.model.Articulo;
 import bo.clync.pos.service.ArticuloService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,49 +23,40 @@ public class ArticuloController {
     private ArticuloService service;
 
     @RequestMapping(value = "/articulo/", method = RequestMethod.GET)
-    public ResponseEntity<List<Articulo>> list() {
+    public ResponseEntity<Salida> list() {
+        //Aun por Corregir recuperar el detalle Precio
         List<Articulo> articulos = service.findAll();
-        return new ResponseEntity<List<Articulo>>(articulos, HttpStatus.OK);
+        Salida salida = new Salida(articulos, true, "Todo salio Bien");
+        return new ResponseEntity<Salida>(salida, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/articulo/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> get(@PathVariable("id") Long id) {
-        Articulo articulo = service.findOne(id);
-        if (articulo == null) {
-            return new ResponseEntity<Articulo>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Articulo>(articulo, HttpStatus.OK);
+    //recuperar el objeto
+    @RequestMapping(value = "/articulo/{codigo}", method = RequestMethod.GET)
+    public ResponseEntity<Salida> get(@PathVariable("codigo") String codigo) {
+        Salida salida = new Salida(service.findOne(codigo));
+        return new ResponseEntity<Salida>(salida, HttpStatus.OK);
     }
 
-
-    @RequestMapping(value = "/articulo/codigo/{codigo}", method = RequestMethod.GET)
-    public ResponseEntity<?> getByCode(@PathVariable("codigo") String codigo) {
-        Articulo articulo = service.findByCodigo(codigo);
-        if (articulo == null) {
-            return new ResponseEntity<Articulo>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<Articulo>(articulo, HttpStatus.OK);
-    }
 
     @RequestMapping(value = "/articulo/", method = RequestMethod.POST)
-    public ResponseEntity<Articulo> create(@RequestBody Articulo articulo, UriComponentsBuilder ucBuilder) {
-        service.save(articulo);
+    public ResponseEntity<Salida> create(@RequestBody Entrada entrada, UriComponentsBuilder ucBuilder) {
+        String codigo = service.save(entrada);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/articulo/{id}").buildAndExpand(articulo.getId()).toUri());
-        return new ResponseEntity<Articulo>(headers, HttpStatus.CREATED);
+        headers.setLocation(ucBuilder.path("/articulo/{codigo}").buildAndExpand(codigo).toUri());
+        return new ResponseEntity<Salida>(headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/articulo/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Articulo> update(@PathVariable("id") Long id, @RequestBody Articulo articulo) {
-        service.update(id, articulo);
+    @RequestMapping(value = "/articulo/{codigo}", method = RequestMethod.PUT)
+    public ResponseEntity<Articulo> update(@PathVariable("codigo") String codigo, @RequestBody Articulo articulo) {
+        service.update(codigo, articulo);
         if(articulo == null)
             return new ResponseEntity<Articulo>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<Articulo>(articulo, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/articulo/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable("id") long id) {
-        if(!service.delete(id))
+    @RequestMapping(value = "/articulo/{codigo}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable("codigo") String codigo) {
+        if(!service.delete(codigo))
             return new ResponseEntity<Articulo>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<Articulo>(HttpStatus.NO_CONTENT);
     }
