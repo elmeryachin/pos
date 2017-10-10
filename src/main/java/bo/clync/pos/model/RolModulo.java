@@ -49,10 +49,10 @@ public class RolModulo implements Serializable {
     private Date fechaBaja;
     @JoinColumn(name = "codigo_modulo", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Modulo modulo;
+    private Modulo codigoModulo;
     @JoinColumn(name = "codigo_rol", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Rol rol;
+    private Rol codigoRol;
 
     public RolModulo() {
     }
@@ -90,20 +90,20 @@ public class RolModulo implements Serializable {
         this.fechaBaja = fechaBaja;
     }
 
-    public Modulo getModulo() {
-        return modulo;
+    public Modulo getCodigoModulo() {
+        return codigoModulo;
     }
 
-    public void setModulo(Modulo modulo) {
-        this.modulo = modulo;
+    public void setCodigoModulo(Modulo codigoModulo) {
+        this.codigoModulo = codigoModulo;
     }
 
-    public Rol getRol() {
-        return rol;
+    public Rol getCodigoRol() {
+        return codigoRol;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setCodigoRol(Rol codigoRol) {
+        this.codigoRol = codigoRol;
     }
 
     @Override

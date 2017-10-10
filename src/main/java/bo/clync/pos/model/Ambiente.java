@@ -13,6 +13,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -35,6 +37,10 @@ public class Ambiente implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
@@ -64,19 +70,27 @@ public class Ambiente implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-
     public Ambiente() {
     }
 
-    public Ambiente(String codigo) {
-        this.codigo = codigo;
+    public Ambiente(Integer id) {
+        this.id = id;
     }
 
-    public Ambiente(String codigo, String nombre, Date fechaRegistro, String operador) {
+    public Ambiente(Integer id, String codigo, String nombre, Date fechaRegistro, String operador) {
+        this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.fechaRegistro = fechaRegistro;
         this.operador = operador;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCodigo() {
@@ -138,7 +152,7 @@ public class Ambiente implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -149,7 +163,7 @@ public class Ambiente implements Serializable {
             return false;
         }
         Ambiente other = (Ambiente) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -157,7 +171,7 @@ public class Ambiente implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.model.Ambiente[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.model.Ambiente[ id=" + id + " ]";
     }
     
 }

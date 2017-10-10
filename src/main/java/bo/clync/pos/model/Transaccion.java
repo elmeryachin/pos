@@ -81,13 +81,13 @@ public class Transaccion implements Serializable {
     private String operador;
     @JoinColumn(name = "sub_dominio_transaccion", referencedColumnName = "codigo_sub_dominio")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private SubDominio subDominio;
-    @JoinColumn(name = "codigo_usuario", referencedColumnName = "codigo")
+    private SubDominio subDominioTransaccion;
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Usuario usuario;
+    private Usuario idUsuario;
     @JoinColumn(name = "valor_estado", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Valor valor;
+    private Valor valorEstado;
 
     public Transaccion() {
     }
@@ -179,28 +179,28 @@ public class Transaccion implements Serializable {
         this.operador = operador;
     }
 
-    public SubDominio getSubDominio() {
-        return subDominio;
+    public SubDominio getSubDominioTransaccion() {
+        return subDominioTransaccion;
     }
 
-    public void setSubDominio(SubDominio subDominio) {
-        this.subDominio = subDominio;
+    public void setSubDominioTransaccion(SubDominio subDominioTransaccion) {
+        this.subDominioTransaccion = subDominioTransaccion;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setIdUsuario(Usuario idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
-    public Valor getValor() {
-        return valor;
+    public Valor getValorEstado() {
+        return valorEstado;
     }
 
-    public void setValor(Valor valor) {
-        this.valor = valor;
+    public void setValorEstado(Valor valorEstado) {
+        this.valorEstado = valorEstado;
     }
 
     @Override

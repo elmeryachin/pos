@@ -51,7 +51,7 @@ public class Aplicacion implements Serializable {
     private String descripcion;
     @JoinColumn(name = "codigo_tema", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Tema tema;
+    private Tema codigoTema;
 
     public Aplicacion() {
     }
@@ -90,12 +90,12 @@ public class Aplicacion implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Tema getTema() {
-        return tema;
+    public Tema getCodigoTema() {
+        return codigoTema;
     }
 
-    public void setTema(Tema tema) {
-        this.tema = tema;
+    public void setCodigoTema(Tema codigoTema) {
+        this.codigoTema = codigoTema;
     }
 
     @Override

@@ -51,7 +51,8 @@ public class SubDominio implements Serializable {
     private String descripcion;
     @JoinColumn(name = "codigo_dominio", referencedColumnName = "dominio")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Dominio dominio;
+    private Dominio codigoDominio;
+
 
     public SubDominio() {
     }
@@ -90,12 +91,12 @@ public class SubDominio implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Dominio getDominio() {
-        return dominio;
+    public Dominio getCodigoDominio() {
+        return codigoDominio;
     }
 
-    public void setDominio(Dominio dominio) {
-        this.dominio = dominio;
+    public void setCodigoDominio(Dominio codigoDominio) {
+        this.codigoDominio = codigoDominio;
     }
 
     @Override

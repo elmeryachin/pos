@@ -53,15 +53,15 @@ public class UsuarioAmbienteCredencial implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @JoinColumn(name = "codigo_ambiente", referencedColumnName = "codigo")
+    @JoinColumn(name = "id_ambiente", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Ambiente ambiente;
+    private Ambiente idAmbiente;
     @JoinColumn(name = "id_credencial", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Credencial credencial;
-    @JoinColumn(name = "codigo_usuario", referencedColumnName = "codigo")
+    private Credencial idCredencial;
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Usuario usuario;
+    private Usuario idUsuario;
 
     public UsuarioAmbienteCredencial() {
     }
@@ -108,28 +108,28 @@ public class UsuarioAmbienteCredencial implements Serializable {
         this.operador = operador;
     }
 
-    public Ambiente getAmbiente() {
-        return ambiente;
+    public Ambiente getIdAmbiente() {
+        return idAmbiente;
     }
 
-    public void setAmbiente(Ambiente ambiente) {
-        this.ambiente = ambiente;
+    public void setIdAmbiente(Ambiente idAmbiente) {
+        this.idAmbiente = idAmbiente;
     }
 
-    public Credencial getCredencial() {
-        return credencial;
+    public Credencial getIdCredencial() {
+        return idCredencial;
     }
 
-    public void setCredencial(Credencial credencial) {
-        this.credencial = credencial;
+    public void setIdCredencial(Credencial idCredencial) {
+        this.idCredencial = idCredencial;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setIdUsuario(Usuario idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     @Override

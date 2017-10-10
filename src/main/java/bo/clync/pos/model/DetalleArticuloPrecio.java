@@ -34,6 +34,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "detalle_articulo_precio")
+@NamedQueries({
+    @NamedQuery(name = "DetalleArticuloPrecio.findAll", query = "SELECT d FROM DetalleArticuloPrecio d")})
 public class DetalleArticuloPrecio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -80,8 +82,6 @@ public class DetalleArticuloPrecio implements Serializable {
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "fecha_baja")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaBaja;
@@ -90,16 +90,9 @@ public class DetalleArticuloPrecio implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
-    @Column(name = "codigo_articulo")
-    private String codigoArticulo;
-/*
-    @JoinColumn(name = "codigo_articulo", referencedColumnName = "codigo")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Articulo articulo;
-*/
+    //@JoinColumn(name = "id_articulo", referencedColumnName = "id")
+    private Integer idArticulo;
+
     public DetalleArticuloPrecio() {
     }
 
@@ -107,7 +100,7 @@ public class DetalleArticuloPrecio implements Serializable {
         this.id = id;
     }
 
-    public DetalleArticuloPrecio(Integer id, BigDecimal precioKilo, BigDecimal peso, BigDecimal precioZonaLibre, BigDecimal porcentajeGasto, BigDecimal gasto, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMercado, Date fechaRegistro, Date fechaBaja, String operador) {
+    public DetalleArticuloPrecio(Integer id, BigDecimal precioKilo, BigDecimal peso, BigDecimal precioZonaLibre, BigDecimal porcentajeGasto, BigDecimal gasto, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMercado, Date fechaRegistro, String operador, Integer idArticulo) {
         this.id = id;
         this.precioKilo = precioKilo;
         this.peso = peso;
@@ -118,8 +111,8 @@ public class DetalleArticuloPrecio implements Serializable {
         this.precioVenta = precioVenta;
         this.precioMercado = precioMercado;
         this.fechaRegistro = fechaRegistro;
-        this.fechaBaja = fechaBaja;
         this.operador = operador;
+        this.idArticulo = idArticulo;
     }
 
     public Integer getId() {
@@ -218,12 +211,12 @@ public class DetalleArticuloPrecio implements Serializable {
         this.operador = operador;
     }
 
-    public String getCodigoArticulo() {
-        return codigoArticulo;
+    public Integer getIdArticulo() {
+        return idArticulo;
     }
 
-    public void setCodigoArticulo(String codigoArticulo) {
-        this.codigoArticulo = codigoArticulo;
+    public void setIdArticulo(Integer idArticulo) {
+        this.idArticulo = idArticulo;
     }
 
     @Override

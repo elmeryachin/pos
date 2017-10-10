@@ -73,7 +73,8 @@ public class Credencial implements Serializable {
     private String operador;
     @JoinColumn(name = "codigo_rol", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Rol rol;
+    private Rol codigoRol;
+
     public Credencial() {
     }
 
@@ -146,12 +147,12 @@ public class Credencial implements Serializable {
         this.operador = operador;
     }
 
-    public Rol getRol() {
-        return rol;
+    public Rol getCodigoRol() {
+        return codigoRol;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setCodigoRol(Rol codigoRol) {
+        this.codigoRol = codigoRol;
     }
 
     @Override

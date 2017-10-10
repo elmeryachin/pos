@@ -59,12 +59,12 @@ public class Inventario implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @JoinColumn(name = "codigo_ambiente", referencedColumnName = "codigo")
+    @JoinColumn(name = "id_ambiente", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Ambiente ambiente;
-    @JoinColumn(name = "codigo_articulo", referencedColumnName = "codigo")
+    private Ambiente idAmbiente;
+    @JoinColumn(name = "id_articulo", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Articulo articulo;
+    private Articulo idArticulo;
 
     public Inventario() {
     }
@@ -120,20 +120,20 @@ public class Inventario implements Serializable {
         this.operador = operador;
     }
 
-    public Ambiente getAmbiente() {
-        return ambiente;
+    public Ambiente getIdAmbiente() {
+        return idAmbiente;
     }
 
-    public void setAmbiente(Ambiente ambiente) {
-        this.ambiente = ambiente;
+    public void setIdAmbiente(Ambiente idAmbiente) {
+        this.idAmbiente = idAmbiente;
     }
 
-    public Articulo getArticulo() {
-        return articulo;
+    public Articulo getIdArticulo() {
+        return idArticulo;
     }
 
-    public void setArticulo(Articulo articulo) {
-        this.articulo = articulo;
+    public void setIdArticulo(Articulo idArticulo) {
+        this.idArticulo = idArticulo;
     }
 
     @Override

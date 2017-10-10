@@ -13,6 +13,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,6 +39,10 @@ public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
@@ -71,20 +77,29 @@ public class Usuario implements Serializable {
     private String operador;
     @JoinColumn(name = "sub_dominio_usuario", referencedColumnName = "codigo_sub_dominio")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private SubDominio subDominio;
+    private SubDominio subDominioUsuario;
 
     public Usuario() {
     }
 
-    public Usuario(String codigo) {
-        this.codigo = codigo;
+    public Usuario(Integer id) {
+        this.id = id;
     }
 
-    public Usuario(String codigo, String estado, Date fechaRegistro, String operador) {
+    public Usuario(Integer id, String codigo, String estado, Date fechaRegistro, String operador) {
+        this.id = id;
         this.codigo = codigo;
         this.estado = estado;
         this.fechaRegistro = fechaRegistro;
         this.operador = operador;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCodigo() {
@@ -151,18 +166,18 @@ public class Usuario implements Serializable {
         this.operador = operador;
     }
 
-    public SubDominio getSubDominio() {
-        return subDominio;
+    public SubDominio getSubDominioUsuario() {
+        return subDominioUsuario;
     }
 
-    public void setSubDominio(SubDominio subDominio) {
-        this.subDominio = subDominio;
+    public void setSubDominioUsuario(SubDominio subDominioUsuario) {
+        this.subDominioUsuario = subDominioUsuario;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -173,7 +188,7 @@ public class Usuario implements Serializable {
             return false;
         }
         Usuario other = (Usuario) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -181,7 +196,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.model.Usuario[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.model.Usuario[ id=" + id + " ]";
     }
     
 }

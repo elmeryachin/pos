@@ -62,7 +62,7 @@ public class Modulo implements Serializable {
     private Date fechaBaja;
     @JoinColumn(name = "codigo_aplicacion", referencedColumnName = "codigo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Aplicacion aplicacion;
+    private Aplicacion codigoAplicacion;
 
     public Modulo() {
     }
@@ -118,12 +118,12 @@ public class Modulo implements Serializable {
         this.fechaBaja = fechaBaja;
     }
 
-    public Aplicacion getAplicacion() {
-        return aplicacion;
+    public Aplicacion getCodigoAplicacion() {
+        return codigoAplicacion;
     }
 
-    public void setAplicacion(Aplicacion aplicacion) {
-        this.aplicacion = aplicacion;
+    public void setCodigoAplicacion(Aplicacion codigoAplicacion) {
+        this.codigoAplicacion = codigoAplicacion;
     }
 
     @Override

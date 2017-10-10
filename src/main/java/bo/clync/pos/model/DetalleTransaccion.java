@@ -31,6 +31,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "detalle_transaccion")
+@NamedQueries({
+    @NamedQuery(name = "DetalleTransaccion.findAll", query = "SELECT d FROM DetalleTransaccion d")})
 public class DetalleTransaccion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,6 +41,10 @@ public class DetalleTransaccion implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    //@Basic(optional = false)
+    //@NotNull
+    @JoinColumn(name = "id_transaccion", referencedColumnName = "id")
+    private int idTransaccion;
     @Basic(optional = false)
     @NotNull
     @Column(name = "cantidad")
@@ -56,15 +62,12 @@ public class DetalleTransaccion implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @JoinColumn(name = "codigo_articulo", referencedColumnName = "codigo")
+    @JoinColumn(name = "id_articulo", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Articulo articulo;
+    private Articulo idArticulo;
     @JoinColumn(name = "id_detalle_articulo", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private DetalleArticuloPrecio detalleArticuloPrecio;
-    @JoinColumn(name = "id_transaccion", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Transaccion transaccion;
+    private DetalleArticuloPrecio idDetalleArticulo;
 
     public DetalleTransaccion() {
     }
@@ -75,6 +78,7 @@ public class DetalleTransaccion implements Serializable {
 
     public DetalleTransaccion(Integer id, int idTransaccion, int cantidad, BigDecimal precio, String operador) {
         this.id = id;
+        this.idTransaccion = idTransaccion;
         this.cantidad = cantidad;
         this.precio = precio;
         this.operador = operador;
@@ -86,6 +90,14 @@ public class DetalleTransaccion implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public int getIdTransaccion() {
+        return idTransaccion;
+    }
+
+    public void setIdTransaccion(int idTransaccion) {
+        this.idTransaccion = idTransaccion;
     }
 
     public int getCantidad() {
@@ -120,28 +132,20 @@ public class DetalleTransaccion implements Serializable {
         this.operador = operador;
     }
 
-    public Articulo getArticulo() {
-        return articulo;
+    public Articulo getIdArticulo() {
+        return idArticulo;
     }
 
-    public void setArticulo(Articulo articulo) {
-        this.articulo = articulo;
+    public void setIdArticulo(Articulo idArticulo) {
+        this.idArticulo = idArticulo;
     }
 
-    public DetalleArticuloPrecio getDetalleArticuloPrecio() {
-        return detalleArticuloPrecio;
+    public DetalleArticuloPrecio getIdDetalleArticulo() {
+        return idDetalleArticulo;
     }
 
-    public void setDetalleArticuloPrecio(DetalleArticuloPrecio detalleArticuloPrecio) {
-        this.detalleArticuloPrecio = detalleArticuloPrecio;
-    }
-
-    public Transaccion getTransaccion() {
-        return transaccion;
-    }
-
-    public void setTransaccion(Transaccion transaccion) {
-        this.transaccion = transaccion;
+    public void setIdDetalleArticulo(DetalleArticuloPrecio idDetalleArticulo) {
+        this.idDetalleArticulo = idDetalleArticulo;
     }
 
     @Override

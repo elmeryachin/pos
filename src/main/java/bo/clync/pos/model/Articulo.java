@@ -8,7 +8,20 @@ package bo.clync.pos.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,6 +37,10 @@ public class Articulo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
@@ -47,27 +64,37 @@ public class Articulo implements Serializable {
     @Column(name = "fecha_actualizacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaActualizacion;
+    @Column(name = "fecha_baja")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaBaja;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
     @Column(name = "operador")
     private String operador;
-    @Transient
-    private DetalleArticuloPrecio detalleArticuloPrecio;
 
     public Articulo() {
     }
 
-    public Articulo(String codigo) {
-        this.codigo = codigo;
+    public Articulo(Integer id) {
+        this.id = id;
     }
 
-    public Articulo(String codigo, String nombre, String descripcion, Date fechaRegistro, String operador) {
+    public Articulo(Integer id, String codigo, String nombre, String descripcion, Date fechaRegistro, String operador) {
+        this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
         this.operador = operador;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getCodigo() {
@@ -110,6 +137,14 @@ public class Articulo implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
+    public Date getFechaBaja() {
+        return fechaBaja;
+    }
+
+    public void setFechaBaja(Date fechaBaja) {
+        this.fechaBaja= fechaBaja;
+    }
+
     public String getOperador() {
         return operador;
     }
@@ -118,19 +153,10 @@ public class Articulo implements Serializable {
         this.operador = operador;
     }
 
-
-    public DetalleArticuloPrecio getDetalleArticuloPrecio() {
-        return detalleArticuloPrecio;
-    }
-
-    public void setDetalleArticuloPrecio(DetalleArticuloPrecio detalleArticuloPrecio) {
-        this.detalleArticuloPrecio = detalleArticuloPrecio;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -141,7 +167,7 @@ public class Articulo implements Serializable {
             return false;
         }
         Articulo other = (Articulo) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -149,7 +175,8 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.model.Articulo[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.model.Articulo[ id=" + id + " ]";
     }
-
+    
 }
+

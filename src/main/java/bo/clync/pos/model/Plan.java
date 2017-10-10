@@ -63,7 +63,7 @@ public class Plan implements Serializable {
     private String operador;
     @JoinColumn(name = "id_transaccion", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Transaccion transaccion;
+    private Transaccion idTransaccion;
 
     public Plan() {
     }
@@ -119,12 +119,12 @@ public class Plan implements Serializable {
         this.operador = operador;
     }
 
-    public Transaccion getTransaccion() {
-        return transaccion;
+    public Transaccion getIdTransaccion() {
+        return idTransaccion;
     }
 
-    public void setTransaccion(Transaccion transaccion) {
-        this.transaccion = transaccion;
+    public void setIdTransaccion(Transaccion idTransaccion) {
+        this.idTransaccion = idTransaccion;
     }
 
     @Override
