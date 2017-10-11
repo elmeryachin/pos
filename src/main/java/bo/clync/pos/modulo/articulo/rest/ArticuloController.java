@@ -21,6 +21,13 @@ public class ArticuloController {
     @Autowired
     private Servicio service;
     private String token = "default";
+
+
+    @RequestMapping(value = "/articulo/hola", method = RequestMethod.GET)
+    public ResponseEntity<String> listaSaludo(@RequestHeader("token") String token) {
+        return new ResponseEntity<>("Hola " + token, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/articulo", method = RequestMethod.GET)
     public ResponseEntity<ServListaResponse> lista() {//@RequestHeader("token") String token
         return new ResponseEntity<>(service.lista(token), HttpStatus.OK);
