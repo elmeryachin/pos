@@ -87,7 +87,7 @@ public class UtilsArticulo {
             if(detalle.getPrecioKilo().compareTo(objeto.getPrecioKilo())!=0) {
                 control = true;
             }
-            if(!detalle.getPeso().equals(objeto.getPeso())) {
+            if(detalle.getPeso().compareTo(objeto.getPeso())!=0) {
                 control = true;
             }
             if(detalle.getPrecioZonaLibre().compareTo(objeto.getPrecioZonaLibre())!=0) {
