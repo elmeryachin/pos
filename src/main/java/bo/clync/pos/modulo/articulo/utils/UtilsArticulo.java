@@ -36,7 +36,6 @@ public class UtilsArticulo {
             detalle.setPeso(objeto.getPeso());
             detalle.setPrecioZonaLibre(objeto.getPrecioZonaLibre());
             detalle.setPorcentajeGasto(objeto.getPorcentajeGasto());
-            detalle.setGasto(objeto.getGasto());
             detalle.setPrecioCompra(objeto.getPrecioCompra());
             detalle.setPrecioVenta(objeto.getPrecioVenta());
             detalle.setPrecioMercado(objeto.getPrecioMercado());
@@ -51,19 +50,22 @@ public class UtilsArticulo {
         }
     }
 
-
+    public static boolean compare(Object a, Object b) {
+        if((a==null && b!=null) || (b==null && a!=null)) return true;
+        return !a.equals(b);
+    }
     public static boolean convertirActualizarArticulo(Articulo articulo, ObjetoArticulo objeto, String operador){
         boolean control = false;
         try {
-            if(!articulo.getCodigo().equals(objeto.getCodigo())) {
+            if(compare(articulo.getCodigo(),objeto.getCodigo())) {
                 articulo.setCodigo(objeto.getCodigo());
                 control = true;
             }
-            if(!articulo.getNombre().equals(objeto.getNombre())) {
+            if(compare(articulo.getNombre(),objeto.getNombre())) {
                 articulo.setNombre(objeto.getNombre());
                 control = true;
             }
-            if(!articulo.getDescripcion().equals(objeto.getDescripcion())) {
+            if(compare(articulo.getDescripcion(),objeto.getDescripcion())) {
                 articulo.setDescripcion(objeto.getDescripcion());
                 control = true;
             }
@@ -82,28 +84,25 @@ public class UtilsArticulo {
     public static boolean validaActualizarDetalleArticulo(DetalleArticuloPrecio detalle, ObjetoArticulo objeto) {
         boolean control = false;
         try {
-            if(!detalle.getPrecioKilo().equals(objeto.getPrecioKilo())) {
+            if(detalle.getPrecioKilo().compareTo(objeto.getPrecioKilo())!=0) {
                 control = true;
             }
             if(!detalle.getPeso().equals(objeto.getPeso())) {
                 control = true;
             }
-            if(!detalle.getPrecioZonaLibre().equals(objeto.getPrecioZonaLibre())) {
+            if(detalle.getPrecioZonaLibre().compareTo(objeto.getPrecioZonaLibre())!=0) {
                 control = true;
             }
-            if(!detalle.getPorcentajeGasto().equals(objeto.getPorcentajeGasto())) {
+            if(detalle.getPorcentajeGasto().compareTo(objeto.getPorcentajeGasto())!=0) {
                 control = true;
             }
-            if(!detalle.getGasto().equals(objeto.getGasto())) {
+            if(detalle.getPrecioCompra().compareTo(objeto.getPrecioCompra())!=0) {
                 control = true;
             }
-            if(!detalle.getPrecioCompra().equals(objeto.getPrecioCompra())) {
+            if(detalle.getPrecioVenta().compareTo(objeto.getPrecioVenta())!=0) {
                 control = true;
             }
-            if(!detalle.getPrecioVenta().equals(objeto.getPrecioVenta())) {
-                control = true;
-            }
-            if(!detalle.getPrecioMercado().equals(objeto.getPrecioMercado())) {
+            if(detalle.getPrecioMercado().compareTo(objeto.getPrecioMercado())!=0) {
                 control = true;
             }
             return control;

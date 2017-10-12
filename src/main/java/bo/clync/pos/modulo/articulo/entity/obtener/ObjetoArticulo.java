@@ -18,7 +18,6 @@ public class ObjetoArticulo {
     private BigDecimal peso;
     private BigDecimal precioZonaLibre;
     private BigDecimal porcentajeGasto;
-    private BigDecimal gasto;//Es el calculo enre precioZonaLibre * porcentajeGasto
     private BigDecimal precioCompra;
     private BigDecimal precioVenta;
     private BigDecimal precioMercado;
@@ -34,7 +33,6 @@ public class ObjetoArticulo {
         this.peso = detalle.getPeso();
         this.precioZonaLibre = detalle.getPrecioZonaLibre();
         this.porcentajeGasto = detalle.getPorcentajeGasto();
-        this.gasto = detalle.getGasto();
         this.precioCompra = detalle.getPrecioCompra();
         this.precioVenta = detalle.getPrecioVenta();
         this.precioMercado = detalle.getPrecioMercado();
@@ -94,14 +92,6 @@ public class ObjetoArticulo {
 
     public void setPorcentajeGasto(BigDecimal porcentajeGasto) {
         this.porcentajeGasto = porcentajeGasto;
-    }
-
-    public BigDecimal getGasto() {
-        return gasto;
-    }
-
-    public void setGasto(BigDecimal gasto) {
-        this.gasto = gasto;
     }
 
     public BigDecimal getPrecioCompra() {

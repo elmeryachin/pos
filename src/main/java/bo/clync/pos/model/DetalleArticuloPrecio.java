@@ -63,10 +63,6 @@ public class DetalleArticuloPrecio implements Serializable {
     private BigDecimal porcentajeGasto;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "gasto")
-    private BigDecimal gasto;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "precio_compra")
     private BigDecimal precioCompra;
     @Basic(optional = false)
@@ -100,13 +96,12 @@ public class DetalleArticuloPrecio implements Serializable {
         this.id = id;
     }
 
-    public DetalleArticuloPrecio(Integer id, BigDecimal precioKilo, BigDecimal peso, BigDecimal precioZonaLibre, BigDecimal porcentajeGasto, BigDecimal gasto, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMercado, Date fechaRegistro, String operador, Integer idArticulo) {
+    public DetalleArticuloPrecio(Integer id, BigDecimal precioKilo, BigDecimal peso, BigDecimal precioZonaLibre, BigDecimal porcentajeGasto, BigDecimal precioCompra, BigDecimal precioVenta, BigDecimal precioMercado, Date fechaRegistro, String operador, Integer idArticulo) {
         this.id = id;
         this.precioKilo = precioKilo;
         this.peso = peso;
         this.precioZonaLibre = precioZonaLibre;
         this.porcentajeGasto = porcentajeGasto;
-        this.gasto = gasto;
         this.precioCompra = precioCompra;
         this.precioVenta = precioVenta;
         this.precioMercado = precioMercado;
@@ -153,14 +148,6 @@ public class DetalleArticuloPrecio implements Serializable {
 
     public void setPorcentajeGasto(BigDecimal porcentajeGasto) {
         this.porcentajeGasto = porcentajeGasto;
-    }
-
-    public BigDecimal getGasto() {
-        return gasto;
-    }
-
-    public void setGasto(BigDecimal gasto) {
-        this.gasto = gasto;
     }
 
     public BigDecimal getPrecioCompra() {
