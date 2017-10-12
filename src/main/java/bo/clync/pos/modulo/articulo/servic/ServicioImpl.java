@@ -125,11 +125,15 @@ public class ServicioImpl implements Servicio {
                         if(request.getObjetoArticulo()!=null)
                             System.out.println(request.getObjetoArticulo().getCodigo());
                     }
-                    articulo = UtilsArticulo.convertirNuevoArticulo(request.getObjetoArticulo(), operador);
-                    repository.save(articulo);
-                    detalle = UtilsArticulo.convertirNuevoDetalleArticulo(request.getObjetoArticulo(), articulo.getId(), operador);
-                    detalleRepository.save(detalle);
-                    respuesta = true;
+                    if(repository.findByCodigo(request.getObjetoArticulo().getCodigo()) == null) {
+                        articulo = UtilsArticulo.convertirNuevoArticulo(request.getObjetoArticulo(), operador);
+                        repository.save(articulo);
+                        detalle = UtilsArticulo.convertirNuevoDetalleArticulo(request.getObjetoArticulo(), articulo.getId(), operador);
+                        detalleRepository.save(detalle);
+                        respuesta = true;
+                    } else {
+                       mensaje = "El codigo de articulo ya existe ingreso otro.";
+                    }
                 } else {
                     mensaje = "Se termino la session";
                 }
