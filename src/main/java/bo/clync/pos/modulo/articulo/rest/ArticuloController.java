@@ -45,13 +45,16 @@ public class ArticuloController {
         return new ResponseEntity<>(service.nuevo(request, token), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/update/{codigo}", method = RequestMethod.PUT)
+
+    @CrossOrigin
+    @PutMapping("/update/{codigo}")
     public ResponseEntity<ServResponse> update(@PathVariable("codigo") String codigo,
                                                @RequestBody ServRequest request) {
         return new ResponseEntity<>(service.actualizar(codigo, request, token), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete/{codigo}", method = RequestMethod.DELETE)
+    @CrossOrigin
+    @DeleteMapping("/delete/{codigo}")
     public ResponseEntity<ServResponse> delete(@PathVariable("codigo") String codigo) {
         return new ResponseEntity<>(service.baja(codigo, token), HttpStatus.OK);
     }
