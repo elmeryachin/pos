@@ -52,7 +52,6 @@ public class Articulo implements Serializable {
     @Column(name = "nombre")
     private String nombre;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "descripcion")
     private String descripcion;

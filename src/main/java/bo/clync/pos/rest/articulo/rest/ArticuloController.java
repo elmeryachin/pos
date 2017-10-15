@@ -1,4 +1,4 @@
-package bo.clync.pos.modulo.articulo.rest;
+package bo.clync.pos.rest.articulo.rest;
 
 import bo.clync.pos.modulo.articulo.entity.lista.ServListaResponse;
 import bo.clync.pos.modulo.articulo.entity.ServRequest;
