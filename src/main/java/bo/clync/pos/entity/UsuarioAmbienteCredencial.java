@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  *
@@ -25,8 +24,7 @@ public class UsuarioAmbienteCredencial implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer idUsuario;
-    private Integer idAmbiente;
-    private String codigoRol;
+    private String codigoAmbiente;
     private String usuario;
     private String contrasenia;
     private Date fechaAlta;
@@ -43,9 +41,8 @@ public class UsuarioAmbienteCredencial implements Serializable {
         this.setId(id);
     }
 
-    public UsuarioAmbienteCredencial(Integer id, String codigoRol, String usuario, String contrasenia, Date fechaAlta, String operadorBaja) {
+    public UsuarioAmbienteCredencial(Integer id, String usuario, String contrasenia, Date fechaAlta, String operadorBaja) {
         this.setId(id);
-        this.setCodigoRol(codigoRol);
         this.setUsuario(usuario);
         this.setContrasenia(contrasenia);
         this.setFechaAlta(fechaAlta);
@@ -73,20 +70,12 @@ public class UsuarioAmbienteCredencial implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public Integer getIdAmbiente() {
-        return idAmbiente;
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
     }
 
-    public void setIdAmbiente(Integer idAmbiente) {
-        this.idAmbiente = idAmbiente;
-    }
-
-    public String getCodigoRol() {
-        return codigoRol;
-    }
-
-    public void setCodigoRol(String codigoRol) {
-        this.codigoRol = codigoRol;
+    public void setCodigoAmbiente(String idAmbiente) {
+        this.codigoAmbiente = idAmbiente;
     }
 
     public String getUsuario() {

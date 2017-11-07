@@ -36,6 +36,7 @@ public class Pagos implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String idTransaccion;
     private BigDecimal montoParcial;
     private Date fechaAlta;
     private String operadorAlta;
@@ -43,7 +44,6 @@ public class Pagos implements Serializable {
     private String operadorActualizacion;
     private Date fechaBaja;
     private String operadorBaja;
-    private Integer idTransaccion;
 
     public Pagos() {
     }
@@ -123,11 +123,11 @@ public class Pagos implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
-    public Integer getIdTransaccion() {
+    public String getIdTransaccion() {
         return idTransaccion;
     }
 
-    public void setIdTransaccion(Integer idTransaccion) {
+    public void setIdTransaccion(String idTransaccion) {
         this.idTransaccion= idTransaccion;
     }
 

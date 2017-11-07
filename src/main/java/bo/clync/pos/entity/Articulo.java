@@ -8,10 +8,7 @@ package bo.clync.pos.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -22,8 +19,6 @@ public class Articulo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private String codigo;
     private String nombre;
     private String descripcion;
@@ -44,24 +39,11 @@ public class Articulo implements Serializable {
     public Articulo() {
     }
 
-    public Articulo(Integer id) {
-        this.id = id;
-    }
-
-    public Articulo(Integer id, String codigo, String nombre, String operadorAlta, Date fechaAlta) {
-        this.id = id;
+    public Articulo(String codigo, String nombre, String operadorAlta, Date fechaAlta) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.operadorAlta = operadorAlta;
         this.fechaAlta = fechaAlta;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getCodigo() {
@@ -195,7 +177,7 @@ public class Articulo implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (codigo != null ? codigo.hashCode() : 0);
         return hash;
     }
 
@@ -206,7 +188,7 @@ public class Articulo implements Serializable {
             return false;
         }
         Articulo other = (Articulo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
         return true;
@@ -214,7 +196,7 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.Articulo[ id=" + id + " ]";
+        return "bo.clync.pos.entity.Articulo[ codigo=" + codigo + " ]";
     }
     
 }

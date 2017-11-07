@@ -9,10 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  *
@@ -23,17 +20,17 @@ public class Transaccion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
     private Integer idCiclo;
     private String codigoDominio;
+    private Integer nroMovimiento;
     private String codigoValor;
     private String codigoValorPago;
     private Integer idUsuarioInicio;
-    private Integer idAmbienteInicio;
+    private String codigoAmbienteInicio;
     private Date fechaInicio;
     private Integer idUsuarioFin;
-    private Integer idAmbienteFin;
+    private String codigoAmbienteFin;
     private Date fechaFin;
     private int cantidad;
     private BigDecimal precio;
@@ -48,11 +45,11 @@ public class Transaccion implements Serializable {
     public Transaccion() {
     }
 
-    public Transaccion(Integer id) {
+    public Transaccion(String id) {
         this.setId(id);
     }
 
-    public Transaccion(Integer id, Date fechaInicio, int cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
+    public Transaccion(String id, Date fechaInicio, int cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
         this.setId(id);
         this.setFechaInicio(fechaInicio);
         this.setCantidad(cantidad);
@@ -66,11 +63,11 @@ public class Transaccion implements Serializable {
         return serialVersionUID;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -114,12 +111,12 @@ public class Transaccion implements Serializable {
         this.idUsuarioInicio = idUsuarioInicio;
     }
 
-    public Integer getIdAmbienteInicio() {
-        return idAmbienteInicio;
+    public String getCodigoAmbienteInicio() {
+        return codigoAmbienteInicio;
     }
 
-    public void setIdAmbienteInicio(Integer idAmbienteInicio) {
-        this.idAmbienteInicio = idAmbienteInicio;
+    public void setCodigoAmbienteInicio(String idAmbienteInicio) {
+        this.codigoAmbienteInicio = idAmbienteInicio;
     }
 
     public Date getFechaInicio() {
@@ -138,12 +135,12 @@ public class Transaccion implements Serializable {
         this.idUsuarioFin = idUsuarioFin;
     }
 
-    public Integer getIdAmbienteFin() {
-        return idAmbienteFin;
+    public String getCodigoAmbienteFin() {
+        return codigoAmbienteFin;
     }
 
-    public void setIdAmbienteFin(Integer idAmbienteFin) {
-        this.idAmbienteFin = idAmbienteFin;
+    public void setCodigoAmbienteFin(String idAmbienteFin) {
+        this.codigoAmbienteFin = idAmbienteFin;
     }
 
     public Date getFechaFin() {
@@ -226,6 +223,13 @@ public class Transaccion implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
+    public Integer getNroMovimiento() {
+        return nroMovimiento;
+    }
+
+    public void setNroMovimiento(Integer nroMovimiento) {
+        this.nroMovimiento = nroMovimiento;
+    }
     @Override
     public int hashCode() {
         int hash = 0;

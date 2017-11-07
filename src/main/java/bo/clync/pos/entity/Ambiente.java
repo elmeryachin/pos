@@ -34,12 +34,9 @@ public class Ambiente implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private String codigo;
     private String nombre;
     private String tipoAmbiente;
-    private String estado;
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
@@ -50,24 +47,11 @@ public class Ambiente implements Serializable {
     public Ambiente() {
     }
 
-    public Ambiente(Integer id) {
-        this.id = id;
-    }
-
-    public Ambiente(Integer id, String codigo, String nombre, Date fechaAlta, String operadorAlta) {
-        this.id = id;
+    public Ambiente(String codigo, String nombre, Date fechaAlta, String operadorAlta) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.fechaAlta = fechaAlta;
         this.operadorAlta = operadorAlta;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getCodigo() {
@@ -92,14 +76,6 @@ public class Ambiente implements Serializable {
 
     public void setTipoAmbiente(String tipoAmbiente) {
         this.tipoAmbiente = tipoAmbiente;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     public Date getFechaAlta() {
@@ -153,7 +129,7 @@ public class Ambiente implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (codigo != null ? codigo.hashCode() : 0);
         return hash;
     }
 
@@ -164,7 +140,7 @@ public class Ambiente implements Serializable {
             return false;
         }
         Ambiente other = (Ambiente) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
         return true;
@@ -172,7 +148,7 @@ public class Ambiente implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.Ambiente[ id=" + id + " ]";
+        return "bo.clync.pos.entity.Ambiente[ codigo=" + codigo + " ]";
     }
     
 }

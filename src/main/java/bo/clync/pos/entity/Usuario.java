@@ -7,25 +7,10 @@ package bo.clync.pos.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -38,12 +23,12 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String codigoDominio;
+    private String codigoValorUsuario;
     private String codigo;
     private String nombre;
     private String telefono;
     private String direccion;
-    private String estado;
+    private String codigoAmbiente;
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
@@ -58,10 +43,9 @@ public class Usuario implements Serializable {
         this.id = id;
     }
 
-    public Usuario(Integer id, String codigo, String estado, Date fechaAlta) {
+    public Usuario(Integer id, String codigo, Date fechaAlta) {
         this.id = id;
         this.codigo = codigo;
-        this.estado = estado;
         this.fechaAlta = fechaAlta;
     }
 
@@ -103,14 +87,6 @@ public class Usuario implements Serializable {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     public Date getFechaAlta() {
@@ -161,12 +137,20 @@ public class Usuario implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
-    public String getCodigoDominio() {
-        return codigoDominio;
+    public String getCodigoValorUsuario() {
+        return codigoValorUsuario;
     }
 
-    public void setCodigoDominio(String codigoDominio) {
-        this.codigoDominio = codigoDominio;
+    public void setCodigoValorUsuario(String codigoDominio) {
+        this.codigoValorUsuario = codigoDominio;
+    }
+
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
+    }
+
+    public void setCodigoAmbiente(String idAmbiente) {
+        this.codigoAmbiente = idAmbiente;
     }
 
     @Override
@@ -193,5 +177,5 @@ public class Usuario implements Serializable {
     public String toString() {
         return "bo.clync.pos.entity.Usuario[ id=" + id + " ]";
     }
-    
+
 }

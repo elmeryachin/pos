@@ -7,22 +7,10 @@ package bo.clync.pos.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -35,12 +23,13 @@ public class Inventario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idAmbiente;
-    private Integer idArticulo;
+    private String codigoAmbiente;
+    private String codigoArticulo;
     private int existencia;
-    private Integer porLlegar;
-    private Integer porEntregar;
-    private Integer porRecibir;
+    private int porLlegar;
+    private int porEntregar;
+    private int porRecibir;
+
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
@@ -79,27 +68,27 @@ public class Inventario implements Serializable {
         this.existencia = existencia;
     }
 
-    public Integer getPorLlegar() {
+    public int getPorLlegar() {
         return porLlegar;
     }
 
-    public void setPorLlegar(Integer porLlegar) {
+    public void setPorLlegar(int porLlegar) {
         this.porLlegar = porLlegar;
     }
 
-    public Integer getPorEntregar() {
+    public int getPorEntregar() {
         return porEntregar;
     }
 
-    public void setPorEntregar(Integer porEntregar) {
+    public void setPorEntregar(int porEntregar) {
         this.porEntregar = porEntregar;
     }
 
-    public Integer getPorRecibir() {
+    public int getPorRecibir() {
         return porRecibir;
     }
 
-    public void setPorRecibir(Integer porRecibir) {
+    public void setPorRecibir(int porRecibir) {
         this.porRecibir = porRecibir;
     }
 
@@ -151,20 +140,20 @@ public class Inventario implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
-    public Integer getIdArticulo() {
-        return idArticulo;
+    public String getCodigoArticulo() {
+        return codigoArticulo;
     }
 
-    public void setIdArticulo(Integer idArticulo) {
-        this.idArticulo = idArticulo;
+    public void setCodigoArticulo(String idArticulo) {
+        this.codigoArticulo = idArticulo;
     }
 
-    public Integer getIdAmbiente() {
-        return idAmbiente;
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
     }
 
-    public void setIdAmbiente(Integer idAmbiente) {
-        this.idAmbiente = idAmbiente;
+    public void setCodigoAmbiente(String idAmbiente) {
+        this.codigoAmbiente = idAmbiente;
     }
 
     @Override

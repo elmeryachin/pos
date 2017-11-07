@@ -8,22 +8,8 @@ package bo.clync.pos.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -33,12 +19,13 @@ import javax.validation.constraints.Size;
 public class DetalleTransaccion implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private BigDecimal precioSistema;
-    private int cantidad;
+    @Id//@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+    private String idTransaccion;
+    private String codigoArticulo;
+    private Integer cantidad;
     private BigDecimal precio;
+    private BigDecimal precioSistema;
     private String observacion;
     private Date fechaAlta;
     private String operadorAlta;
@@ -46,17 +33,17 @@ public class DetalleTransaccion implements Serializable {
     private String operadorActualizacion;
     private Date fechaBaja;
     private String operadorBaja;
-    private Integer idArticulo;
-    private Integer idTransaccion;
+    private Integer cantidadOficial;
+    private BigDecimal precioOficial;
 
     public DetalleTransaccion() {
     }
 
-    public DetalleTransaccion(Integer id) {
+    public DetalleTransaccion(String id) {
         this.id = id;
     }
 
-    public DetalleTransaccion(Integer id, BigDecimal precioSistema, int cantidad, BigDecimal precio, String operadorBaja) {
+    public DetalleTransaccion(String id, BigDecimal precioSistema, int cantidad, BigDecimal precio, String operadorBaja) {
         this.id = id;
         this.precioSistema = precioSistema;
         this.cantidad = cantidad;
@@ -64,11 +51,11 @@ public class DetalleTransaccion implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -80,11 +67,11 @@ public class DetalleTransaccion implements Serializable {
         this.precioSistema = precioSistema;
     }
 
-    public int getCantidad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
 
@@ -152,20 +139,36 @@ public class DetalleTransaccion implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
-    public Integer getIdArticulo() {
-        return idArticulo;
+    public String getCodigoArticulo() {
+        return codigoArticulo;
     }
 
-    public void setIdArticulo(Integer idArticulo) {
-        this.idArticulo = idArticulo;
+    public void setCodigoArticulo(String idArticulo) {
+        this.codigoArticulo = idArticulo;
     }
 
-    public Integer getIdTransaccion() {
+    public String getIdTransaccion() {
         return idTransaccion;
     }
 
-    public void setIdTransaccion(Integer idTransaccion) {
+    public void setIdTransaccion(String idTransaccion) {
         this.idTransaccion = idTransaccion;
+    }
+
+    public Integer getCantidadOficial() {
+        return cantidadOficial;
+    }
+
+    public void setCantidadOficial(Integer cantidadOficial) {
+        this.cantidadOficial = cantidadOficial;
+    }
+
+    public BigDecimal getPrecioOficial() {
+        return precioOficial;
+    }
+
+    public void setPrecioOficial(BigDecimal precioOficial) {
+        this.precioOficial = precioOficial;
     }
 
     @Override
