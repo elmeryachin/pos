@@ -14,15 +14,15 @@ import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    public Usuario findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(String codigo, String codigoValorUsuario, String codigoAmbiente);
+    Usuario findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(String codigo, String codigoValorUsuario, String codigoAmbiente);
 
     @Query("SELECT o.id " +
             " FROM Usuario o " +
             "WHERE o.codigo = :codigo " +
-            "AND o.codigoValorUsuario=:codigoValorUsuario " +
-            "AND o.codigoAmbiente=:codigoAmbiente" +
+            "  AND o.codigoValorUsuario=:codigoValorUsuario " +
+            "  AND o.codigoAmbiente=:codigoAmbiente" +
             "  AND o.fechaBaja IS NULL")
-    public Integer getIdUsuarioProveedor(@Param("codigo") String codigo,
+    Integer getIdUsuarioProveedor(@Param("codigo") String codigo,
                                          @Param("codigoValorUsuario") String codigoValorUsuario,
                                          @Param("codigoAmbiente") String codigoAmbiente);
 
@@ -32,7 +32,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente " +
             "  AND o.fechaBaja IS NULL")
-    public List<Resumen> getListaUsuarioResumenPorPatron(@Param("codigo") String codigo,
+    List<Resumen> getListaUsuarioResumenPorPatron(@Param("codigo") String codigo,
                                                          @Param("codigoValorUsuario") String codigoValorUsuario,
                                                          @Param("codigoAmbiente") String codigoAmbiente);
 
@@ -41,7 +41,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "WHERE o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente " +
             "  AND o.fechaBaja IS NULL")
-    public List<Resumen> getListaUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario,
+    List<Resumen> getListaUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario,
                                                 @Param("codigoAmbiente") String codigoAmbiente);
 
 }

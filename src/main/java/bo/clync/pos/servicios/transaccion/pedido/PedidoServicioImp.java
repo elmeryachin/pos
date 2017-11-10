@@ -18,6 +18,7 @@ import bo.clync.pos.repository.common.UsuarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.utilitarios.UtilsDominio;
+import bo.clync.pos.utilitarios.UtilsGeneral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class PedidoServicioImp implements PedidoServicio {
             Integer nro = transaccionRepository.initMovimiento(idUsuario, codigoAmbiente, UtilsDominio.PEDIDO, idCiclo);
             nro = nro==null?1:nro+1;
             init.setNroMovimiento(nro);
-            init.setFechaMovimiento(new Date());
+            init.setFechaMovimiento(UtilsGeneral.fechaActual());
             init.setRespuesta(true);
         } catch (Exception e) {
             init.setMensaje("Error al generar el nro de movimiento");
@@ -183,7 +184,7 @@ public class PedidoServicioImp implements PedidoServicio {
             if(verificacion ==null || verificacion[0].equals(0l)) {
                 Integer idProveedo = usuarioRepository.getIdUsuarioProveedor(request.getPedidoObjeto().getCodigoProveedor(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
                 transaccion = new Transaccion();
-                String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + getSecuencialTransaccion().toString();
+                String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + request.getPedidoObjeto().getNroMovimiento();//getSecuencialTransaccion().toString();
                 transaccion.setId(sid);
                 transaccion.setIdCiclo(idCiclo);
                 transaccion.setCodigoDominio(UtilsDominio.PEDIDO);
@@ -192,7 +193,7 @@ public class PedidoServicioImp implements PedidoServicio {
                 transaccion.setNroMovimiento(request.getPedidoObjeto().getNroMovimiento());
                 transaccion.setIdUsuarioInicio(idUsuario);
                 transaccion.setCodigoAmbienteInicio(codigoAmbiente);
-                transaccion.setFechaInicio(request.getPedidoObjeto().getFechaMovimiento());
+                transaccion.setFechaInicio(UtilsGeneral.convertirFecha(request.getPedidoObjeto().getFechaMovimiento()));
                 transaccion.setIdUsuarioFin(idProveedo);
                 transaccion.setCodigoAmbienteFin(null);
                 transaccion.setFechaFin(null);
@@ -266,65 +267,71 @@ public class PedidoServicioImp implements PedidoServicio {
             String codigoAmbiente = (String) arrayId[1];
             Integer idProveedo = usuarioRepository.getIdUsuarioProveedor(request.getPedidoObjeto().getCodigoProveedor(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
             transaccion = transaccionRepository.findOne(request.getPedidoObjeto().getId());
-            transaccion.setIdUsuarioFin(idProveedo);
-            transaccion.setObservacion(request.getPedidoObjeto().getObservacion());
-            transaccion.setFechaActualizacion(fecha);
-            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-            transaccionRepository.save(transaccion);
-            request.getPedidoObjeto().setId(transaccion.getId());
-            List<String> listaActualizada = new ArrayList<>();
-            for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
-                if (pedido.getId() != null) {
-                    detalle = detalleTransaccionRepository.findOne(pedido.getId());
-                    listaActualizada.add(pedido.getId());
-                    detalle.setCodigoArticulo(pedido.getCodigoArticulo());
-                    detalle.setCantidad(pedido.getCantidad());
-                    detalle.setPrecio(pedido.getPrecio());
-                    detalle.setCantidadOficial(pedido.getCantidad());
-                    detalle.setPrecioOficial(pedido.getPrecio());
-                    detalle.setObservacion(pedido.getObservacion());
-                    detalle.setOperadorActualizacion(String.valueOf(idUsuario));
-                    detalle.setFechaActualizacion(fecha);
-                    detalleTransaccionRepository.save(detalle);
-                }
-            }
-
-            List<DetalleTransaccion> listBaja = detalleTransaccionRepository.findByIdNotInAndFechaBajaIsNull(listaActualizada);
-
-            for(DetalleTransaccion de : listBaja) {
-                de.setFechaBaja(fecha);
-                de.setOperadorBaja(String.valueOf(idUsuario));
-                detalleTransaccionRepository.save(de);
-            }
-
-            for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
-                if (pedido.getId() == null) {
-                    String idDetalleExistente = detalleTransaccionRepository.existeArticuloEnTransaccion(transaccion.getId(), pedido.getCodigoArticulo());
-                    if (idDetalleExistente == null) {
-                        detalle = new DetalleTransaccion();
-                        String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
-                        detalle.setId(uid);
-                        detalle.setIdTransaccion(transaccion.getId());
-                        BigDecimal precioVenta = articuloRepository.getPrecioVentaPorCodigo(pedido.getCodigoArticulo());
+            if(transaccion != null) {
+                transaccion.setIdUsuarioFin(idProveedo);
+                transaccion.setObservacion(request.getPedidoObjeto().getObservacion());
+                transaccion.setFechaActualizacion(fecha);
+                transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                transaccionRepository.save(transaccion);
+                request.getPedidoObjeto().setId(transaccion.getId());
+                List<String> listaActualizada = new ArrayList<>();
+                for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
+                    if (pedido.getId() != null) {
+                        detalle = detalleTransaccionRepository.findOne(pedido.getId());
+                        listaActualizada.add(pedido.getId());
                         detalle.setCodigoArticulo(pedido.getCodigoArticulo());
                         detalle.setCantidad(pedido.getCantidad());
                         detalle.setPrecio(pedido.getPrecio());
-                        detalle.setPrecioSistema(precioVenta);
-                        detalle.setObservacion(null);
-                        detalle.setOperadorAlta(String.valueOf(idUsuario));
-                        detalle.setFechaAlta(fecha);
+                        detalle.setCantidadOficial(pedido.getCantidad());
+                        detalle.setPrecioOficial(pedido.getPrecio());
+                        detalle.setObservacion(pedido.getObservacion());
+                        detalle.setOperadorActualizacion(String.valueOf(idUsuario));
+                        detalle.setFechaActualizacion(fecha);
                         detalleTransaccionRepository.save(detalle);
-                        pedido.setId(detalle.getId());
-                        listaActualizada.add(pedido.getId());
-                    } else {
-                        response.setMensaje("Esta volviendo a insertar un articulo");
                     }
                 }
-            }
 
-            if(response.getMensaje() == null) {
-                response.setPedidoObjeto(request.getPedidoObjeto());
-                response.setRespuesta(true);
+                List<DetalleTransaccion> listBaja = detalleTransaccionRepository.findByIdNotInAndFechaBajaIsNull(listaActualizada);
+
+                for (DetalleTransaccion de : listBaja) {
+                    de.setFechaBaja(fecha);
+                    de.setOperadorBaja(String.valueOf(idUsuario));
+                    detalleTransaccionRepository.save(de);
+                }
+
+                for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
+                    if (pedido.getId() == null) {
+                        String idDetalleExistente = detalleTransaccionRepository.existeArticuloEnTransaccion(transaccion.getId(), pedido.getCodigoArticulo());
+                        if (idDetalleExistente == null) {
+                            detalle = new DetalleTransaccion();
+                            String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
+                            detalle.setId(uid);
+                            detalle.setIdTransaccion(transaccion.getId());
+                            BigDecimal precioVenta = articuloRepository.getPrecioVentaPorCodigo(pedido.getCodigoArticulo());
+                            detalle.setCodigoArticulo(pedido.getCodigoArticulo());
+                            detalle.setCantidad(pedido.getCantidad());
+                            detalle.setPrecio(pedido.getPrecio());
+                            detalle.setPrecioSistema(precioVenta);
+                            detalle.setCantidadOficial(pedido.getCantidad());
+                            detalle.setPrecioOficial(pedido.getPrecio());
+                            detalle.setObservacion(null);
+                            detalle.setOperadorAlta(String.valueOf(idUsuario));
+                            detalle.setFechaAlta(fecha);
+                            detalleTransaccionRepository.save(detalle);
+                            pedido.setId(detalle.getId());
+                            listaActualizada.add(pedido.getId());
+                        } else {
+                            response.setMensaje("Esta volviendo a insertar un articulo");
+                        }
+                    }
+                }
+
+                if (response.getMensaje() == null) {
+                    response.setPedidoObjeto(request.getPedidoObjeto());
+                    response.setRespuesta(true);
+                }
+            } else {
+                response.setMensaje("No se encontro la transaccion");
             }
         } catch(Exception e) {
             e.printStackTrace();

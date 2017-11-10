@@ -15,7 +15,9 @@ public interface LlegadaServicio {
 
     LlegadaResponse confirmarLlegada(String token, LlegadaRequest request) throws Exception;
 
-    public LlegadaResponseList lista(String token);
+    LlegadaResponse eliminarLlegada(String token, LlegadaRequest request) throws Exception;
 
-    public LlegadaResponse obtener(String token, String id);
+    LlegadaResponseList lista(String token);
+
+    LlegadaResponse obtener(String token, String id);
 }

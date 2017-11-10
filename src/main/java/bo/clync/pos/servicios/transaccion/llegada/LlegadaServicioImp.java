@@ -56,7 +56,7 @@ public class LlegadaServicioImp implements LlegadaServicio {
                         transaccion.setFechaActualizacion(fecha);
                         transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
                         transaccionRepository.save(transaccion);
-                        request.getLlegadaObjeto().setId(transaccion.getId());
+                        //request.getLlegadaObjeto().setId(transaccion.getId());
                         for (LlegadaDetalle llegada : request.getLlegadaObjeto().getLista()) {
                             if (llegada.getId() != null) {
                                 detalle = detalleTransaccionRepository.getDetalleTransaccion(llegada.getId());
@@ -104,7 +104,62 @@ public class LlegadaServicioImp implements LlegadaServicio {
         return response;
     }
 
-    // FALTA SERVICIO DE ELIMINAR LLEGADA Y DE ESTA FORMA DEVOLVER LA OPERACION REALIZADA.
+    @Override
+    public LlegadaResponse eliminarLlegada(String token, LlegadaRequest request) throws Exception {
+        LlegadaResponse response = new LlegadaResponse();
+        Transaccion transaccion = null;
+        DetalleTransaccion detalle = null;
+        Date fecha = null;
+        try {
+            fecha = new Date();
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if(arrayId != null) {
+                Integer idUsuario = (Integer) arrayId[0];
+                transaccion = transaccionRepository.getTransaccion(request.getLlegadaObjeto().getId());
+                if (transaccion != null) {
+                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_LLEGADA)) {
+                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
+                        transaccion.setObservacion(request.getLlegadaObjeto().getObservacion());
+                        transaccion.setFechaActualizacion(fecha);
+                        transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                        transaccionRepository.save(transaccion);
+                        for (LlegadaDetalle llegada : request.getLlegadaObjeto().getLista()) {
+                            if (llegada.getId() != null) {
+                                detalle = detalleTransaccionRepository.getDetalleTransaccion(llegada.getId());
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                                Integer cantidad = inventario.getExistencia() - detalle.getCantidadOficial();
+                                if(cantidad < 0) {
+                                    response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                                }
+                                inventario.setExistencia(cantidad);
+                                inventario.setFechaActualizacion(fecha);
+                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                                inventarioRepository.save(inventario);
+                            }
+                        }
+                        if(response.getMensaje() == null) {
+                            response.setLlegadaObjeto(request.getLlegadaObjeto());
+                            response.setRespuesta(true);
+                        }
+                    } else {
+                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                    }
+                } else {
+                    response.setMensaje("No se encontro la transaccion");
+                }
+            } else {
+                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            response.setLlegadaObjeto(null);
+            response.setMensaje("Error al confirmar la llegada ");
+        }
+        if(!response.isRespuesta())
+            throw new Exception(response.getMensaje());
+        return response;
+    }
+
 
     @Override
     public LlegadaResponseList lista(String token) {

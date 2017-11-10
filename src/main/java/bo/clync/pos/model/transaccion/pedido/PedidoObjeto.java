@@ -1,5 +1,7 @@
 package bo.clync.pos.model.transaccion.pedido;
 
+import bo.clync.pos.utilitarios.UtilsGeneral;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
 public class PedidoObjeto {
 
     private String id;
-    private Date fechaMovimiento;
+    private String fechaMovimiento;
     private Integer nroMovimiento;
     private String codigoProveedor;
     private String observacion;
@@ -19,7 +21,7 @@ public class PedidoObjeto {
 
     public PedidoObjeto(String id, Date fechaMovimiento, Integer nroMovimiento, String codigoProveedor, String observacion){
         this.id = id;
-        this.fechaMovimiento = fechaMovimiento;
+        this.fechaMovimiento = UtilsGeneral.fecha(fechaMovimiento);
         this.nroMovimiento = nroMovimiento;
         this.codigoProveedor = codigoProveedor;
         this.observacion = observacion;
@@ -41,11 +43,11 @@ public class PedidoObjeto {
         this.nroMovimiento = nroMovimiento;
     }
 
-    public Date getFechaMovimiento() {
+    public String getFechaMovimiento() {
         return fechaMovimiento;
     }
 
-    public void setFechaMovimiento(Date fechaMovimiento) {
+    public void setFechaMovimiento(String fechaMovimiento) {
         this.fechaMovimiento = fechaMovimiento;
     }
 

@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class PedidoResponseInit {
     private Integer nroMovimiento;
-    private Date fechaMovimiento;
+    private String fechaMovimiento;
     private boolean respuesta;
     private String mensaje;
 
@@ -20,11 +20,11 @@ public class PedidoResponseInit {
         this.nroMovimiento = nroMovimiento;
     }
 
-    public Date getFechaMovimiento() {
+    public String getFechaMovimiento() {
         return fechaMovimiento;
     }
 
-    public void setFechaMovimiento(Date fechaMovimiento) {
+    public void setFechaMovimiento(String fechaMovimiento) {
         this.fechaMovimiento = fechaMovimiento;
     }
 
