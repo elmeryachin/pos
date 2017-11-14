@@ -1,19 +1,18 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
 import bo.clync.pos.entity.DetalleTransaccion;
+import bo.clync.pos.entity.Inventario;
 import bo.clync.pos.entity.Transaccion;
 import bo.clync.pos.entity.Usuario;
 import bo.clync.pos.model.Resumen;
 import bo.clync.pos.model.ServResponse;
 import bo.clync.pos.model.articulo.obtener.ObjetoArticulo;
-import bo.clync.pos.model.transaccion.llegada.LlegadaDetalle;
-import bo.clync.pos.model.transaccion.llegada.LlegadaObjeto;
-import bo.clync.pos.model.transaccion.llegada.LlegadaResponse;
 import bo.clync.pos.model.transaccion.pedido.*;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
 import bo.clync.pos.repository.common.CicloRepository;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
+import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.common.UsuarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
@@ -35,7 +34,7 @@ import java.util.List;
  * Created by eyave on 27-10-17.
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class PedidoServicioImp implements PedidoServicio {
 
     @Autowired
@@ -54,6 +53,8 @@ public class PedidoServicioImp implements PedidoServicio {
     private ArticuloRepository articuloRepository;
     @PersistenceContext
     private EntityManager em;
+    @Autowired
+    private InventarioRepository inventarioRepository;
 
     private Object[] getConectados(String token) {
         Integer id = conectadoRepositor.obtenerIdUsuarioAmbienteCredencial(token);
@@ -211,8 +212,6 @@ public class PedidoServicioImp implements PedidoServicio {
                     detalle.setCodigoArticulo(pedido.getCodigoArticulo());
                     detalle.setCantidad(pedido.getCantidad());
                     detalle.setPrecio(pedido.getPrecio());
-                    detalle.setCantidadOficial(pedido.getCantidad());
-                    detalle.setPrecioOficial(pedido.getPrecio());
                     detalle.setPrecioSistema(precioVenta);
                     detalle.setObservacion(pedido.getObservacion());
                     detalle.setOperadorAlta(String.valueOf(idUsuario));
@@ -236,15 +235,14 @@ public class PedidoServicioImp implements PedidoServicio {
     }
 
     @Override
-    public PedidoResponseList lista(String token) {
+    public PedidoResponseList listaSolicitud(String token) {
         PedidoResponseList response = new PedidoResponseList();
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
             Integer idCiclo = cicloRepository.getIdCiclo();
             List<PedidoObjeto> lista = transaccionRepository.listaTransacciones(codigoAmbiente, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_SOLICITUD, idCiclo, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
-            for (int i = 0; i < lista.size(); i++) {
-                List<PedidoDetalle> detalle = detalleTransaccionRepository.listaDetallePedido(lista.get(i).getId());
-                lista.get(i).setLista(detalle);
+            for (PedidoObjeto pedido : lista) {
+                pedido.setLista(detalleTransaccionRepository.listaDetalle(pedido.getId()));
             }
             response.setList(lista);
             response.setRespuesta(true);
@@ -282,8 +280,6 @@ public class PedidoServicioImp implements PedidoServicio {
                         detalle.setCodigoArticulo(pedido.getCodigoArticulo());
                         detalle.setCantidad(pedido.getCantidad());
                         detalle.setPrecio(pedido.getPrecio());
-                        detalle.setCantidadOficial(pedido.getCantidad());
-                        detalle.setPrecioOficial(pedido.getPrecio());
                         detalle.setObservacion(pedido.getObservacion());
                         detalle.setOperadorActualizacion(String.valueOf(idUsuario));
                         detalle.setFechaActualizacion(fecha);
@@ -312,8 +308,6 @@ public class PedidoServicioImp implements PedidoServicio {
                             detalle.setCantidad(pedido.getCantidad());
                             detalle.setPrecio(pedido.getPrecio());
                             detalle.setPrecioSistema(precioVenta);
-                            detalle.setCantidadOficial(pedido.getCantidad());
-                            detalle.setPrecioOficial(pedido.getPrecio());
                             detalle.setObservacion(null);
                             detalle.setOperadorAlta(String.valueOf(idUsuario));
                             detalle.setFechaAlta(fecha);
@@ -340,82 +334,6 @@ public class PedidoServicioImp implements PedidoServicio {
         }
         if(!response.isRespuesta())
             throw new Exception(response.getMensaje());
-        return response;
-    }
-
-    //@Override
-    //@Transactional(propagation= Propagation.REQUIRES_NEW)
-    public PedidoResponse actualizarBackup(String token, PedidoRequest request) {
-        PedidoResponse response = new PedidoResponse();
-        Transaccion transaccion = null;
-        DetalleTransaccion detalle = null;
-        Date fecha = new Date();
-        try {
-            em.getTransaction().begin();
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            Integer idUsuario = (Integer) arrayId[0];
-            String codigoAmbiente = (String) arrayId[1];
-            Integer idProveedo = usuarioRepository.getIdUsuarioProveedor(request.getPedidoObjeto().getCodigoProveedor(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
-            transaccion = transaccionRepository.findOne(request.getPedidoObjeto().getId());
-            transaccion.setIdUsuarioFin(idProveedo);
-            transaccion.setObservacion(request.getPedidoObjeto().getObservacion());
-            transaccion.setFechaActualizacion(fecha);
-            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-            em.merge(transaccion);//transaccionRepository.save(transaccion);
-            //request.getPedidoObjeto().setId(transaccion.getId());
-            List<String> listaActualizada = new ArrayList<>();
-            for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
-                if (pedido.getId() == null) {
-                    detalle = new DetalleTransaccion();
-                    String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
-                    detalle.setId(uid);
-                    detalle.setIdTransaccion(transaccion.getId());
-                    BigDecimal precioVenta = articuloRepository.getPrecioVentaPorCodigo(pedido.getCodigoArticulo());
-                    detalle.setCodigoArticulo(pedido.getCodigoArticulo());
-                    detalle.setCantidad(pedido.getCantidad());
-                    detalle.setPrecio(pedido.getPrecio());
-                    detalle.setPrecioSistema(precioVenta);
-                    detalle.setObservacion(null);
-                    detalle.setOperadorAlta(String.valueOf(idUsuario));
-                    detalle.setFechaAlta(fecha);
-                    em.persist(detalle);//detalleTransaccionRepository.save(detalle);
-                    pedido.setId(detalle.getId());
-                    listaActualizada.add(pedido.getId());
-                } else {
-                    detalle = detalleTransaccionRepository.findOne(pedido.getId());
-                    listaActualizada.add(pedido.getId());
-                    detalle.setCodigoArticulo(pedido.getCodigoArticulo());
-                    detalle.setCantidad(pedido.getCantidad());
-                    detalle.setPrecio(pedido.getPrecio());
-                    detalle.setObservacion(pedido.getObservacion());
-                    detalle.setOperadorActualizacion(String.valueOf(idUsuario));
-                    detalle.setFechaActualizacion(fecha);
-                    em.merge(detalle);//detalleTransaccionRepository.save(detalle);
-                }
-            }
-            String[] array = new String[listaActualizada.size()];
-            for (int i = 0; i < listaActualizada.size(); i++) {
-                array[i] = listaActualizada.get(i);
-            }
-            //Object oo = detalleTransaccionRepository.bajaDetalleTransaccionPorSeleccion(listaActualizada, fecha, String.valueOf(idUsuario));
-            Query query = em.createQuery("UPDATE DetalleTransaccion o " +
-                              "   SET o.fechaBaja=?1, " +
-                              "       o.operadorBaja=?2 " +
-                              " WHERE o.id NOT IN ?3").
-                    setParameter(1, fecha).
-                    setParameter(2, String.valueOf(idUsuario)).
-                    setParameter(3, listaActualizada);
-            int executeUpdate = query.executeUpdate();
-            System.out.println("executeUpdate : " +  executeUpdate);
-            response.setPedidoObjeto(request.getPedidoObjeto());
-            response.setRespuesta(true);
-            em.getTransaction().commit();
-        } catch(Exception e) {
-            e.printStackTrace();
-            em.getTransaction().rollback();
-            response.setPedidoObjeto(null);
-            response.setMensaje("Error al actualizar la transaccion ");
-        }
         return response;
     }
 
@@ -457,10 +375,9 @@ public class PedidoServicioImp implements PedidoServicio {
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if(arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];//String codigoAmbiente = (String) arrayId[1];
                 PedidoObjeto pedidoObjeto = transaccionRepository.getPedidoObjeto(id);
                 if(pedidoObjeto != null) {
-                    pedidoObjeto.setLista(detalleTransaccionRepository.listaDetallePedido(id));
+                    pedidoObjeto.setLista(detalleTransaccionRepository.listaDetalle(id));
                     response.setPedidoObjeto(pedidoObjeto);
                     response.setRespuesta(true);
                 } else {
@@ -472,6 +389,133 @@ public class PedidoServicioImp implements PedidoServicio {
         } catch (Exception e) {
             e.printStackTrace();
             response.setMensaje("Error al obtener el pedido");
+        }
+        return response;
+    }
+
+
+    @Override
+    public ServResponse confirmarLlegada(String token, String id) throws Exception {
+        ServResponse response = new ServResponse();
+        Transaccion transaccion = null;
+        Date fecha = null;
+        try {
+            fecha = new Date();
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if(arrayId != null) {
+                Integer idUsuario = (Integer) arrayId[0];
+                transaccion = transaccionRepository.getTransaccion(id);
+                if (transaccion != null) {
+                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
+                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
+                        transaccion.setFechaActualizacion(fecha);
+                        transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                        transaccionRepository.save(transaccion);
+                        List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                        for (DetalleTransaccion dt : detalles) {
+                            dt.setOperadorActualizacion(String.valueOf(idUsuario));
+                            dt.setFechaActualizacion(fecha);
+                            detalleTransaccionRepository.save(dt);
+                            Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
+                            if(inventario == null) {
+                                inventario = new Inventario();
+                                inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
+                                inventario.setCodigoArticulo(dt.getCodigoArticulo());
+                                inventario.setExistencia(dt.getCantidad());
+                                inventario.setFechaAlta(fecha);
+                                inventario.setOperadorAlta(String.valueOf(idUsuario));
+                            } else {
+                                Integer cantidad = inventario.getExistencia() + dt.getCantidad();
+                                inventario.setExistencia(cantidad);
+                                inventario.setFechaActualizacion(fecha);
+                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                            }
+                            inventarioRepository.save(inventario);
+                        }
+                        response.setRespuesta(true);
+                    } else {
+                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                    }
+                } else {
+                    response.setMensaje("No se encontro la transaccion");
+                }
+            } else {
+                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error al confirmar la llegada ");
+        }
+        if(!response.isRespuesta())
+            throw new Exception(response.getMensaje());
+        return response;
+    }
+
+    @Override
+    public ServResponse cancelarLlegada(String token, String id) throws Exception {
+        ServResponse response = new ServResponse();
+        Transaccion transaccion = null;
+        Date fecha = null;
+        try {
+            fecha = new Date();
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if(arrayId != null) {
+                Integer idUsuario = (Integer) arrayId[0];
+                transaccion = transaccionRepository.getTransaccion(id);
+                if (transaccion != null) {
+                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_LLEGADA)) {
+                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
+                        transaccion.setFechaActualizacion(fecha);
+                        transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                        transaccionRepository.save(transaccion);
+                        List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                        for (DetalleTransaccion detalle : detalles) {
+                            Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                            Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
+                            if(cantidad < 0) {
+                                response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                            }
+                            inventario.setExistencia(cantidad);
+                            inventario.setFechaActualizacion(fecha);
+                            inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                            inventarioRepository.save(inventario);
+                        }
+                        if(response.getMensaje() == null) {
+                            response.setRespuesta(true);
+                        }
+                    } else {
+                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                    }
+                } else {
+                    response.setMensaje("No se encontro la transaccion");
+                }
+            } else {
+                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error al confirmar la llegada ");
+        }
+        if(!response.isRespuesta())
+            throw new Exception(response.getMensaje());
+        return response;
+    }
+
+    @Override
+    public PedidoResponseList listaLlegadas(String token) {
+        PedidoResponseList response = new PedidoResponseList();
+        try {
+            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
+            Integer idCiclo = cicloRepository.getIdCiclo();
+            List<PedidoObjeto> lista = transaccionRepository.listaTransacciones(codigoAmbiente, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_LLEGADA, idCiclo, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
+            for (PedidoObjeto pedido : lista) {
+                pedido.setLista(detalleTransaccionRepository.listaDetalle(pedido.getId()));
+            }
+            response.setList(lista);
+            response.setRespuesta(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error al generar la lista de Pedidos");
         }
         return response;
     }

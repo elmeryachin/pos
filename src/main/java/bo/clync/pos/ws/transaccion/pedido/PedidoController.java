@@ -86,7 +86,7 @@ public class PedidoController {
     @CrossOrigin
     @GetMapping("/list")
     public ResponseEntity<?> lista() {
-        return new ResponseEntity<>( service.lista(token), HttpStatus.OK);
+        return new ResponseEntity<>( service.listaSolicitud(token), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -121,4 +121,35 @@ public class PedidoController {
         return new ResponseEntity<>(service.obtener(token, id), HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @PutMapping("/llegada/confirmar/{id}")
+    public ResponseEntity<?> confirmarLlegada(@PathVariable("id") String id) {
+        ServResponse response = null;
+        try {
+            response = service.confirmarLlegada(token, id);
+        } catch (Exception e) {
+            response = new ServResponse();
+            response.setMensaje(e.getMessage());
+        }
+        return new ResponseEntity<>( response, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PutMapping("/llegada/cancelar/{id}")
+    public ResponseEntity<?> llegadaCancelar(@PathVariable("id") String id) {
+        ServResponse response = null;
+        try {
+            response = service.cancelarLlegada(token, id);
+        } catch (Exception e) {
+            response = new ServResponse();
+            response.setMensaje(e.getMessage());
+        }
+        return new ResponseEntity<>( response, HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/llegada/list")
+    public ResponseEntity<?> listaLlegadas() {
+        return new ResponseEntity<>( service.listaLlegadas(token), HttpStatus.OK);
+    }
 }

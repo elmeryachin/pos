@@ -62,7 +62,7 @@ public class ArticuloController {
     @CrossOrigin
     @DeleteMapping("/delete/{codigo}")
     public ResponseEntity<ServResponse> eliminar(@PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>(service.baja(codigo, token), HttpStatus.OK);
+        return new ResponseEntity<>(service.eliminar(codigo, token), HttpStatus.OK);
     }
 
 }

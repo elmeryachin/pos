@@ -20,6 +20,6 @@ public interface ArticuloServicio {
 
     public ServResponse actualizar(String codigo, ArticuloRequest request, String token);
 
-    public ServResponse baja(String codigo, String token);
+    public ServResponse eliminar(String codigo, String token);
 
 }

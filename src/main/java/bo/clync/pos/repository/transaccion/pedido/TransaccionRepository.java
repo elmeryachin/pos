@@ -1,7 +1,6 @@
 package bo.clync.pos.repository.transaccion.pedido;
 
 import bo.clync.pos.entity.Transaccion;
-import bo.clync.pos.model.transaccion.llegada.LlegadaObjeto;
 import bo.clync.pos.model.transaccion.pedido.PedidoObjeto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,23 +42,6 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                                  @Param("idCiclo") Integer idCiclo,
                                                  @Param("codigoValorUsuario") String codigoValorUsuario);
 
-
-    @Query("SELECT new bo.clync.pos.model.transaccion.llegada.LlegadaObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion) " +
-            " FROM Transaccion o, Usuario u " +
-            "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
-            "  AND o.codigoDominio=:dominio " +
-            "  AND o.codigoValor=:codigoValor " +
-            "  AND o.idCiclo=:idCiclo " +
-            "  AND o.idUsuarioFin=u.id " +
-            "  AND u.codigoValorUsuario=:codigoValorUsuario " +
-            "  AND u.codigoAmbiente=:codigoAmbienteInicio " +
-            "  AND o.fechaBaja IS NULL")
-    public List<LlegadaObjeto> listaSolicitudesLlegada(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
-                                                       @Param("dominio") String dominio,
-                                                       @Param("codigoValor") String codigoValor,
-                                                       @Param("idCiclo") Integer idCiclo,
-                                                       @Param("codigoValorUsuario") String codigoValorUsuario);
-
     @Query("SELECT o " +
            "  FROM Transaccion o " +
            " WHERE o.id = :id " +
@@ -79,13 +61,6 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                        @Param("dominio") String dominio,
                                        @Param("idCiclo") Integer idCiclo,
                                        @Param("nroMovimiento") Integer nroMovimiento);
-
-    @Query("SELECT new bo.clync.pos.model.transaccion.llegada.LlegadaObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion ) " +
-           "  FROM Transaccion o, Usuario u " +
-           " WHERE o.id = :id " +
-           "   AND o.idUsuarioFin=u.id " +
-           "   AND o.fechaBaja IS NULL")
-    public LlegadaObjeto getLlegadaObjeto(@Param("id") String id);
 
     @Query("SELECT new bo.clync.pos.model.transaccion.pedido.PedidoObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion ) " +
             "  FROM Transaccion o, Usuario u " +

@@ -141,7 +141,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     }
 
     @Override
-    public ServResponse baja(String codigo, String token) {
+    public ServResponse eliminar(String codigo, String token) {
         Articulo articulo       = null;
         String operador         = null;
         Object[] arrayId        = null;
