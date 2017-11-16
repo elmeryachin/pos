@@ -1,17 +1,21 @@
-package bo.clync.pos.model.transaccion.pedido;
-
-import bo.clync.pos.model.Resumen;
-
-import java.util.List;
+package bo.clync.pos.dao.transaccion.pedido;
 
 /**
- * Created by eyave on 28-10-17.
+ * Created by eyave on 27-10-17.
  */
-    public class ProveedorResponseList {
+public class PedidoResponse {
 
-    private List<Resumen> list;
+    private PedidoObjeto PedidoObjeto;
     private boolean respuesta;
     private String mensaje;
+
+    public PedidoObjeto getPedidoObjeto() {
+        return PedidoObjeto;
+    }
+
+    public void setPedidoObjeto(PedidoObjeto pedidoObjeto) {
+        this.PedidoObjeto = pedidoObjeto;
+    }
 
     public boolean isRespuesta() {
         return respuesta;
@@ -27,13 +31,5 @@ import java.util.List;
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
-    }
-
-    public List<Resumen> getList() {
-        return list;
-    }
-
-    public void setList(List<Resumen> list) {
-        this.list = list;
     }
 }

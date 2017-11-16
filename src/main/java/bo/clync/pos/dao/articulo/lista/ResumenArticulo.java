@@ -1,4 +1,4 @@
-package bo.clync.pos.model.articulo.lista;
+package bo.clync.pos.dao.articulo.lista;
 
 import bo.clync.pos.entity.Articulo;
 

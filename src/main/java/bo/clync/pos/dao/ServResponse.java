@@ -1,30 +1,17 @@
-package bo.clync.pos.model.articulo.obtener;
+package bo.clync.pos.dao;
 
 /**
  * Created by eyave on 09-10-17.
  */
-
-public class ServObtenerResponse {
-
-    private ObjetoArticulo articulo;
+public class ServResponse {
     private boolean respuesta;
     private String mensaje;
 
+    public ServResponse() {}
 
-    public ServObtenerResponse(){}
-
-    public ServObtenerResponse(ObjetoArticulo articulo, boolean respuesta, String mensaje){
-        this.articulo = articulo;
+    public ServResponse(boolean respuesta, String mensaje) {
         this.respuesta = respuesta;
         this.mensaje = mensaje;
-    }
-
-    public ObjetoArticulo getArticulo() {
-        return articulo;
-    }
-
-    public void setArticulo(ObjetoArticulo articulo) {
-        this.articulo = articulo;
     }
 
     public boolean isRespuesta() {

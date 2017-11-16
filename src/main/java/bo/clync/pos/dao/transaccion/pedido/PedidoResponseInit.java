@@ -1,6 +1,4 @@
-package bo.clync.pos.model.transaccion.pedido;
-
-import java.util.Date;
+package bo.clync.pos.dao.transaccion.pedido;
 
 /**
  * Created by eyave on 28-10-17.

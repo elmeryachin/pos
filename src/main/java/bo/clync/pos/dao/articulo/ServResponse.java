@@ -1,17 +1,16 @@
-package bo.clync.pos.model;
+package bo.clync.pos.dao.articulo;
 
 /**
- * Created by eyave on 07-11-17.
+ * Created by eyave on 09-10-17.
  */
-public class MiExcepcion extends Exception {
+public class ServResponse {
     private boolean respuesta;
     private String mensaje;
 
-    public MiExcepcion(String mensaje) {
-        super();
-        this.setMensaje(mensaje);
+    public ServResponse(boolean respuesta, String mensaje) {
+        this.respuesta = respuesta;
+        this.mensaje = mensaje;
     }
-
 
     public boolean isRespuesta() {
         return respuesta;
@@ -27,9 +26,5 @@ public class MiExcepcion extends Exception {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
-    }
-    @Override
-    public String getMessage(){
-        return this.mensaje;
     }
 }

@@ -1,13 +1,11 @@
 package bo.clync.pos.repository.acceso;
 
 import bo.clync.pos.entity.Conectado;
-import bo.clync.pos.model.ServResponse;
+import bo.clync.pos.dao.ServResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import java.util.Date;
 
 /**

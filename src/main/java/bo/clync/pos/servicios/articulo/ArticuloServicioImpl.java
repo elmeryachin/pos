@@ -2,23 +2,17 @@ package bo.clync.pos.servicios.articulo;
 
 
 import bo.clync.pos.entity.Articulo;
-import bo.clync.pos.model.articulo.ArticuloRequest;
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.articulo.lista.ResumenArticulo;
-import bo.clync.pos.model.articulo.lista.ServListaResponse;
-import bo.clync.pos.model.articulo.obtener.ObjetoArticulo;
-import bo.clync.pos.model.articulo.obtener.ServObtenerResponse;
+import bo.clync.pos.dao.articulo.ArticuloRequest;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.articulo.lista.ServListaResponse;
+import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
-import bo.clync.pos.utilitarios.articulo.UtilsArticulo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by eyave on 05-10-17.

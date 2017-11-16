@@ -1,4 +1,4 @@
-package bo.clync.pos.model.acceso;
+package bo.clync.pos.dao.acceso;
 
 /**
  * Created by eyave on 29-10-17.

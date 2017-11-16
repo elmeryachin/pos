@@ -1,4 +1,4 @@
-package bo.clync.pos.model.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.pedido;
 
 import java.math.BigDecimal;
 

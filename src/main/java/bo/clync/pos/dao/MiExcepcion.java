@@ -1,21 +1,17 @@
-package bo.clync.pos.model.transaccion.pedido;
+package bo.clync.pos.dao;
 
 /**
- * Created by eyave on 27-10-17.
+ * Created by eyave on 07-11-17.
  */
-public class PedidoResponse {
-
-    private PedidoObjeto PedidoObjeto;
+public class MiExcepcion extends Exception {
     private boolean respuesta;
     private String mensaje;
 
-    public PedidoObjeto getPedidoObjeto() {
-        return PedidoObjeto;
+    public MiExcepcion(String mensaje) {
+        super();
+        this.setMensaje(mensaje);
     }
 
-    public void setPedidoObjeto(PedidoObjeto pedidoObjeto) {
-        this.PedidoObjeto = pedidoObjeto;
-    }
 
     public boolean isRespuesta() {
         return respuesta;
@@ -31,5 +27,9 @@ public class PedidoResponse {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+    @Override
+    public String getMessage(){
+        return this.mensaje;
     }
 }

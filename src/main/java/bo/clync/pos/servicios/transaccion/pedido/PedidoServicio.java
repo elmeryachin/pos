@@ -1,10 +1,7 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
-import bo.clync.pos.model.MiExcepcion;
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.transaccion.pedido.*;
-
-import java.util.List;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.transaccion.pedido.*;
 
 /**
  * Created by eyave on 27-10-17.

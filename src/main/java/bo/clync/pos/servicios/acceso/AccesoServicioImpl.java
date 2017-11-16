@@ -1,19 +1,17 @@
 package bo.clync.pos.servicios.acceso;
 
 import bo.clync.pos.entity.Conectado;
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.acceso.AccesoRequest;
-import bo.clync.pos.model.acceso.AccesoResponse;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.acceso.AccesoRequest;
+import bo.clync.pos.dao.acceso.AccesoResponse;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.CicloRepository;
 import bo.clync.pos.utilitarios.acceso.UtilsConectado;
-import org.postgresql.util.PGTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**

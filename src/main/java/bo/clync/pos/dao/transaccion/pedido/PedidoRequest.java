@@ -1,4 +1,4 @@
-package bo.clync.pos.model.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.pedido;
 
 /**
  * Created by eyave on 27-10-17.

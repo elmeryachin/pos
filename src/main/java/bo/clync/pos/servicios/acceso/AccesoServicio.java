@@ -1,8 +1,8 @@
 package bo.clync.pos.servicios.acceso;
 
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.acceso.AccesoRequest;
-import bo.clync.pos.model.acceso.AccesoResponse;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.acceso.AccesoRequest;
+import bo.clync.pos.dao.acceso.AccesoResponse;
 
 /**
  * Created by eyave on 29-10-17.

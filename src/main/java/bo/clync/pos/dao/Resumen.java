@@ -1,4 +1,4 @@
-package bo.clync.pos.model;
+package bo.clync.pos.dao;
 
 /**
  * Created by eyave on 29-10-17.

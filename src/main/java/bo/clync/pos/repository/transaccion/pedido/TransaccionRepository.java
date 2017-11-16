@@ -1,7 +1,7 @@
 package bo.clync.pos.repository.transaccion.pedido;
 
 import bo.clync.pos.entity.Transaccion;
-import bo.clync.pos.model.transaccion.pedido.PedidoObjeto;
+import bo.clync.pos.dao.transaccion.pedido.PedidoObjeto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,7 +26,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                   @Param("idCiclo") Integer idCiclo);
 
 
-    @Query("SELECT new bo.clync.pos.model.transaccion.pedido.PedidoObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion) " +
+    @Query("SELECT new bo.clync.pos.dao.transaccion.pedido.PedidoObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion) " +
             " FROM Transaccion o, Usuario u " +
             "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
             "  AND o.codigoDominio=:dominio " +
@@ -62,7 +62,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                        @Param("idCiclo") Integer idCiclo,
                                        @Param("nroMovimiento") Integer nroMovimiento);
 
-    @Query("SELECT new bo.clync.pos.model.transaccion.pedido.PedidoObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion ) " +
+    @Query("SELECT new bo.clync.pos.dao.transaccion.pedido.PedidoObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion ) " +
             "  FROM Transaccion o, Usuario u " +
             " WHERE o.id = :id " +
             "   AND o.idUsuarioFin=u.id " +

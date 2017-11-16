@@ -1,9 +1,9 @@
 package bo.clync.pos.ws.articulo;
 
-import bo.clync.pos.model.articulo.ArticuloRequest;
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.articulo.lista.ServListaResponse;
-import bo.clync.pos.model.articulo.obtener.ServObtenerResponse;
+import bo.clync.pos.dao.articulo.ArticuloRequest;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.articulo.lista.ServListaResponse;
+import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
 import bo.clync.pos.servicios.articulo.ArticuloServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,9 +1,9 @@
 package bo.clync.pos.servicios.articulo;
 
-import bo.clync.pos.model.articulo.ArticuloRequest;
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.articulo.obtener.ServObtenerResponse;
-import bo.clync.pos.model.articulo.lista.ServListaResponse;
+import bo.clync.pos.dao.articulo.ArticuloRequest;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
+import bo.clync.pos.dao.articulo.lista.ServListaResponse;
 
 /**
  * Created by eyave on 09-10-17.

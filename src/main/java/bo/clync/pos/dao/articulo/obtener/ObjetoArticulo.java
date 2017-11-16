@@ -1,4 +1,4 @@
-package bo.clync.pos.model.articulo.obtener;
+package bo.clync.pos.dao.articulo.obtener;
 
 import bo.clync.pos.entity.Articulo;
 

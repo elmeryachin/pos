@@ -1,4 +1,4 @@
-package bo.clync.pos.model.acceso;
+package bo.clync.pos.dao.acceso;
 
 import java.util.Date;
 

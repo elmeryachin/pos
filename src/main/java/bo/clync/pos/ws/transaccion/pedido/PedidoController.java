@@ -1,8 +1,8 @@
 package bo.clync.pos.ws.transaccion.pedido;
 
-import bo.clync.pos.model.ServResponse;
-import bo.clync.pos.model.transaccion.pedido.PedidoRequest;
-import bo.clync.pos.model.transaccion.pedido.PedidoResponse;
+import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.dao.transaccion.pedido.PedidoRequest;
+import bo.clync.pos.dao.transaccion.pedido.PedidoResponse;
 import bo.clync.pos.servicios.transaccion.pedido.PedidoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

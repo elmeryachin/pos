@@ -1,12 +1,11 @@
 package bo.clync.pos;
 
-import bo.clync.pos.model.articulo.lista.ServListaResponse;
-import bo.clync.pos.model.articulo.obtener.ServObtenerResponse;
+import bo.clync.pos.dao.articulo.lista.ServListaResponse;
+import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
 import bo.clync.pos.servicios.articulo.ArticuloServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import static java.lang.System.exit;
 

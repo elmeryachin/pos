@@ -1,24 +1,17 @@
-package bo.clync.pos.model.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.pedido;
 
-import bo.clync.pos.model.Resumen;
+import bo.clync.pos.dao.Resumen;
 
 import java.util.List;
 
 /**
  * Created by eyave on 28-10-17.
  */
-public class ArticuloResponseList {
+    public class ProveedorResponseList {
+
     private List<Resumen> list;
     private boolean respuesta;
     private String mensaje;
-
-    public List<Resumen> getList() {
-        return list;
-    }
-
-    public void setList(List<Resumen> list) {
-        this.list = list;
-    }
 
     public boolean isRespuesta() {
         return respuesta;
@@ -34,5 +27,13 @@ public class ArticuloResponseList {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    public List<Resumen> getList() {
+        return list;
+    }
+
+    public void setList(List<Resumen> list) {
+        this.list = list;
     }
 }
