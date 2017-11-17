@@ -19,17 +19,13 @@ public interface ConectadoRepository extends JpaRepository<Conectado, Integer> {
             "WHERE o.idUsuAmbCred = u.id " +
             "  AND u.usuario = :usuario" +
             "  AND o.fechaFin IS NULL")
-    public String buscarToken(@Param("usuario") String usuario);
+    String buscarToken(@Param("usuario") String usuario);
 
     @Query("SELECT o.idUsuAmbCred " +
             " FROM Conectado o " +
             "WHERE o.token = :token " +
             "  AND o.fechaFin IS NULL")
-    public Integer obtenerIdUsuarioAmbienteCredencial(@Param("token") String token);
+    Integer obtenerIdUsuarioAmbienteCredencial(@Param("token") String token);
 
-    @Query("UPDATE Conectado o" +
-            "  SET o.fechaFin =:fechaFin " +
-            "WHERE o.token = :token " +
-            "  AND o.fechaFin IS NULL")
-    public ServResponse salir(@Param("fechaFin") Date fechaFin, @Param("token") String token);
+    Conectado findByTokenAndFechaFinIsNull(String token);
 }

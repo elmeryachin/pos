@@ -60,7 +60,9 @@ public class AccesoServicioImpl implements AccesoServicio {
     public ServResponse salir(String token) {
         ServResponse response = new ServResponse();
         try {
-            conectadoRepository.salir(new Date(), token);
+            Conectado conectado = conectadoRepository.findByTokenAndFechaFinIsNull(token);
+            conectado.setFechaFin(new Date());
+            conectadoRepository.save(conectado);
             response.setRespuesta(true);
         } catch (Exception e) {
             response.setMensaje("Error al cerrar la session");
