@@ -21,7 +21,7 @@ public class AccesoController {
 
     @Autowired
     private AccesoServicio servicio;
-    private String token = "";
+    private String token = "20171029130500-1-1";
 
     @CrossOrigin
     @PostMapping("/login")

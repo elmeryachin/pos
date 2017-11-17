@@ -3,6 +3,7 @@ package bo.clync.pos.ws.transaccion.pedido;
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.transaccion.pedido.PedidoRequest;
 import bo.clync.pos.dao.transaccion.pedido.PedidoResponse;
+import bo.clync.pos.dao.transaccion.pedido.UsuarioRequest;
 import bo.clync.pos.servicios.transaccion.pedido.PedidoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -151,5 +152,12 @@ public class PedidoController {
     @GetMapping("/llegada/list")
     public ResponseEntity<?> listaLlegadas() {
         return new ResponseEntity<>( service.listaLlegadas(token), HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
+    @PostMapping("/proveedor/add")
+    public ResponseEntity<ServResponse> nuevo(@RequestBody UsuarioRequest request) {
+        return new ResponseEntity<>(service.nuevoProveedor(token, request), HttpStatus.CREATED);
     }
 }

@@ -102,6 +102,39 @@ public class PedidoServicioImp implements PedidoServicio {
     }
 
     @Override
+    public ServResponse nuevoProveedor(String token, UsuarioRequest request) {
+        ServResponse response = new ServResponse();
+        try {
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if(arrayId != null) {
+                Integer idUsuario = (Integer) arrayId[0];
+                String codigoAmbiente = (String) arrayId[1];
+                Usuario usuario= usuarioRepository.findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(request.getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
+                if(usuario == null) {
+                    usuario = new Usuario();
+                    usuario.setCodigo(request.getCodigo());
+                    usuario.setNombre(request.getNombre());
+                    usuario.setDireccion(request.getDireccion());
+                    usuario.setTelefono(request.getTelefono());
+                    usuario.setCodigoAmbiente(codigoAmbiente);
+                    usuario.setCodigoValorUsuario(UtilsDominio.TIPO_USUARIO_PROVEEDOR);
+                    usuario.setFechaAlta(new Date());
+                    usuario.setOperadorAlta(String.valueOf(idUsuario));
+                    usuarioRepository.save(usuario);
+                    response.setRespuesta(true);
+                } else {
+                    response.setMensaje("El codigo ya existe");
+                }
+            } else {
+                response.setMensaje("Las credenciales estan vencidas, ingrese desde el login nuevamente");
+            }
+        } catch(Exception e) {
+            response.setMensaje("Error Al crear nuevo proveedork");
+            e.printStackTrace();
+        }
+        return response;
+    }
+    @Override
     public ProveedorResponseList listaProveedor(String token, String patron) {
         ProveedorResponseList response = new ProveedorResponseList();
         try {

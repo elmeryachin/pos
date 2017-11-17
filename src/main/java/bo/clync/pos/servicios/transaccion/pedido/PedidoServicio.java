@@ -10,6 +10,7 @@ public interface PedidoServicio {
 
     PedidoResponseInit init(String token);
     ProveedorResponseMin obtenerProveedor(String token, String codigo);
+    ServResponse nuevoProveedor(String token, UsuarioRequest request);
     ProveedorResponseList listaProveedor(String token, String patron);
     ArticuloResponseMin obtenerArticulo(String token, String codigo);
     ArticuloResponseList existenciaArticulo(String token, String codigo);
