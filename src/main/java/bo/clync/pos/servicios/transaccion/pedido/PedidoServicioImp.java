@@ -172,14 +172,61 @@ public class PedidoServicioImp implements PedidoServicio {
     @Override
     public ArticuloResponseList existenciaArticulo(String token, String codigo) {
         ArticuloResponseList response = new ArticuloResponseList();
-        response.setRespuesta(true);
-        List<Resumen> lista = new ArrayList<>();
-        for (int i = 0; i < 15; i++) {
-            Resumen resumen = new Resumen("T"+i, ""+(100+i));
+        if(!codigo.equals("0000")) {
+            try {
+                Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+                if (arrayId != null) {
+                    Integer idUsuario = (Integer) arrayId[0];
+                    String codigoAmbiente = (String) arrayId[1];
+                    List<Resumen> lista = new ArrayList<>();
+                    List<Inventario> inventarios = inventarioRepository.getInventario(codigo);
+                    System.out.println("Lista de invnetario " + inventarios);
+                    Resumen resumen = null;
+                    Integer porLlegar = null;
+                    Integer porRecibir = null;
+                    for (Inventario inventario : inventarios) {
+                        resumen = new Resumen();
+                        resumen.setCodigo(inventario.getCodigoAmbiente());
+                        resumen.obtenerMonto(inventario.getExistencia());
+                        if (codigoAmbiente.equals(inventario.getCodigoAmbiente())) {
+                            porLlegar = inventario.getPorLlegar();
+                            porRecibir = inventario.getPorRecibir();
+                        }
+                        lista.add(resumen);
+                    }
+
+                    resumen = new Resumen();
+                    resumen.setCodigo("Por Recibir");
+                    resumen.obtenerMonto(porRecibir);
+                    lista.add(resumen);
+                    resumen = new Resumen();
+                    resumen.setCodigo("Por Llegar");
+                    resumen.obtenerMonto(porLlegar);
+                    lista.add(resumen);
+                    response.setList(lista);
+                    response.setRespuesta(true);
+                } else {
+                    response.setMensaje("Las credenciales estan vencidas, ingrese desde el login nuevamente");
+                }
+            } catch (Exception e) {
+                response.setMensaje("Error al recuperar el registro");
+                e.printStackTrace();
+            }
+            return response;
+        } else {
+            response.setRespuesta(true);
+            List<Resumen> lista = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                Resumen resumen = new Resumen("T" + i, "" + (100 + i));
+                lista.add(resumen);
+            }
+            Resumen resumen = new Resumen("Por llegar " , "" + (10));
             lista.add(resumen);
+            resumen = new Resumen("Por Recibir" , "" +(2));
+            lista.add(resumen);
+            response.setList(lista);
+            return response;
         }
-        response.setList(lista);
-        return response;
     }
 
     @Override
@@ -209,52 +256,60 @@ public class PedidoServicioImp implements PedidoServicio {
         DetalleTransaccion detalle = null;
         Date fecha = new Date();
         try {
-            Integer idCiclo = cicloRepository.getIdCiclo();
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            Integer idUsuario = (Integer) arrayId[0];
-            String codigoAmbiente = (String) arrayId[1];
-            Object[] verificacion = (Object[]) transaccionRepository.existeNroMovimiento(idUsuario, codigoAmbiente, UtilsDominio.PEDIDO, idCiclo, request.getPedidoObjeto().getNroMovimiento());
-            if(verificacion ==null || verificacion[0].equals(0l)) {
-                Integer idProveedo = usuarioRepository.getIdUsuarioProveedor(request.getPedidoObjeto().getCodigoProveedor(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
-                transaccion = new Transaccion();
-                String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + request.getPedidoObjeto().getNroMovimiento();//getSecuencialTransaccion().toString();
-                transaccion.setId(sid);
-                transaccion.setIdCiclo(idCiclo);
-                transaccion.setCodigoDominio(UtilsDominio.PEDIDO);
-                transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
-                transaccion.setCodigoValorPago(UtilsDominio.TIPO_PAGO_PAGADO);//Cambiable cuando se adicione la funcion de pago
-                transaccion.setNroMovimiento(request.getPedidoObjeto().getNroMovimiento());
-                transaccion.setIdUsuarioInicio(idUsuario);
-                transaccion.setCodigoAmbienteInicio(codigoAmbiente);
-                transaccion.setFechaInicio(UtilsGeneral.convertirFecha(request.getPedidoObjeto().getFechaMovimiento()));
-                transaccion.setIdUsuarioFin(idProveedo);
-                transaccion.setCodigoAmbienteFin(null);
-                transaccion.setFechaFin(null);
-                transaccion.setObservacion(request.getPedidoObjeto().getObservacion());
-                transaccion.setFechaAlta(fecha);
-                transaccion.setOperadorAlta(String.valueOf(idUsuario));
-                transaccionRepository.save(transaccion);
-                request.getPedidoObjeto().setId(transaccion.getId());
-                for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
-                    detalle = new DetalleTransaccion();
-                    String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
-                    detalle.setId(uid);
-                    detalle.setIdTransaccion(transaccion.getId());
-                    BigDecimal precioVenta = articuloRepository.getPrecioVentaPorCodigo(pedido.getCodigoArticulo());
-                    detalle.setCodigoArticulo(pedido.getCodigoArticulo());
-                    detalle.setCantidad(pedido.getCantidad());
-                    detalle.setPrecio(pedido.getPrecio());
-                    detalle.setPrecioSistema(precioVenta);
-                    detalle.setObservacion(pedido.getObservacion());
-                    detalle.setOperadorAlta(String.valueOf(idUsuario));
-                    detalle.setFechaAlta(fecha);
-                    detalleTransaccionRepository.save(detalle);
-                    pedido.setId(detalle.getId());
+            if(request.getPedidoObjeto() != null) {
+                if(request.getPedidoObjeto().getLista()!=null && request.getPedidoObjeto().getLista().size() > 0) {
+                    Integer idCiclo = cicloRepository.getIdCiclo();
+                    Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+                    Integer idUsuario = (Integer) arrayId[0];
+                    String codigoAmbiente = (String) arrayId[1];
+                    Object[] verificacion = (Object[]) transaccionRepository.existeNroMovimiento(idUsuario, codigoAmbiente, UtilsDominio.PEDIDO, idCiclo, request.getPedidoObjeto().getNroMovimiento());
+                    if(verificacion ==null || verificacion[0].equals(0l)) {
+                        Integer idProveedo = usuarioRepository.getIdUsuarioProveedor(request.getPedidoObjeto().getCodigoProveedor(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente);
+                        transaccion = new Transaccion();
+                        String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + request.getPedidoObjeto().getNroMovimiento();//getSecuencialTransaccion().toString();
+                        transaccion.setId(sid);
+                        transaccion.setIdCiclo(idCiclo);
+                        transaccion.setCodigoDominio(UtilsDominio.PEDIDO);
+                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
+                        transaccion.setCodigoValorPago(UtilsDominio.TIPO_PAGO_PAGADO);//Cambiable cuando se adicione la funcion de pago
+                        transaccion.setNroMovimiento(request.getPedidoObjeto().getNroMovimiento());
+                        transaccion.setIdUsuarioInicio(idUsuario);
+                        transaccion.setCodigoAmbienteInicio(codigoAmbiente);
+                        transaccion.setFechaInicio(UtilsGeneral.convertirFecha(request.getPedidoObjeto().getFechaMovimiento()));
+                        transaccion.setIdUsuarioFin(idProveedo);
+                        transaccion.setCodigoAmbienteFin(null);
+                        transaccion.setFechaFin(null);
+                        transaccion.setObservacion(request.getPedidoObjeto().getObservacion());
+                        transaccion.setFechaAlta(fecha);
+                        transaccion.setOperadorAlta(String.valueOf(idUsuario));
+                        transaccionRepository.save(transaccion);
+                        request.getPedidoObjeto().setId(transaccion.getId());
+                        for (PedidoDetalle pedido : request.getPedidoObjeto().getLista()) {
+                            detalle = new DetalleTransaccion();
+                            String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
+                            detalle.setId(uid);
+                            detalle.setIdTransaccion(transaccion.getId());
+                            BigDecimal precioVenta = articuloRepository.getPrecioVentaPorCodigo(pedido.getCodigoArticulo());
+                            detalle.setCodigoArticulo(pedido.getCodigoArticulo());
+                            detalle.setCantidad(pedido.getCantidad());
+                            detalle.setPrecio(pedido.getPrecio());
+                            detalle.setPrecioSistema(precioVenta);
+                            detalle.setObservacion(pedido.getObservacion());
+                            detalle.setOperadorAlta(String.valueOf(idUsuario));
+                            detalle.setFechaAlta(fecha);
+                            detalleTransaccionRepository.save(detalle);
+                            pedido.setId(detalle.getId());
+                        }
+                        response.setPedidoObjeto(request.getPedidoObjeto());
+                        response.setRespuesta(true);
+                    } else {
+                        response.setMensaje("Ya existe el nro movimiento " + verificacion[0] + ", se creo el " + verificacion[1]);
+                    }
+                } else {
+                    response.setMensaje("Adicione al menos un articulo al detalle");
                 }
-                response.setPedidoObjeto(request.getPedidoObjeto());
-                response.setRespuesta(true);
-            } else {
-                response.setMensaje("Ya existe el nro movimiento " + verificacion[0] + ", se creo el " + verificacion[1]);
+            } else{
+                response.setMensaje("El transaccion recibida se encuentra vacia.");
             }
         } catch(Exception e) {
             e.printStackTrace();

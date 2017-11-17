@@ -26,4 +26,8 @@ public class Resumen {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    public void obtenerMonto(Integer monto) {
+        this.nombre = monto==null?"0":String.valueOf(monto);
+    }
 }

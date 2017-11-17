@@ -25,10 +25,10 @@ public class Inventario implements Serializable {
     private Integer id;
     private String codigoAmbiente;
     private String codigoArticulo;
-    private int existencia;
-    private int porLlegar;
-    private int porEntregar;
-    private int porRecibir;
+    private Integer existencia;
+    private Integer porLlegar;
+    private Integer porEntregar;
+    private Integer porRecibir;
 
     private Date fechaAlta;
     private String operadorAlta;
@@ -45,7 +45,7 @@ public class Inventario implements Serializable {
         this.id = id;
     }
 
-    public Inventario(Integer id, int existencia, Date fechaAlta, String operadorBaja) {
+    public Inventario(Integer id, Integer existencia, Date fechaAlta, String operadorBaja) {
         this.id = id;
         this.existencia = existencia;
         this.fechaAlta = fechaAlta;
@@ -60,31 +60,31 @@ public class Inventario implements Serializable {
         this.id = id;
     }
 
-    public int getExistencia() {
+    public Integer getExistencia() {
         return existencia;
     }
 
-    public void setExistencia(int existencia) {
+    public void setExistencia(Integer existencia) {
         this.existencia = existencia;
     }
 
-    public int getPorLlegar() {
+    public Integer getPorLlegar() {
         return porLlegar;
     }
 
-    public void setPorLlegar(int porLlegar) {
+    public void setPorLlegar(Integer porLlegar) {
         this.porLlegar = porLlegar;
     }
 
-    public int getPorEntregar() {
+    public Integer getPorEntregar() {
         return porEntregar;
     }
 
-    public void setPorEntregar(int porEntregar) {
+    public void setPorEntregar(Integer porEntregar) {
         this.porEntregar = porEntregar;
     }
 
-    public int getPorRecibir() {
+    public Integer getPorRecibir() {
         return porRecibir;
     }
 
