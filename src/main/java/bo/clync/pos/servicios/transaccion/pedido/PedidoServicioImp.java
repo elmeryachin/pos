@@ -495,6 +495,7 @@ public class PedidoServicioImp implements PedidoServicio {
                 if (transaccion != null) {
                     if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
                         transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
+                        transaccion.setFechaFin(fecha);
                         transaccion.setFechaActualizacion(fecha);
                         transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
                         transaccionRepository.save(transaccion);
