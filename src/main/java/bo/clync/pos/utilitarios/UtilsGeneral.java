@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class UtilsGeneral {
 
-    private static final String FORMATO_FECHA = "dd/mm/yyyy";
+    private static final String FORMATO_FECHA = "dd/MM/yyyy";
     private static final SimpleDateFormat format = new SimpleDateFormat(FORMATO_FECHA);
 
     public static String fechaActual(){
@@ -23,4 +23,10 @@ public class UtilsGeneral {
         return format.format(fecha);
     }
 
+    public static void mainFecha(String[] args) throws Exception{
+        System.out.println(fecha(convertirFecha("20/30/2017")));
+        System.out.println(fechaActual());
+        System.out.println(fecha(convertirFecha(fechaActual())));
+
+    }
 }
