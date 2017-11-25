@@ -62,7 +62,7 @@ public class ReporteServicioImp implements ReporteServicio {
         String url      = properties.getProperty("spring.datasource.url");
         String user     = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection("jdbc:"+url, user, password);
     }
 
     private Connection getConnectionBackup() throws SQLException {
