@@ -53,6 +53,7 @@ public class ReporteServicioImp implements ReporteServicio {
             System.out.println("Proceso terminado....");
         }
         return new byte[0];
+
     }
 
     private Connection getConnection() throws Exception {
@@ -65,7 +66,7 @@ public class ReporteServicioImp implements ReporteServicio {
         String url      = properties.getProperty("spring.datasource.url");
         String user     = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
-        return DriverManager.getConnection("jdbc:"+url, user, password);
+        return DriverManager.getConnection("jdbc:"+url);//, user, password);
     }
 
     private Connection getConnectionBackup() throws SQLException {
