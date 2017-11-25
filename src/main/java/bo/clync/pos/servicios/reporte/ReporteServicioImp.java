@@ -63,10 +63,11 @@ public class ReporteServicioImp implements ReporteServicio {
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        String url      = properties.getProperty("spring.datasource.url");
+        String url      = "jdbc:postgresql://lslxuvtrjyxztq:4e595be2d5baca04b715d5d3d1a7a32412cada41dbd9a317922dfdf164c35a63@ec2-54-163-245-14.compute-1.amazonaws.com:5432/d6ih3rc9tcudf5";
+                //properties.getProperty("spring.datasource.url");
         String user     = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
-        return DriverManager.getConnection("jdbc:"+url);//, user, password);
+        return DriverManager.getConnection(url);//,user, password);
     }
 
     private Connection getConnectionBackup() throws SQLException {
