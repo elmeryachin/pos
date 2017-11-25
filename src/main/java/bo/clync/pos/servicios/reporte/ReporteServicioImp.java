@@ -56,6 +56,9 @@ public class ReporteServicioImp implements ReporteServicio {
     }
 
     private Connection getConnection() throws Exception {
+
+        Class.forName("org.postgresql.Driver");
+
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
