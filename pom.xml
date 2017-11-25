@@ -45,13 +45,13 @@
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
-      <version>6.0.4</version>
+      <version>6.4.0</version>
     </dependency>
     <!-- for report in xls format -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>3.17</version>
+      <version>3.12</version>
     </dependency>
 
 
@@ -80,6 +80,13 @@
       <version>1.6.6</version>
     </dependency>
     <!-- fin logs -->
+    <!-- ini fx -->
+    <dependency>
+      <groupId>de.roskenet</groupId>
+      <artifactId>springboot-javafx-support</artifactId>
+      <version>1.4.1</version>
+    </dependency>
+    <!-- fin fx -->
   </dependencies>
 
   <build>
@@ -89,6 +96,40 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
     </plugins>
+
+    <resources>
+        <resource>
+          <directory>src/main/resources</directory>
+        </resource>
+        <resource>
+          <directory>src/main/resources/reportes/plantilla</directory>
+        </resource>
+    </resources>
+    <!--resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.fxml</include>
+          <include>**/*.css</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*.fxml</include>
+          <include>**/*.css</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </resource>
+    </resources-->
   </build>
 
 </project>
