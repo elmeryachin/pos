@@ -9,7 +9,7 @@
 	<parameter name="codigo-ambiente" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select tra.fecha_inicio, tra.nro_movimiento, usu.codigo, usu.nombre, tra.observacion, 
-	 det.codigo_articulo, det.cantidad, art.precio_zona_libre, (det.cantidad*art.precio_zona_libre) as total, art.nombre as nombre_articulo
+	 det.codigo_articulo, det.cantidad, det.precio, (det.cantidad*det.precio) as total, art.nombre as nombre_articulo
     from transaccion tra, usuario usu, detalle_transaccion det, articulo art
    where tra.id_usuario_fin = usu.id
      and tra.codigo_ambiente_inicio = '$P!{codigo-ambiente}'
@@ -53,9 +53,9 @@ order by tra.fecha_inicio asc,
 		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_transaccion"/>
 	</field>
-	<field name="precio_zona_libre" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.label" value="precio_zona_libre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+	<field name="precio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="precio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_transaccion"/>
 	</field>
 	<field name="total" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="total"/>
@@ -74,7 +74,7 @@ order by tra.fecha_inicio asc,
 		<groupExpression><![CDATA[$F{nro_movimiento}]]></groupExpression>
 		<groupHeader>
 			<band height="49">
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="80" y="0" width="60" height="12" printWhenGroupChanges="movimiento" uuid="caae73f0-bc87-439c-a308-6d54500a5f1e">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -95,7 +95,7 @@ order by tra.fecha_inicio asc,
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nro_movimiento}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="80" y="12" width="60" height="12" printWhenGroupChanges="movimiento" uuid="8f8bb92b-95c6-486c-93d9-1f835f4c903b">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -116,7 +116,7 @@ order by tra.fecha_inicio asc,
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="220" y="0" width="80" height="12" uuid="7806400e-7151-4b9d-adb2-dffabcdc87ea">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -137,7 +137,7 @@ order by tra.fecha_inicio asc,
 					</textElement>
 					<textFieldExpression><![CDATA[$F{fecha_inicio}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="370" y="0" width="185" height="12" uuid="e5ffaf61-4e8f-47f6-8f25-12bc21110072">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -158,7 +158,7 @@ order by tra.fecha_inicio asc,
 					</textElement>
 					<textFieldExpression><![CDATA[$F{observacion}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="140" y="12" width="415" height="12" uuid="f2e2e17a-aa57-46c9-a215-69a73c49dfe4">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -317,7 +317,7 @@ order by tra.fecha_inicio asc,
 						<font size="8" isBold="true"/>
 						<paragraph leftIndent="2" rightIndent="2"/>
 					</textElement>
-					<text><![CDATA[Precio Zona Libre]]></text>
+					<text><![CDATA[Precio]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="220" y="24" width="80" height="25" printWhenGroupChanges="movimiento" uuid="96582129-40b6-438e-b8db-bf36b81b4266">
@@ -363,7 +363,7 @@ order by tra.fecha_inicio asc,
 		</groupHeader>
 		<groupFooter>
 			<band height="12">
-				<textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 					<reportElement x="220" y="0" width="80" height="12" uuid="8e5cd68c-a482-4aa4-90fc-0e1fb280344e">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14c53a6f-79b9-4fec-bdac-4545ceb8da44"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -384,7 +384,7 @@ order by tra.fecha_inicio asc,
 					</textElement>
 					<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="80" y="0" width="60" height="12" uuid="0f9ad97f-adb2-41ab-88fe-95d5c8310351">
 						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -468,7 +468,7 @@ order by tra.fecha_inicio asc,
 	</pageHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<textField pattern="dd/MM/yyyy">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="80" height="12" uuid="14ae68de-f7b3-4531-9934-b2a41ea0928f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2d39ce1-51f7-4c03-be75-66a4909c8ddd"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -488,7 +488,7 @@ order by tra.fecha_inicio asc,
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo_articulo}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="80" y="0" width="60" height="12" uuid="c7c7bd48-db24-4817-9537-855cb47371fa">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -509,7 +509,7 @@ order by tra.fecha_inicio asc,
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="140" y="0" width="80" height="12" uuid="5e47e692-1682-483e-af24-d70b25c96adb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14c53a6f-79b9-4fec-bdac-4545ceb8da44"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -528,9 +528,9 @@ order by tra.fecha_inicio asc,
 					<font size="8"/>
 					<paragraph leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{precio_zona_libre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="220" y="0" width="80" height="12" uuid="cfe0843b-2f0d-4c5c-9f28-03e82aaa4e96">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14c53a6f-79b9-4fec-bdac-4545ceb8da44"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -551,7 +551,7 @@ order by tra.fecha_inicio asc,
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="300" y="0" width="255" height="12" uuid="ba163099-d1f2-4dea-873c-e6c2b9cae760">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14c53a6f-79b9-4fec-bdac-4545ceb8da44"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>

@@ -198,7 +198,7 @@ order by codigo asc]]>
 	</columnHeader>
 	<detail>
 		<band height="12" splitType="Stretch">
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="60" height="12" uuid="14ae68de-f7b3-4531-9934-b2a41ea0928f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a2d39ce1-51f7-4c03-be75-66a4909c8ddd"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -218,7 +218,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="60" y="0" width="65" height="12" uuid="c7c7bd48-db24-4817-9537-855cb47371fa">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6674b90-46cd-4f8d-971f-736fba3ffd3a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -239,7 +239,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio_zona_libre}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="125" y="0" width="44" height="12" uuid="8507605a-feca-430f-9d73-59cd91c87bfd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4c42eb53-d9ef-449c-9a61-aab9677dbc11"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -259,7 +259,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{peso}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="169" y="0" width="65" height="12" uuid="91cbf78b-287c-4c62-a34d-02c7700dab80">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="00c1e5d4-0a51-426c-b5d9-5deb84f025a7"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -280,7 +280,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio_mercado}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="234" y="0" width="65" height="12" uuid="9491232f-3189-46fa-8770-09979b1801a0">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="81fcf8d1-e705-4d7c-b7c8-e510d2a575a2"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -301,7 +301,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio_compra}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
 				<reportElement x="299" y="0" width="65" height="12" uuid="5e47e692-1682-483e-af24-d70b25c96adb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14c53a6f-79b9-4fec-bdac-4545ceb8da44"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -322,7 +322,7 @@ order by codigo asc]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio_venta}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="364" y="0" width="191" height="12" uuid="bbe47b37-a3d1-4d3b-b56b-9ddb830aac48">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9c39b7ec-90f0-43b7-b1f9-a3dac126f1ba"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
