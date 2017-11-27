@@ -33,15 +33,12 @@ public class UtilsReporte {
     public byte[] getPrint(String formato, String nombre, Map<String, Object> parameters, Connection connection) throws Exception{
         getProperties();
         String rutaReporte = this.properties.getProperty(nombre);
-        System.out.println("rutaReporte : " + rutaReporte);
         this.inputStream = getClass().getResourceAsStream(rutaReporte);
         this.connection = connection;
         this.parameters = parameters;
-        System.out.println(" inputStream " + inputStream);
         if(formato.equals(TipoDocumento.FORMAT_PDF)) return getPrintPdf();
         else if(formato.equals(TipoDocumento.FORMAT_XLS)) return getPrintXls();
         else if(formato.equals(TipoDocumento.FORMAT_XLS)) return getPrintTxt();
-
         return JasperRunManager.runReportToPdf(inputStream, parameters, connection);
     }
 
@@ -61,9 +58,6 @@ public class UtilsReporte {
         configuration.setDetectCellType(true);
         configuration.setCollapseRowSpan(false);
         configuration.setWhitePageBackground(false);
-
-        //File file = new File("listaArticulos.xls");
-        //FileOutputStream fos = new FileOutputStream(file,true);
 
         JRXlsExporter exporterXLS = new JRXlsExporter();
         exporterXLS.setExporterInput(new SimpleExporterInput(jasperPrint));

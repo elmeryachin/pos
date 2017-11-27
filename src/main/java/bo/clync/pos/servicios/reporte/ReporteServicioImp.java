@@ -38,11 +38,11 @@ public class ReporteServicioImp implements ReporteServicio {
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if(arrayId != null) {
-                //Integer idUsuario = (Integer) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 Ambiente ambiente = ambienteRepository.findOne(codigoAmbiente);
                 parameters = new HashMap<>();
-                parameters.put("ambiente-codigo",ambiente.getNombre() + "(" + ambiente.getCodigo() + ")");
+                parameters.put("ambiente-codigo",ambiente.getTipoAmbiente() + ": " +ambiente.getNombre() + " (" + ambiente.getCodigo() + ")");
+                parameters.put("codigo-ambiente",ambiente.getCodigo());
                 connection = getConnection();
                 return new UtilsReporte().getPrint(format, nombre, parameters, connection);
             }
@@ -59,12 +59,11 @@ public class ReporteServicioImp implements ReporteServicio {
     private Connection getConnection() throws Exception {
 
         Class.forName("org.postgresql.Driver");
-
+        //"jdbc:postgresql://ec2-54-163-245-14.compute-1.amazonaws.com:5432/d6ih3rc9tcudf5";
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        String url      = "jdbc:postgresql://ec2-54-163-245-14.compute-1.amazonaws.com:5432/d6ih3rc9tcudf5";
-                //properties.getProperty("spring.datasource.url");
+        String url      = properties.getProperty("spring.datasource.url");
         String user     = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
         return DriverManager.getConnection(url,user, password);

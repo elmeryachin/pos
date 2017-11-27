@@ -18,7 +18,7 @@ public class AppCommander  implements CommandLineRunner {
     @Autowired
     private ArticuloServicio service;
 
-    public static void main(String[] args) throws Exception {
+    public static void mainComm(String[] args) throws Exception {
         SpringApplication.run(AppCommander.class, args);
     }
 

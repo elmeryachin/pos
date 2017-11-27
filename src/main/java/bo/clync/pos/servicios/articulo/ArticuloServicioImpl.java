@@ -163,4 +163,10 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         return response;
     }
 
+    @Override
+    public byte[] reporteListaArticulos(String token, String tipo) {
+
+        return new byte[0];
+    }
+
 }

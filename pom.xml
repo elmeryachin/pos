@@ -81,11 +81,11 @@
     </dependency>
     <!-- fin logs -->
     <!-- ini fx -->
-    <dependency>
+    <!--dependency>
       <groupId>de.roskenet</groupId>
       <artifactId>springboot-javafx-support</artifactId>
       <version>1.4.1</version>
-    </dependency>
+    </dependency-->
     <!-- fin fx -->
   </dependencies>
 
