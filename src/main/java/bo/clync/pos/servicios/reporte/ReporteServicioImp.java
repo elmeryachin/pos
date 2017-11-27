@@ -63,7 +63,7 @@ public class ReporteServicioImp implements ReporteServicio {
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        String url      = properties.getProperty("spring.datasource.url");
+        String url      = properties.getProperty("test.source.url");
         String user     = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
         return DriverManager.getConnection(url,user, password);
