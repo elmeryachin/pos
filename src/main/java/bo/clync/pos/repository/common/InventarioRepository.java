@@ -27,4 +27,10 @@ public interface InventarioRepository  extends JpaRepository<Inventario, String>
             "   AND o.fechaBaja IS NULL")
     public List<Inventario> getInventario(@Param("codigoArticulo") String codigoArticulo);
 
+    /*@Query("SELECT new bo.clync.pos.entity.Inventario(a.codigo, i.existencia, i.porLlegar, i.porEntregar, i.porRecibir) " +
+           "  FROM Ambiente a LEFT OUTER JOIN Inventario i" +
+           "    ON a.codigo = i.codigoAmbiente" +
+           " WHERE a.fechaBaja IS NULL" +
+           "   AND i.fechaBaja IS NULL")
+    public List<Inventario> getInventarioAll(@Param("codigoArticulo") String codigoArticulo);*/
 }

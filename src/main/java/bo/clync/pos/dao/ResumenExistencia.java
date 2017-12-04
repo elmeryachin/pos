@@ -29,6 +29,7 @@ public class ResumenExistencia {
     }
 
     public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+        if(cantidad==null) this.cantidad = 0;
+        else this.cantidad = cantidad;
     }
 }

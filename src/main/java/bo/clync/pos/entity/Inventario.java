@@ -7,16 +7,23 @@ package bo.clync.pos.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  *
  * @author eyave
  */
 @Entity
+@SqlResultSetMapping(name="GetInventarioCantidad", entities={
+        @EntityResult(entityClass = Inventario.class, fields = {
+                @FieldResult(name="codigoAmbiente", column="codigo_ambiente"),
+                @FieldResult(name="existencia", column="existencia"),
+                @FieldResult(name="porLlegar", column="por_llegar"),
+                @FieldResult(name="porEntregar", column="por_entregar"),
+                @FieldResult(name="porRecibir", column="por_recibir")
+        })
+}
+)
 public class Inventario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,11 +52,12 @@ public class Inventario implements Serializable {
         this.id = id;
     }
 
-    public Inventario(Integer id, Integer existencia, Date fechaAlta, String operadorBaja) {
-        this.id = id;
+    public Inventario(String codigoArticulo, Integer existencia, Integer porLlegar, Integer porEntregar, Integer porRecibir) {
+        this.codigoArticulo = codigoArticulo;
         this.existencia = existencia;
-        this.fechaAlta = fechaAlta;
-        this.operadorBaja = operadorBaja;
+        this.porLlegar = porLlegar;
+        this.porEntregar = porEntregar;
+        this.porRecibir = porRecibir;
     }
 
     public Integer getId() {
