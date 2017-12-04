@@ -23,4 +23,5 @@ public interface ArticuloServicio {
     public ServResponse eliminar(String codigo, String token);
 
     public byte[] reporteListaArticulos(String token, String tipo);
+
 }

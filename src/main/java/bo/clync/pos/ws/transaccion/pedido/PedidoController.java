@@ -53,13 +53,6 @@ public class PedidoController {
     }
 
     @CrossOrigin
-    @GetMapping("/articulo/{codigo}/existence")
-    public ResponseEntity<?> existenciaArticulo(@PathVariable("codigo") String codigo) {
-        //Postergado
-        return new ResponseEntity<>( service.existenciaArticulo(token, codigo), HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @GetMapping("/articulo/list/{patron}")
     public ResponseEntity<?> listaArticuloCodigo(@PathVariable("patron") String patron) {
         return new ResponseEntity<>( service.listaArticulo(token, patron), HttpStatus.OK);

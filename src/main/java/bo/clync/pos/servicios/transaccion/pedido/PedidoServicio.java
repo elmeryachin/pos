@@ -13,7 +13,6 @@ public interface PedidoServicio {
     ServResponse nuevoProveedor(String token, UsuarioRequest request);
     ProveedorResponseList listaProveedor(String token, String patron);
     ArticuloResponseMin obtenerArticulo(String token, String codigo);
-    ArticuloResponseList existenciaArticulo(String token, String codigo);
     ArticuloResponseList listaArticulo(String token, String patron);
     PedidoResponse nuevo(String token, PedidoRequest request) throws Exception;
     PedidoResponseList listaSolicitud(String token);

@@ -51,7 +51,6 @@ public class ArticuloController {
         return new ResponseEntity<>(service.nuevo(request, token), HttpStatus.CREATED);
     }
 
-
     @CrossOrigin
     @PutMapping("/update/{codigo}")
     public ResponseEntity<ServResponse> actualizar(@PathVariable("codigo") String codigo,

@@ -4,7 +4,6 @@ import bo.clync.pos.entity.DetalleTransaccion;
 import bo.clync.pos.entity.Inventario;
 import bo.clync.pos.entity.Transaccion;
 import bo.clync.pos.entity.Usuario;
-import bo.clync.pos.dao.Resumen;
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.articulo.obtener.ObjetoArticulo;
 import bo.clync.pos.dao.transaccion.pedido.*;
@@ -167,66 +166,6 @@ public class PedidoServicioImp implements PedidoServicio {
             response.setMensaje("Error Al recuperar el articulo por codigo");
         }
         return response;
-    }
-
-    @Override
-    public ArticuloResponseList existenciaArticulo(String token, String codigo) {
-        ArticuloResponseList response = new ArticuloResponseList();
-        if(!codigo.equals("0000")) {
-            try {
-                Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-                if (arrayId != null) {
-                    Integer idUsuario = (Integer) arrayId[0];
-                    String codigoAmbiente = (String) arrayId[1];
-                    List<Resumen> lista = new ArrayList<>();
-                    List<Inventario> inventarios = inventarioRepository.getInventario(codigo);
-                    System.out.println("Lista de invnetario " + inventarios);
-                    Resumen resumen = null;
-                    Integer porLlegar = null;
-                    Integer porRecibir = null;
-                    for (Inventario inventario : inventarios) {
-                        resumen = new Resumen();
-                        resumen.setCodigo(inventario.getCodigoAmbiente());
-                        resumen.obtenerMonto(inventario.getExistencia());
-                        if (codigoAmbiente.equals(inventario.getCodigoAmbiente())) {
-                            porLlegar = inventario.getPorLlegar();
-                            porRecibir = inventario.getPorRecibir();
-                        }
-                        lista.add(resumen);
-                    }
-
-                    resumen = new Resumen();
-                    resumen.setCodigo("Por Recibir");
-                    resumen.obtenerMonto(porRecibir);
-                    lista.add(resumen);
-                    resumen = new Resumen();
-                    resumen.setCodigo("Por Llegar");
-                    resumen.obtenerMonto(porLlegar);
-                    lista.add(resumen);
-                    response.setList(lista);
-                    response.setRespuesta(true);
-                } else {
-                    response.setMensaje("Las credenciales estan vencidas, ingrese desde el login nuevamente");
-                }
-            } catch (Exception e) {
-                response.setMensaje("Error al recuperar el registro");
-                e.printStackTrace();
-            }
-            return response;
-        } else {
-            response.setRespuesta(true);
-            List<Resumen> lista = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                Resumen resumen = new Resumen("T" + i, "" + (100 + i));
-                lista.add(resumen);
-            }
-            Resumen resumen = new Resumen("Por llegar " , "" + (10));
-            lista.add(resumen);
-            resumen = new Resumen("Por Recibir" , "" +(2));
-            lista.add(resumen);
-            response.setList(lista);
-            return response;
-        }
     }
 
     @Override
