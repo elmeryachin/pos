@@ -22,7 +22,9 @@ public class ArticuloController {
 
     private String token = "20171029130500-1-1";
 
-    @RequestMapping(value = "/hola", method = RequestMethod.GET)
+
+    @CrossOrigin
+    @GetMapping("/hola")
     public ResponseEntity<String> listaSaludo(@RequestHeader("token") String token) {
         return new ResponseEntity<>("Hola " + token, HttpStatus.OK);
     }
