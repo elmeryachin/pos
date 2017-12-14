@@ -1,6 +1,7 @@
 package bo.clync.pos.servicios.articulo;
 
 
+import bo.clync.pos.dao.articulo.lista.ResumenArticulo;
 import bo.clync.pos.entity.Articulo;
 import bo.clync.pos.dao.articulo.ArticuloRequest;
 import bo.clync.pos.dao.ServResponse;
@@ -12,7 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by eyave on 05-10-17.
@@ -30,7 +38,10 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     public ServListaResponse lista(String token) {
         ServListaResponse response = new ServListaResponse();
         try {
+            long ini = System.currentTimeMillis();
             response.setLista(repository.getListResumenArticulos());
+            long res = ini - System.currentTimeMillis();
+            System.out.println("TIEMPO TRANSCURRIDO : " + res);
             response.setRespuesta(true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,10 +51,56 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     }
 
     @Override
-    public ServListaResponse listaPorCodigo(String token, String codigo) {
+    public ServListaResponse listaNativa(String token) {
+        ServListaResponse response = new ServListaResponse();
+        Connection connection = null;
+        try {
+
+            long ini = System.currentTimeMillis();
+            List<ResumenArticulo> lista = new ArrayList<>();
+
+            connection = getConnection();
+            ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM ARTICULO");
+            ResumenArticulo ra = null;
+            while (rs.next()) {
+                ra = new ResumenArticulo(
+                        rs.getString("codigo"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion")
+                );
+                lista.add(ra);
+            }
+            rs.close();
+            connection.close();
+            response.setLista(lista);
+
+            long res = ini - System.currentTimeMillis();
+            System.out.println("TIEMPO TRANSCURRIDO nativo : " + res);
+            response.setRespuesta(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error al recuperar los registros");
+        }
+        return response;
+    }
+
+    private Connection getConnection() throws Exception {
+
+        Class.forName("org.postgresql.Driver");
+        InputStream inputStream = getClass().getResourceAsStream("/application.properties");
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        String url      = properties.getProperty("test.source.url");
+        String user     = properties.getProperty("spring.datasource.username");
+        String password = properties.getProperty("spring.datasource.password");
+        return DriverManager.getConnection(url,user, password);
+    }
+
+    @Override
+    public ServListaResponse listaPorCodigo(String token, String patron) {
         ServListaResponse response = new ServListaResponse();
         try {
-            response.setLista(repository.getListResumenArticulosPorPatron(codigo));
+            response.setLista(repository.getListResumenArticulosPorPatron(patron));
             response.setRespuesta(true);
         } catch (Exception e) {
             e.printStackTrace();

@@ -36,9 +36,15 @@ public class ArticuloController {
     }
 
     @CrossOrigin
-    @GetMapping("/list/{codigo}")
-    public ResponseEntity<ServListaResponse> listaPorCodigo(@PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>(service.listaPorCodigo(token, codigo), HttpStatus.OK);
+    @GetMapping("/list/nativa")
+    public ResponseEntity<ServListaResponse> listaNativa() {
+        return new ResponseEntity<>(service.listaNativa(token), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/list/{patron}")
+    public ResponseEntity<ServListaResponse> listaPorCodigo(@PathVariable("patron") String patron) {
+        return new ResponseEntity<>(service.listaPorCodigo(token, patron), HttpStatus.OK);
     }
 
     @CrossOrigin

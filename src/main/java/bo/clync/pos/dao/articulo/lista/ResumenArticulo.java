@@ -16,6 +16,11 @@ public class ResumenArticulo {
         this.descripcion = articulo.getDescripcion();
     }
 
+    public ResumenArticulo ( String codigo, String nombre, String descripcion){
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+    }
 
     public String getCodigo() {
         return codigo;

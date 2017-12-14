@@ -12,7 +12,9 @@ public interface ArticuloServicio {
 
     ServListaResponse lista(String token);
 
-    ServListaResponse listaPorCodigo(String token, String codigo);
+    ServListaResponse listaNativa(String token);
+
+    ServListaResponse listaPorCodigo(String token, String patron);
 
     ServObtenerResponse obtener(String codigo, String token);
 
