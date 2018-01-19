@@ -42,8 +42,8 @@ public class ArticuloController {
     }
 
     @CrossOrigin
-    @GetMapping("/list/{patron}")
-    public ResponseEntity<ServListaResponse> listaPorCodigo(@PathVariable("patron") String patron) {
+    @PostMapping("/list")
+    public ResponseEntity<ServListaResponse> listaPorCodigo(@RequestParam("patron") String patron) {
         return new ResponseEntity<>(service.listaPorCodigo(token, patron), HttpStatus.OK);
     }
 
