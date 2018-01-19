@@ -1,5 +1,6 @@
 package bo.clync.pos.ws.articulo;
 
+import bo.clync.pos.dao.ServPatron;
 import bo.clync.pos.dao.articulo.ArticuloRequest;
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.articulo.lista.ServListaResponse;
@@ -43,8 +44,8 @@ public class ArticuloController {
 
     @CrossOrigin
     @PostMapping("/list")
-    public ResponseEntity<ServListaResponse> listaPorCodigo(@RequestParam("patron") String patron) {
-        return new ResponseEntity<>(service.listaPorCodigo(token, patron), HttpStatus.OK);
+    public ResponseEntity<ServListaResponse> listaPorCodigo(@RequestBody ServPatron patron) {
+        return new ResponseEntity<>(service.listaPorCodigo(token, patron.getPatron()), HttpStatus.OK);
     }
 
     @CrossOrigin

@@ -1,5 +1,6 @@
 package bo.clync.pos.ws.transaccion.pedido;
 
+import bo.clync.pos.dao.ServPatron;
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.transaccion.pedido.PedidoRequest;
 import bo.clync.pos.dao.transaccion.pedido.PedidoResponse;
@@ -42,8 +43,8 @@ public class PedidoController {
 
     @CrossOrigin
     @PostMapping("/proveedor/list")
-    public ResponseEntity<?> listaProveedorPorCodigo(@RequestParam("patron") String patron) {
-        return new ResponseEntity<>( service.listaProveedor(token, patron), HttpStatus.OK);
+    public ResponseEntity<?> listaProveedorPorCodigo(@RequestBody ServPatron patron) {
+        return new ResponseEntity<>( service.listaProveedor(token, patron.getPatron()), HttpStatus.OK);
     }
 
     @CrossOrigin
