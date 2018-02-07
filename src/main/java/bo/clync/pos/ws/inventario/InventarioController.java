@@ -24,4 +24,13 @@ public class InventarioController {
         //Postergado
         return new ResponseEntity<>( service.existenciaArticulo(token, codigo), HttpStatus.OK);
     }
+
+
+    @CrossOrigin
+    @GetMapping(value = "/articulo/sucursales")
+    public ResponseEntity<?> listaSucursales() {
+        //Postergado
+        return new ResponseEntity<>( service.listaSucursales(token), HttpStatus.OK);
+    }
+
 }

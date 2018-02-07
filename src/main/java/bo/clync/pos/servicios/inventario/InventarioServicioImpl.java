@@ -2,6 +2,8 @@ package bo.clync.pos.servicios.inventario;
 
 import bo.clync.pos.dao.ResumenExistencia;
 import bo.clync.pos.dao.inventario.ExistenciaResponseList;
+import bo.clync.pos.dao.inventario.Sucursales;
+import bo.clync.pos.dao.inventario.SucursalesResponseList;
 import bo.clync.pos.entity.Inventario;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
@@ -98,5 +100,39 @@ public class InventarioServicioImpl implements InventarioServicio {
             response.setList(lista);
             return response;
         }
+    }
+
+    public SucursalesResponseList listaSucursales(String token) {
+        SucursalesResponseList response = new SucursalesResponseList();
+        try {
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if (arrayId != null) {
+                Integer idUsuario = (Integer) arrayId[0];
+                String codigoAmbiente = (String) arrayId[1];
+                List<Sucursales> lista = new ArrayList<>();
+                String sql = "   SELECT a.codigo, a.nombre, a.tipo_ambiente " +
+                        "     FROM ambiente a " +
+                        "    WHERE a.fecha_baja is null " +
+                        " ORDER BY a.nombre asc ";
+
+                Query query = em.createNativeQuery(sql);
+                List<Object[]> list = (List<Object[]>) query.getResultList();
+                Sucursales sucursal = null;
+                for (Object[] objecto : list) {
+                    sucursal = new Sucursales();
+                    sucursal.setCodigo((String) objecto[0]);
+                    sucursal.setNombre((String) objecto[1]);
+                    sucursal.setTipoAmbiente((String) objecto[2]);
+                    lista.add(sucursal);
+                }
+                response.setList(lista);
+                response.setRespuesta(true);
+            } else {
+                response.setMensaje("Las credenciales estan vencidas, ingrese desde el login nuevamente");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 }

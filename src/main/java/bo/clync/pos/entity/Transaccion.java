@@ -32,7 +32,7 @@ public class Transaccion implements Serializable {
     private Integer idUsuarioFin;
     private String codigoAmbienteFin;
     private Date fechaFin;
-    private int cantidad;
+    private Integer cantidad;
     private BigDecimal precio;
     private String observacion;
     private Date fechaAlta;
@@ -49,7 +49,7 @@ public class Transaccion implements Serializable {
         this.setId(id);
     }
 
-    public Transaccion(String id, Date fechaInicio, int cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
+    public Transaccion(String id, Date fechaInicio, Integer cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
         this.setId(id);
         this.setFechaInicio(fechaInicio);
         this.setCantidad(cantidad);
@@ -151,11 +151,11 @@ public class Transaccion implements Serializable {
         this.fechaFin = fechaFin;
     }
 
-    public int getCantidad() {
+    public Integer getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
     }
 
