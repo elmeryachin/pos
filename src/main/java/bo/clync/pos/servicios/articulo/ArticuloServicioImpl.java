@@ -101,7 +101,12 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         ServListaResponse response = new ServListaResponse();
         try {
             response.setLista(repository.getListResumenArticulosPorPatron(patron));
-            response.setRespuesta(true);
+            if(response.getLista().size() == 0) {
+                response.setRespuesta(false);
+                response.setMensaje("true");
+            } else {
+                response.setRespuesta(true);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             response.setMensaje("Error al recuperar los registros");
