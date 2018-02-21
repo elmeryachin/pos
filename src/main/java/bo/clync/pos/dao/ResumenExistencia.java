@@ -5,15 +5,27 @@ package bo.clync.pos.dao;
  */
 public class ResumenExistencia {
 
+    private String nombreAmbiente;
     private String codigoAmbiente;
     private Integer cantidad;
+    private int propio;
 
     public ResumenExistencia(){
     }
 
-    public ResumenExistencia(String codigoAmbiente, Integer cantidad){
-        this.codigoAmbiente = codigoAmbiente;
-        this.cantidad = cantidad;
+    public ResumenExistencia(String nombreAmbiente, String codigoAmbiente, Integer cantidad, int propio){
+        this.setNombreAmbiente(nombreAmbiente);
+        this.setCodigoAmbiente(codigoAmbiente);
+        this.setCantidad(cantidad);
+        this.setPropio(propio);
+    }
+
+    public String getNombreAmbiente() {
+        return nombreAmbiente;
+    }
+
+    public void setNombreAmbiente(String nombreAmbiente) {
+        this.nombreAmbiente = nombreAmbiente;
     }
 
     public String getCodigoAmbiente() {
@@ -31,5 +43,13 @@ public class ResumenExistencia {
     public void setCantidad(Integer cantidad) {
         if(cantidad==null) this.cantidad = 0;
         else this.cantidad = cantidad;
+    }
+
+    public int getPropio() {
+        return propio;
+    }
+
+    public void setPropio(int propio) {
+        this.propio = propio;
     }
 }

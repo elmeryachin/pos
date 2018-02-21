@@ -34,14 +34,13 @@ public class InventarioServicioImpl implements InventarioServicio {
     @Override
     public ExistenciaResponseList existenciaArticulo(String token, String codigo) {
         ExistenciaResponseList response = new ExistenciaResponseList();
-        if(!codigo.equals("0000")) {
             try {
                 Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
                 if (arrayId != null) {
                     Integer idUsuario = (Integer) arrayId[0];
                     String codigoAmbiente = (String) arrayId[1];
                     List<ResumenExistencia> lista = new ArrayList<>();
-                    String sql = "   SELECT a.codigo, i.existencia, i.por_llegar, i.por_entregar, i.por_recibir " +
+                    String sql = "   SELECT a.nombre, a.codigo, i.existencia, i.por_llegar, i.por_entregar, i.por_recibir " +
                                  "     FROM ambiente a LEFT OUTER JOIN ( " +
                                  "                                  SELECT codigo_ambiente, existencia, por_llegar, por_entregar, por_recibir " +
                                  "                                    FROM inventario " +
@@ -56,25 +55,41 @@ public class InventarioServicioImpl implements InventarioServicio {
                     List<Object[]> list = (List<Object[]>) query.getResultList();
                     ResumenExistencia resumen = null;
                     Integer porLlegar = null;
+                    Integer porEntregar = null;
                     Integer porRecibir = null;
                     for (Object[] objecto : list) {
                         resumen = new ResumenExistencia();
-                        resumen.setCodigoAmbiente((String) objecto[0]);
-                        resumen.setCantidad((Integer) objecto[1]);
-                        if (codigoAmbiente.equals(objecto[0])) {
-                            porLlegar = (Integer) objecto[2];//inventario.getPorLlegar();
-                            porRecibir = (Integer) objecto[3];// inventario.getPorRecibir();
+                        resumen.setNombreAmbiente((String) objecto[0]);
+                        resumen.setCodigoAmbiente((String) objecto[1]);
+                        resumen.setCantidad((Integer) objecto[2]);
+                        if (codigoAmbiente.equals(objecto[1])) {
+                            porLlegar = (Integer) objecto[3];
+                            porEntregar = (Integer) objecto[4];
+                            porRecibir = (Integer) objecto[5];
+                            resumen.setPropio(1);
+                        } else {
+                            resumen.setPropio(0);
                         }
                         lista.add(resumen);
                     }
 
                     resumen = new ResumenExistencia();
-                    resumen.setCodigoAmbiente("Por Recibir");
-                    resumen.setCantidad(porRecibir);
+                    resumen.setNombreAmbiente("Por Llegar");
+                    resumen.setCodigoAmbiente(codigoAmbiente);
+                    resumen.setCantidad(porLlegar);
+                    resumen.setPropio(1);
                     lista.add(resumen);
                     resumen = new ResumenExistencia();
-                    resumen.setCodigoAmbiente("Por Llegar");
-                    resumen.setCantidad(porLlegar);
+                    resumen.setNombreAmbiente("Por Entregar");
+                    resumen.setCodigoAmbiente(codigoAmbiente);
+                    resumen.setCantidad(porEntregar);
+                    resumen.setPropio(1);
+                    lista.add(resumen);
+                    resumen = new ResumenExistencia();
+                    resumen.setNombreAmbiente("Por Recibir");
+                    resumen.setCodigoAmbiente(codigoAmbiente);
+                    resumen.setCantidad(porRecibir);
+                    resumen.setPropio(1);
                     lista.add(resumen);
                     response.setList(lista);
                     response.setRespuesta(true);
@@ -86,20 +101,6 @@ public class InventarioServicioImpl implements InventarioServicio {
                 e.printStackTrace();
             }
             return response;
-        } else {
-            response.setRespuesta(true);
-            List<ResumenExistencia> lista = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                ResumenExistencia resumen = new ResumenExistencia("T" + i, (100 + i));
-                lista.add(resumen);
-            }
-            ResumenExistencia resumen = new ResumenExistencia("Por llegar " , 10);
-            lista.add(resumen);
-            resumen = new ResumenExistencia("Por Recibir" , 2);
-            lista.add(resumen);
-            response.setList(lista);
-            return response;
-        }
     }
 
     public SucursalesResponseList listaSucursales(String token) {
