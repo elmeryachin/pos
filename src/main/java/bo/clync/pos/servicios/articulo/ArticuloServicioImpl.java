@@ -205,15 +205,20 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         try {
             arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if(arrayId != null) {
-                operador = String.valueOf(arrayId[0]);
-                articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
-                if (articulo != null) {
-                    articulo.setFechaBaja(new Date());
-                    articulo.setOperadorBaja(operador);
-                    repository.save(articulo);
-                    response.setRespuesta(true);
+                Integer usoArticulo = repository.getUsoArticulo(codigo);
+                if(usoArticulo == 0){
+                    operador = String.valueOf(arrayId[0]);
+                    articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
+                    if (articulo != null) {
+                        articulo.setFechaBaja(new Date());
+                        articulo.setOperadorBaja(operador);
+                        repository.save(articulo);
+                        response.setRespuesta(true);
+                    } else {
+                        response.setMensaje("No existe el articulo que quiere eliminar");
+                    }
                 } else {
-                    response.setMensaje("No existe el articulo que quiere eliminar");
+                    response.setMensaje("El articulo se encuentra en uso");
                 }
             } else {
                 response.setMensaje("Su session expiro");

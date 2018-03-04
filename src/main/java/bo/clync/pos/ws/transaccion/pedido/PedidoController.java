@@ -54,9 +54,9 @@ public class PedidoController {
     }
 
     @CrossOrigin
-    @GetMapping("/articulo/list/{patron}")
-    public ResponseEntity<?> listaArticuloCodigo(@PathVariable("patron") String patron) {
-        return new ResponseEntity<>( service.listaArticulo(token, patron), HttpStatus.OK);
+    @PostMapping("/articulo/list")
+    public ResponseEntity<?> listaArticuloCodigo(@RequestBody ServPatron patron) {
+        return new ResponseEntity<>( service.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
     }
 
     @CrossOrigin

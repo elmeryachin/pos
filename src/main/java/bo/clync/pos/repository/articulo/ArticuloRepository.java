@@ -51,4 +51,11 @@ public interface ArticuloRepository extends JpaRepository<Articulo, String> {
             "WHERE o.codigo=:codigo " +
             "  AND o.fechaBaja is null")
     public BigDecimal getPrecioVentaPorCodigo(@Param("codigo") String codigo);
+
+    @Query("SELECT count(o) " +
+            " FROM DetalleTransaccion o " +
+            "WHERE o.codigoArticulo=:codigo " +
+            "  AND o.fechaBaja is null")
+    public Integer getUsoArticulo(@Param("codigo") String codigo);
+
 }
