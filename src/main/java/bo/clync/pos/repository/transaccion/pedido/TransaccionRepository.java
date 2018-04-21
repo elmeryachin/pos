@@ -36,7 +36,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND u.codigoValorUsuario=:codigoValorUsuario " +
             "  AND u.codigoAmbiente=:codigoAmbienteInicio " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio ASC")
+            " ORDER BY o.fechaInicio DESC")
     public List<PedidoObjeto> listaTransacciones(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                  @Param("dominio") String dominio,
                                                  @Param("codigoValor") String codigoValor,
