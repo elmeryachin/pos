@@ -8,6 +8,7 @@ import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.articulo.obtener.ObjetoArticulo;
 import bo.clync.pos.dao.transaccion.pedido.*;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
+import bo.clync.pos.repository.common.AmbienteRepository;
 import bo.clync.pos.repository.common.CicloRepository;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
@@ -49,6 +50,8 @@ public class PedidoServicioImp implements PedidoServicio {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ArticuloRepository articuloRepository;
+    @Autowired
+    private AmbienteRepository ambienteRepository;
     @PersistenceContext
     private EntityManager em;
     @Autowired
@@ -152,13 +155,21 @@ public class PedidoServicioImp implements PedidoServicio {
     public ArticuloResponseMin obtenerArticulo(String token, String codigo) {
         ArticuloResponseMin response = new ArticuloResponseMin();
         try {
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+
+            Integer count = ambienteRepository.verificarSucursal((String)arrayId[1]);
+
             ObjetoArticulo o = articuloRepository.getObtenerArticuloPorCodigo(codigo);
             if(o == null) {
                 response.setMensaje("No se encontro el articulo con el codigo");
             } else {
                 response.setCodigo(o.getCodigo());
                 response.setNombre(o.getNombre());
-                response.setPrecio(o.getPrecioVenta());
+                if(count == 1) {
+                    response.setPrecio(o.getPrecioZonaLibre());
+                } else {
+                    response.setPrecio(o.getPrecioVenta());
+                }
                 response.setRespuesta(true);
             }
         } catch (Exception e) {
