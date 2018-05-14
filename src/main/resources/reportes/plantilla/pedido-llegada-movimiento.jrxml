@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Llegada" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="c7180854-f183-4fd0-9a5c-58e290749834">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConeccionPostgres"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="3"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="ambiente-codigo" class="java.lang.String"/>
 	<parameter name="codigo-ambiente" class="java.lang.String"/>
-	<queryString language="SQL">
-		<![CDATA[select tra.fecha_inicio, tra.fecha_fin, tra.nro_movimiento, usu.codigo, usu.nombre, tra.observacion, 
+	<parameter name="id-transaccion" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select tra.fecha_inicio, tra.fecha_fin, tra.nro_movimiento, usu.codigo, usu.nombre, tra.observacion,
 	 det.codigo_articulo, det.cantidad, det.precio, (det.cantidad*det.precio)  as total, art.nombre as nombre_articulo
     from transaccion tra, usuario usu, detalle_transaccion det, articulo art
    where tra.id_usuario_fin = usu.id
@@ -16,13 +19,14 @@
      and tra.codigo_dominio = 'PEDIDO'
      and tra.codigo_valor   = 'LLEGADA'
      and usu.codigo_valor_usuario = 'PROVEEDOR'
+     and tra.id = '$P!{id-transaccion}'
      and tra.id = det.id_transaccion
      and det.codigo_articulo = art.codigo
      and tra.fecha_baja is null
      and usu.fecha_baja is null
      and det.fecha_baja is null
      and det.fecha_baja is null
-order by tra.fecha_inicio asc, 
+order by tra.fecha_inicio asc,
 	 tra.nro_movimiento asc]]>
 	</queryString>
 	<field name="fecha_inicio" class="java.sql.Timestamp">

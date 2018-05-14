@@ -56,6 +56,33 @@ public class ReporteServicioImp implements ReporteServicio {
 
     }
 
+    @Override
+    public byte[] reporteArticulos(String token, String nombre, String format, String id) {
+        Connection connection = null;
+        Map<String, Object> parameters = null;
+        try {
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if(arrayId != null) {
+                String codigoAmbiente = (String) arrayId[1];
+                Ambiente ambiente = ambienteRepository.findOne(codigoAmbiente);
+                parameters = new HashMap<>();
+                parameters.put("ambiente-codigo",ambiente.getTipoAmbiente() + ": " +ambiente.getNombre() + " (" + ambiente.getCodigo() + ")");
+                parameters.put("codigo-ambiente",ambiente.getCodigo());
+                parameters.put("id-transaccion", id);
+                connection = getConnection();
+                return new UtilsReporte().getPrint(format, nombre, parameters, connection);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {connection.close(); } catch (Exception e){}
+            System.out.println("Proceso terminado....");
+        }
+        return new byte[0];
+
+    }
+
+
     private Connection getConnection() throws Exception {
 
         Class.forName("org.postgresql.Driver");

@@ -7,4 +7,6 @@ public interface ReporteServicio {
 
     byte[] reporteArticulos(String token, String nombre, String format);
 
+
+    byte[] reporteArticulos(String token, String nombre, String format, String id);
 }
