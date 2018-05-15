@@ -5,8 +5,8 @@ package bo.clync.pos.servicios.reporte;
  */
 public interface ReporteServicio {
 
-    byte[] reporteArticulos(String token, String nombre, String format);
+    Object reporteArticulos(String token, String nombre, String format);
 
 
-    byte[] reporteArticulos(String token, String nombre, String format, String id);
+    Object reporteArticulos(String token, String nombre, String format, String id);
 }

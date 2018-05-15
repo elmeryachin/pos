@@ -61,5 +61,11 @@ public class ReporteController {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_XLS, id), HttpStatus.OK);
     }
 
+    @CrossOrigin
+    @GetMapping(value = "/{nombre}/html/view/{id}", produces = {"text/plain"})
+    public ResponseEntity<?> htmlViewId(@PathVariable("nombre") String nombre,
+                                       @PathVariable("id") String id) {
+        return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_HTML, id), HttpStatus.OK);
+    }
 
 }

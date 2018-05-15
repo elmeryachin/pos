@@ -1,10 +1,7 @@
 package bo.clync.pos.utilitarios.reporte;
 
 import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.export.*;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
@@ -30,7 +27,7 @@ public class UtilsReporte {
         properties.load(inputStream);
     }
 
-    public byte[] getPrint(String formato, String nombre, Map<String, Object> parameters, Connection connection) throws Exception{
+    public Object getPrint(String formato, String nombre, Map<String, Object> parameters, Connection connection) throws Exception {
         getProperties();
         String rutaReporte = this.properties.getProperty(nombre);
         this.inputStream = getClass().getResourceAsStream(rutaReporte);
@@ -39,6 +36,7 @@ public class UtilsReporte {
         if(formato.equals(TipoDocumento.FORMAT_PDF)) return getPrintPdf();
         else if(formato.equals(TipoDocumento.FORMAT_XLS)) return getPrintXls();
         else if(formato.equals(TipoDocumento.FORMAT_XLS)) return getPrintTxt();
+        else if(formato.equals(TipoDocumento.FORMAT_HTML)) return getPrintHtml();
         return JasperRunManager.runReportToPdf(inputStream, parameters, connection);
     }
 
@@ -72,4 +70,14 @@ public class UtilsReporte {
         return JasperRunManager.runReportToPdf(this.inputStream, this.parameters, this.connection);
     }
 
+    private String getPrintHtml() throws Exception {
+        StringBuffer html = new StringBuffer();
+        final JasperPrint print = JasperFillManager.fillReport(this.inputStream, this.parameters, this.connection);
+        final JRHtmlExporter exporter = new JRHtmlExporter();
+        exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STRING_BUFFER, html);
+        exporter.exportReport();
+        return html.toString();
+    }
 }

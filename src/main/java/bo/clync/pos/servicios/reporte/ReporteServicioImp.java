@@ -32,7 +32,7 @@ public class ReporteServicioImp implements ReporteServicio {
     @Autowired
     private AmbienteRepository ambienteRepository;
     @Override
-    public byte[] reporteArticulos(String token, String nombre, String format) {
+    public Object reporteArticulos(String token, String nombre, String format) {
         Connection connection = null;
         Map<String, Object> parameters = null;
         try {
@@ -57,7 +57,7 @@ public class ReporteServicioImp implements ReporteServicio {
     }
 
     @Override
-    public byte[] reporteArticulos(String token, String nombre, String format, String id) {
+    public Object reporteArticulos(String token, String nombre, String format, String id) {
         Connection connection = null;
         Map<String, Object> parameters = null;
         try {

@@ -7,5 +7,6 @@ public class TipoDocumento {
     public final static String FORMAT_PDF = "pdf";
     public final static String FORMAT_XLS = "xls";
     public final static String FORMAT_TXT = "txt";
+    public final static String FORMAT_HTML = "html";
 
 }
