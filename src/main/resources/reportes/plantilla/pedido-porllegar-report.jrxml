@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ArticuloLista" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="c7180854-f183-4fd0-9a5c-58e290749834">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConeccionPostgres"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="ambiente-codigo" class="java.lang.String"/>
 	<parameter name="codigo-ambiente" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[select tra.fecha_inicio, usu.codigo, usu.nombre, tra.nro_movimiento, 
+		<![CDATA[select tra.fecha_inicio, usu.codigo, usu.nombre, tra.nro_movimiento,
 	 sum(det.cantidad) as cantidad , sum(det.cantidad*det.precio) as total
     from transaccion tra, usuario usu, detalle_transaccion det
    where tra.id_usuario_fin = usu.id
@@ -21,7 +23,7 @@
      and usu.fecha_baja is null
      and det.fecha_baja is null
 group by tra.fecha_inicio, usu.codigo, usu.nombre, tra.nro_movimiento
-order by tra.fecha_inicio asc, 
+order by tra.fecha_inicio asc,
 	 tra.nro_movimiento asc]]>
 	</queryString>
 	<field name="fecha_inicio" class="java.sql.Timestamp">
@@ -69,7 +71,7 @@ order by tra.fecha_inicio asc,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Mercaderia Por Llegar a ]]></text>
+				<text><![CDATA[Mercaderia Por Llegar a]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="20" width="554" height="20" uuid="efb47c4b-3424-434a-82c9-ba0eaa5669f0">

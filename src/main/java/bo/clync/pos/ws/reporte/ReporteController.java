@@ -48,6 +48,12 @@ public class ReporteController {
     }
 
     @CrossOrigin
+    @GetMapping(value = "/{nombre}/html/view", produces = {"text/plain"})
+    public ResponseEntity<?> htmlView(@PathVariable("nombre") String nombre) {
+        return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_HTML), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping(value = "/{nombre}/pdf/view/{id}", produces = {"application/pdf"})
     public ResponseEntity<?> pdfViewId(@PathVariable("nombre") String nombre,
                                        @PathVariable("id") String id) {
