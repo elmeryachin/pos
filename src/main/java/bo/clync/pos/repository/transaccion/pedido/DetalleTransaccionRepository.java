@@ -18,7 +18,7 @@ public interface DetalleTransaccionRepository extends JpaRepository<DetalleTrans
             " FROM DetalleTransaccion o " +
             "WHERE o.idTransaccion=:idTransaccion " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.id desc")
+            " ORDER BY o.id asc")
     public List<PedidoDetalle> listaDetalle(@Param("idTransaccion") String idTransaccion);
 
 
