@@ -1,4 +1,4 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.articulo;
 
 import bo.clync.pos.dao.Resumen;
 

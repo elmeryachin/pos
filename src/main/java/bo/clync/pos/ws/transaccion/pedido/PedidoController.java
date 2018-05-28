@@ -2,10 +2,13 @@ package bo.clync.pos.ws.transaccion.pedido;
 
 import bo.clync.pos.dao.ServPatron;
 import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.transaccion.pedido.PedidoRequest;
-import bo.clync.pos.dao.transaccion.pedido.PedidoResponse;
-import bo.clync.pos.dao.transaccion.pedido.UsuarioRequest;
-import bo.clync.pos.servicios.transaccion.pedido.PedidoServicio;
+import bo.clync.pos.dao.transaccion.generic.TransaccionRequest;
+import bo.clync.pos.dao.transaccion.generic.TransaccionResponse;
+import bo.clync.pos.dao.usuario.generic.UsuarioRequest;
+import bo.clync.pos.servicios.articulo.ArticuloServicio;
+import bo.clync.pos.servicios.transaccion.pedido.LlegadaServicio;
+import bo.clync.pos.servicios.transaccion.pedido.SolicitudServicio;
+import bo.clync.pos.servicios.usuario.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,60 +22,48 @@ import org.springframework.web.bind.annotation.*;
 public class PedidoController {
 
     @Autowired
-    private PedidoServicio service;
+    private SolicitudServicio solicitudServicio;
+    @Autowired
+    private UsuarioServicio usuarioServicio;
+    @Autowired
+    private LlegadaServicio llegadaServicio;
+    @Autowired
+    private ArticuloServicio articuloServicio;
 
     private String token = "20171029130500-1-1";
 
     @CrossOrigin
     @GetMapping("/init")
     public ResponseEntity<?> init() {
-        return new ResponseEntity<>(service.init(token), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/proveedor/quest/{codigo}")
-    public ResponseEntity<?> obtenerProveedor(@PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>( service.obtenerProveedor(token, codigo), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/proveedor/list")
-    public ResponseEntity<?> listaProveedor() {
-        return new ResponseEntity<>( service.listaProveedor(token, null), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/proveedor/list")
-    public ResponseEntity<?> listaProveedorPorCodigo(@RequestBody ServPatron patron) {
-        return new ResponseEntity<>( service.listaProveedor(token, patron.getPatron()), HttpStatus.OK);
+        return new ResponseEntity<>(solicitudServicio.init(token), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/articulo/quest/{codigo}")
     public ResponseEntity<?> obtenerArticulo(@PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>( service.obtenerArticulo(token, codigo), HttpStatus.OK);
+        return new ResponseEntity<>( articuloServicio.obtenerArticulo(token, codigo), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/articulo/list")
     public ResponseEntity<?> listaArticuloCodigo(@RequestBody ServPatron patron) {
-        return new ResponseEntity<>( service.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
+        return new ResponseEntity<>( articuloServicio.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/articulo/list")
     public ResponseEntity<?> listaArticulo() {
-        return new ResponseEntity<>( service.listaArticulo(token, null), HttpStatus.OK);
+        return new ResponseEntity<>( articuloServicio.listaArticulo(token, null), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/add")
-    public ResponseEntity<?> nuevo(@RequestBody PedidoRequest request) {
-        PedidoResponse response = null;
+    public ResponseEntity<?> nuevo(@RequestBody TransaccionRequest request) {
+        TransaccionResponse response = null;
         try {
-            response = service.nuevo(token, request);
+            response = solicitudServicio.nuevo(token, request);
         } catch (Exception e) {
-            response = new PedidoResponse();
+            response = new TransaccionResponse();
             response.setMensaje(e.getMessage());
         }
         return new ResponseEntity<>( response, HttpStatus.OK);
@@ -81,17 +72,17 @@ public class PedidoController {
     @CrossOrigin
     @GetMapping("/list")
     public ResponseEntity<?> lista() {
-        return new ResponseEntity<>( service.listaSolicitud(token), HttpStatus.OK);
+        return new ResponseEntity<>( solicitudServicio.lista(token), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PutMapping("/update")
-    public ResponseEntity<?> actualizar(@RequestBody PedidoRequest request) {
-        PedidoResponse response = null;
+    public ResponseEntity<?> actualizar(@RequestBody TransaccionRequest request) {
+        TransaccionResponse response = null;
         try {
-            response = service.actualizar(token, request);
+            response = solicitudServicio.actualizar(token, request);
         } catch (Exception e) {
-            response = new PedidoResponse();
+            response = new TransaccionResponse();
             response.setMensaje(e.getMessage());
         }
         return new ResponseEntity<>( response, HttpStatus.OK);
@@ -102,7 +93,7 @@ public class PedidoController {
     public ResponseEntity<?> eliminar(@PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            response = service.eliminar(token, id);
+            response = solicitudServicio.eliminar(token, id);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -113,7 +104,7 @@ public class PedidoController {
     @CrossOrigin
     @GetMapping("/quest/{id}")
     public ResponseEntity<?> obtener(@PathVariable("id") String id) {
-        return new ResponseEntity<>(service.obtener(token, id), HttpStatus.OK);
+        return new ResponseEntity<>(solicitudServicio.obtener(token, id), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -121,7 +112,7 @@ public class PedidoController {
     public ResponseEntity<?> confirmarLlegada(@PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            response = service.confirmarLlegada(token, id);
+            response = solicitudServicio.confirmarLlegada(token, id);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -134,7 +125,7 @@ public class PedidoController {
     public ResponseEntity<?> llegadaCancelar(@PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            response = service.cancelarLlegada(token, id);
+            response = llegadaServicio.cancelarLlegada(token, id);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -145,13 +136,31 @@ public class PedidoController {
     @CrossOrigin
     @GetMapping("/llegada/list")
     public ResponseEntity<?> listaLlegadas() {
-        return new ResponseEntity<>( service.listaLlegadas(token), HttpStatus.OK);
+        return new ResponseEntity<>( llegadaServicio.lista(token), HttpStatus.OK);
     }
 
 
     @CrossOrigin
     @PostMapping("/proveedor/add")
     public ResponseEntity<ServResponse> nuevo(@RequestBody UsuarioRequest request) {
-        return new ResponseEntity<>(service.nuevoProveedor(token, request), HttpStatus.CREATED);
+        return new ResponseEntity<>(usuarioServicio.nuevoProveedor(token, request), HttpStatus.CREATED);
+    }
+
+    @CrossOrigin
+    @GetMapping("/proveedor/quest/{codigo}")
+    public ResponseEntity<?> obtenerProveedor(@PathVariable("codigo") String codigo) {
+        return new ResponseEntity<>( usuarioServicio.obtenerProveedor(token, codigo), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/proveedor/list")
+    public ResponseEntity<?> listaProveedor() {
+        return new ResponseEntity<>( usuarioServicio.listaProveedor(token, null), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/proveedor/list")
+    public ResponseEntity<?> listaProveedorPorCodigo(@RequestBody ServPatron patron) {
+        return new ResponseEntity<>( usuarioServicio.listaProveedor(token, patron.getPatron()), HttpStatus.OK);
     }
 }

@@ -1,20 +1,18 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.generic;
 
-/**
- * Created by eyave on 27-10-17.
- */
-public class PedidoResponse {
+import java.util.List;
 
-    private PedidoObjeto PedidoObjeto;
+public class TransaccionResponseList {
+    private List<TransaccionObjeto> list;
     private boolean respuesta;
     private String mensaje;
 
-    public PedidoObjeto getPedidoObjeto() {
-        return PedidoObjeto;
+    public List<TransaccionObjeto> getList() {
+        return list;
     }
 
-    public void setPedidoObjeto(PedidoObjeto pedidoObjeto) {
-        this.PedidoObjeto = pedidoObjeto;
+    public void setList(List<TransaccionObjeto> list) {
+        this.list = list;
     }
 
     public boolean isRespuesta() {

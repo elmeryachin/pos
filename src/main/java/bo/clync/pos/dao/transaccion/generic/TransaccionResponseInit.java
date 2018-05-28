@@ -1,9 +1,6 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.generic;
 
-/**
- * Created by eyave on 28-10-17.
- */
-public class PedidoResponseInit {
+public class TransaccionResponseInit {
     private Integer nroMovimiento;
     private String fechaMovimiento;
     private boolean respuesta;

@@ -1,18 +1,17 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.ambiente.generic;
 
-import java.math.BigDecimal;
-
-/**
- * Created by eyave on 28-10-17.
- */
-public class ArticuloResponseMin {
-
+public class AmbienteResponseMin {
     private String codigo;
     private String nombre;
-    private BigDecimal precio;
-
     private boolean respuesta;
     private String mensaje;
+
+    public AmbienteResponseMin(){}
+
+    public AmbienteResponseMin(String codigo, String nombre) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+    }
 
     public String getCodigo() {
         return codigo;
@@ -28,14 +27,6 @@ public class ArticuloResponseMin {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public BigDecimal getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
     }
 
     public boolean isRespuesta() {

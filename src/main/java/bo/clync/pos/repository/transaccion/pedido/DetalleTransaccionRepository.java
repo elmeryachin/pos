@@ -1,7 +1,7 @@
 package bo.clync.pos.repository.transaccion.pedido;
 
+import bo.clync.pos.dao.transaccion.generic.TransaccionDetalle;
 import bo.clync.pos.entity.DetalleTransaccion;
-import bo.clync.pos.dao.transaccion.pedido.PedidoDetalle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,12 +14,12 @@ import java.util.List;
  */
 public interface DetalleTransaccionRepository extends JpaRepository<DetalleTransaccion, String> {
 
-    @Query("SELECT new bo.clync.pos.dao.transaccion.pedido.PedidoDetalle(o.id, o.codigoArticulo, o.cantidad, o.precio, o.observacion) " +
+    @Query("SELECT new bo.clync.pos.dao.transaccion.generic.TransaccionDetalle(o.id, o.codigoArticulo, o.cantidad, o.precio, o.observacion) " +
             " FROM DetalleTransaccion o " +
             "WHERE o.idTransaccion=:idTransaccion " +
             "  AND o.fechaBaja IS NULL" +
             " ORDER BY o.id asc")
-    public List<PedidoDetalle> listaDetalle(@Param("idTransaccion") String idTransaccion);
+    public List<TransaccionDetalle> listaDetalle(@Param("idTransaccion") String idTransaccion);
 
 
     List<DetalleTransaccion> findByIdNotInAndFechaBajaIsNull(Collection<String> ids);

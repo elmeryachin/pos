@@ -1,20 +1,17 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.transaccion.generic;
 
 import java.math.BigDecimal;
 
-/**
- * Created by eyave on 27-10-17.
- */
-public class PedidoDetalle {
+public class TransaccionDetalle {
     private String id;
     private String codigoArticulo;
     private Integer cantidad;
     private BigDecimal precio;
     private String observacion;
 
-    public PedidoDetalle(){}
+    public TransaccionDetalle(){}
 
-    public PedidoDetalle(String id, String codigoArticulo, Integer cantidad, BigDecimal precio, String observacion){
+    public TransaccionDetalle(String id, String codigoArticulo, Integer cantidad, BigDecimal precio, String observacion){
         this.id = id;
         this.codigoArticulo = codigoArticulo;
         this.cantidad = cantidad;

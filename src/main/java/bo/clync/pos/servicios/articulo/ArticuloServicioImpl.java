@@ -2,6 +2,9 @@ package bo.clync.pos.servicios.articulo;
 
 
 import bo.clync.pos.dao.articulo.lista.ResumenArticulo;
+import bo.clync.pos.dao.articulo.obtener.ObjetoArticulo;
+import bo.clync.pos.dao.articulo.ArticuloResponseList;
+import bo.clync.pos.dao.articulo.ArticuloResponseMin;
 import bo.clync.pos.entity.Articulo;
 import bo.clync.pos.dao.articulo.ArticuloRequest;
 import bo.clync.pos.dao.ServResponse;
@@ -9,6 +12,7 @@ import bo.clync.pos.dao.articulo.lista.ServListaResponse;
 import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
+import bo.clync.pos.repository.common.AmbienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,10 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     private ArticuloRepository repository;
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
+    @Autowired
+    private ArticuloRepository articuloRepository;
+    @Autowired
+    private AmbienteRepository ambienteRepository;
 
     @Override
     public ServListaResponse lista(String token) {
@@ -90,10 +98,10 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         InputStream inputStream = getClass().getResourceAsStream("/application.properties");
         Properties properties = new Properties();
         properties.load(inputStream);
-        String url      = properties.getProperty("test.source.url");
-        String user     = properties.getProperty("spring.datasource.username");
+        String url = properties.getProperty("test.source.url");
+        String user = properties.getProperty("spring.datasource.username");
         String password = properties.getProperty("spring.datasource.password");
-        return DriverManager.getConnection(url,user, password);
+        return DriverManager.getConnection(url, user, password);
     }
 
     @Override
@@ -101,7 +109,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         ServListaResponse response = new ServListaResponse();
         try {
             response.setLista(repository.getListResumenArticulosPorPatron(patron));
-            if(response.getLista().size() == 0) {
+            if (response.getLista().size() == 0) {
                 response.setRespuesta(false);
                 response.setMensaje("true");
             } else {
@@ -115,11 +123,11 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     }
 
     @Override
-    public ServObtenerResponse obtener(String codigo, String token){
+    public ServObtenerResponse obtener(String codigo, String token) {
         ServObtenerResponse response = new ServObtenerResponse();
         try {
             response.setArticulo(repository.getObtenerArticuloPorCodigo(codigo));
-            if(response.getArticulo()==null)
+            if (response.getArticulo() == null)
                 response.setMensaje("No se encontro un articulo con codigo " + codigo);
             else response.setRespuesta(true);
         } catch (Exception e) {
@@ -131,13 +139,13 @@ public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Override
     public ServResponse nuevo(ArticuloRequest request, String token) {
-        String operador         = null;
-        Articulo articulo       = null;
-        ServResponse response   = new ServResponse();
+        String operador = null;
+        Articulo articulo = null;
+        ServResponse response = new ServResponse();
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             operador = String.valueOf(arrayId[0]);
-            if(repository.getObtenerArticuloPorCodigo(request.getObjetoArticulo().getCodigo()) == null) {
+            if (repository.getObtenerArticuloPorCodigo(request.getObjetoArticulo().getCodigo()) == null) {
                 articulo = new Articulo();
                 articulo.setCodigo(request.getObjetoArticulo().getCodigo());
                 articulo.setNombre(request.getObjetoArticulo().getNombre());
@@ -165,14 +173,14 @@ public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Override
     public ServResponse actualizar(String codigo, ArticuloRequest request, String token) {
-        Articulo articulo               = null;
-        String operador                 = null;
+        Articulo articulo = null;
+        String operador = null;
         ServResponse response = new ServResponse();
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             operador = String.valueOf(arrayId[0]);
             articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
-            if(articulo != null) {
+            if (articulo != null) {
                 articulo.setNombre(request.getObjetoArticulo().getNombre());
                 articulo.setDescripcion(request.getObjetoArticulo().getDescripcion());
                 articulo.setPrecioKilo(request.getObjetoArticulo().getPrecioKilo());
@@ -198,15 +206,15 @@ public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Override
     public ServResponse eliminar(String codigo, String token) {
-        Articulo articulo       = null;
-        String operador         = null;
-        Object[] arrayId        = null;
-        ServResponse response   = new ServResponse();
+        Articulo articulo = null;
+        String operador = null;
+        Object[] arrayId = null;
+        ServResponse response = new ServResponse();
         try {
             arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            if(arrayId != null) {
+            if (arrayId != null) {
                 Integer usoArticulo = repository.getUsoArticulo(codigo);
-                if(usoArticulo == 0){
+                if (usoArticulo == 0) {
                     operador = String.valueOf(arrayId[0]);
                     articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
                     if (articulo != null) {
@@ -223,7 +231,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
             } else {
                 response.setMensaje("Su session expiro");
             }
-        } catch (Exception e ){
+        } catch (Exception e) {
             e.printStackTrace();
             response.setMensaje("Error en el servicio de eliminacion");
         }
@@ -234,6 +242,48 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     public byte[] reporteListaArticulos(String token, String tipo) {
 
         return new byte[0];
+    }
+
+    @Override
+    public ArticuloResponseMin obtenerArticulo(String token, String codigo) {
+        ArticuloResponseMin response = new ArticuloResponseMin();
+        try {
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+
+            Integer count = ambienteRepository.verificarSucursal((String) arrayId[1]);
+
+            ObjetoArticulo o = articuloRepository.getObtenerArticuloPorCodigo(codigo);
+            if (o == null) {
+                response.setMensaje("No se encontro el articulo con el codigo");
+            } else {
+                response.setCodigo(o.getCodigo());
+                response.setNombre(o.getNombre());
+                if (count == 1) {
+                    response.setPrecio(o.getPrecioZonaLibre());
+                } else {
+                    response.setPrecio(o.getPrecioVenta());
+                }
+                response.setRespuesta(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error Al recuperar el articulo por codigo");
+        }
+        return response;
+    }
+
+    @Override
+    public ArticuloResponseList listaArticulo(String token, String patron) {
+        ArticuloResponseList response = new ArticuloResponseList();
+        try {
+            if (patron == null) response.setList(articuloRepository.getListaArticuloResumen());
+            else response.setList(articuloRepository.getListaArticuloResumenPorCodigo(patron));
+            response.setRespuesta(true);
+        } catch (Exception e) {
+            response.setMensaje("Error al listar los Articulos");
+            e.printStackTrace();
+        }
+        return response;
     }
 
 }

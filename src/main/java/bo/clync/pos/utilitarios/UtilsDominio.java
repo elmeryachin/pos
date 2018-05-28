@@ -19,11 +19,19 @@ public class UtilsDominio {
     public static final String PEDIDO_SOLICITUD = "SOLICITUD";
     public static final String PEDIDO_LLEGADA = "LLEGADA";
 
+    public static final String TRANSFERENCIA = "TRANSFERENCIA";
+    public static final String TRANSFERENCIA_ENVIO = "ENVIADO";
+    public static final String TRANSFERENCIA_RECIBIR = "RECIBIDO";
+
+    public static final String VENTA = "VENTA";
+    public static final String VENTA_INICIAADA  = "INICIADA";
+    public static final String VENTA_FINALIZADA = "FINALIZADA";
 
     //public static final String TIPO_PAGO = "TIPO_PAGO";
     public static final String TIPO_PAGO_POR_PAGAR = "POR_PAGAR";
     public static final String TIPO_PAGO_PARCIAL = "PARCIAL";
     public static final String TIPO_PAGO_PAGADO = "PAGADO";
+    public static final String TIPO_PAGO_NO_REQUERIDO = "NO_REQUERIDO";
 
 
 }

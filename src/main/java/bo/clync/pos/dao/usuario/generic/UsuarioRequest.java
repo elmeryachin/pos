@@ -1,4 +1,4 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.usuario.generic;
 
 /**
  * Created by eyave on 16-11-17.

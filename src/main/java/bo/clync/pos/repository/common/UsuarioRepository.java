@@ -1,5 +1,6 @@
 package bo.clync.pos.repository.common;
 
+import bo.clync.pos.dao.usuario.generic.UsuarioResponseMin;
 import bo.clync.pos.entity.Usuario;
 import bo.clync.pos.dao.Resumen;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,25 +24,25 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "  AND o.codigoAmbiente=:codigoAmbiente" +
             "  AND o.fechaBaja IS NULL")
     Integer getIdUsuarioProveedor(@Param("codigo") String codigo,
-                                         @Param("codigoValorUsuario") String codigoValorUsuario,
-                                         @Param("codigoAmbiente") String codigoAmbiente);
+                                  @Param("codigoValorUsuario") String codigoValorUsuario,
+                                  @Param("codigoAmbiente") String codigoAmbiente);
 
-    @Query("SELECT new bo.clync.pos.dao.Resumen(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.dao.usuario.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Usuario o " +
-            "WHERE o.codigo LIKE :codigo" + //CONCAT('%',:codigo,'%')
+            "WHERE o.codigo LIKE :codigo" +
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente " +
             "  AND o.fechaBaja IS NULL")
-    List<Resumen> getListaUsuarioResumenPorPatron(@Param("codigo") String codigo,
-                                                         @Param("codigoValorUsuario") String codigoValorUsuario,
-                                                         @Param("codigoAmbiente") String codigoAmbiente);
+    List<UsuarioResponseMin> getListaUsuarioResumenPorPatron(@Param("codigo") String codigo,
+                                                             @Param("codigoValorUsuario") String codigoValorUsuario,
+                                                             @Param("codigoAmbiente") String codigoAmbiente);
 
-    @Query("SELECT new bo.clync.pos.dao.Resumen(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.dao.usuario.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Usuario o " +
             "WHERE o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente " +
             "  AND o.fechaBaja IS NULL")
-    List<Resumen> getListaUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario,
-                                                @Param("codigoAmbiente") String codigoAmbiente);
+    List<UsuarioResponseMin> getListaUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario,
+                                                    @Param("codigoAmbiente") String codigoAmbiente);
 
 }

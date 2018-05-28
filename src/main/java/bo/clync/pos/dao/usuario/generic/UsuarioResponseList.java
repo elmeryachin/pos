@@ -1,22 +1,12 @@
-package bo.clync.pos.dao.transaccion.pedido;
+package bo.clync.pos.dao.usuario.generic;
+
 
 import java.util.List;
 
-/**
- * Created by eyave on 28-10-17.
- */
-public class PedidoResponseList {
-    private List<PedidoObjeto> list;
+public class UsuarioResponseList {
+    private List<UsuarioResponseMin> list;
     private boolean respuesta;
     private String mensaje;
-
-    public List<PedidoObjeto> getList() {
-        return list;
-    }
-
-    public void setList(List<PedidoObjeto> list) {
-        this.list = list;
-    }
 
     public boolean isRespuesta() {
         return respuesta;
@@ -32,5 +22,13 @@ public class PedidoResponseList {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    public List<UsuarioResponseMin> getList() {
+        return list;
+    }
+
+    public void setList(List<UsuarioResponseMin> list) {
+        this.list = list;
     }
 }
