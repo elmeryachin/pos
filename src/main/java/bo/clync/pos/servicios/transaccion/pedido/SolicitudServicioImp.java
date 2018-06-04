@@ -50,7 +50,7 @@ public class SolicitudServicioImp implements SolicitudServicio {
     }
 
     @Override
-    public TransaccionResponse nuevo(String token, TransaccionRequest request) throws Exception {
+    public TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception {
         return transaccionServicio.nuevo(token, request, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_SOLICITUD, UtilsDominio.TIPO_PAGO_PAGADO);
     }
 
@@ -103,6 +103,7 @@ public class SolicitudServicioImp implements SolicitudServicio {
                             } else {
                                 Integer cantidad = inventario.getExistencia() + dt.getCantidad();
                                 inventario.setExistencia(cantidad);
+                                inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
                                 inventario.setFechaActualizacion(fecha);
                                 inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                             }

@@ -3,14 +3,17 @@ package bo.clync.pos.servicios.transaccion.generic;
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.transaccion.generic.*;
 import bo.clync.pos.entity.DetalleTransaccion;
+import bo.clync.pos.entity.Inventario;
 import bo.clync.pos.entity.Transaccion;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
 import bo.clync.pos.repository.common.CicloRepository;
+import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.common.UsuarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.utilitarios.UtilsConstante;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import bo.clync.pos.utilitarios.UtilsGeneral;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +33,24 @@ public class TransaccionServicioImpl implements TransaccionServicio {
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
     @Autowired
-    private ConectadoRepository conectadoRepositor;
-    @Autowired
     private TransaccionRepository transaccionRepository;
     @Autowired
     private CicloRepository cicloRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
+    private ConectadoRepository conectadoRepository;
+    @Autowired
     private ArticuloRepository articuloRepository;
     @Autowired
     private DetalleTransaccionRepository detalleTransaccionRepository;
+    @Autowired
+    private InventarioRepository inventarioRepository;
     @PersistenceContext
     private EntityManager em;
 
     private Object[] getConectados(String token) {
-        Integer id = conectadoRepositor.obtenerIdUsuarioAmbienteCredencial(token);
+        Integer id = conectadoRepository.obtenerIdUsuarioAmbienteCredencial(token);
         return (Object[]) credencialRepository.origenCredencial(id);
     }
 
@@ -63,7 +68,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         TransaccionResponseInit init = new TransaccionResponseInit();
         try {
             Object[] o = getConectados(token);
-            Integer nro = transaccionRepository.initMovimiento((Integer) o[0],  (String) o[1], dominio, cicloRepository.getIdCiclo());
+            Integer nro = transaccionRepository.initMovimiento((Integer) o[0], (String) o[1], dominio, cicloRepository.getIdCiclo());
             nro = nro == null ? 1 : nro + 1;
             init.setNroMovimiento(nro);
             init.setFechaMovimiento(UtilsGeneral.fechaActual());
@@ -75,11 +80,11 @@ public class TransaccionServicioImpl implements TransaccionServicio {
     }
 
     private void getTransaccion(String dominio, TransaccionRequest request, Transaccion transaccion, String codigoAmbiente) {
-        if(dominio.equals(UtilsDominio.PEDIDO)) {
+        if (dominio.equals(UtilsDominio.PEDIDO)) {
             transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioProveedor(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente));
-        } else if(dominio.equals(UtilsDominio.TRANSFERENCIA)) {
+        } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)) {
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
-        } else if(dominio.equals(UtilsDominio.VENTA)) {
+        } else if (dominio.equals(UtilsDominio.VENTA)) {
             transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioProveedor(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_CLIENTE, codigoAmbiente));
         }
         transaccion.setObservacion(request.getTransaccionObjeto().getObservacion());
@@ -135,6 +140,13 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             this.detalleTransaccionRepository.save(detalle);
                             pedido.setId(detalle.getId());
                         }
+
+                        getInventario(this.inventarioRepository,
+                                idUsuario, fecha,
+                                codigoAmbiente, transaccion.getCodigoAmbienteFin(),
+                                dominio, valor, request.getTransaccionObjeto().getLista(),
+                                UtilsConstante.INVENTARIO_ADD);
+
                         response.setTransaccionObjeto(request.getTransaccionObjeto());
                         response.setRespuesta(true);
                     } else {
@@ -156,6 +168,63 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         return response;
     }
 
+    private void getInventario(InventarioRepository repository,
+                               Integer idUsuario, Date fecha,
+                               String ambienteOrigen, String ambienteDestino,
+                               String dominio, String valor,
+                               List<TransaccionDetalle> list,
+                               Integer operador) throws Exception {
+        Inventario inventario = null;
+        for (TransaccionDetalle detalle : list) {
+            inventario = repository.getInventario(ambienteOrigen, detalle.getCodigoArticulo());
+            if (dominio.equals(UtilsDominio.PEDIDO) && valor.equals(UtilsDominio.PEDIDO_SOLICITUD)) {
+                if(inventario == null) {
+                    inventario = new Inventario();
+                    inventario.setCodigoAmbiente(ambienteOrigen);
+                    inventario.setCodigoArticulo(detalle.getCodigoArticulo());
+                    inventario.setExistencia(0);
+                    inventario.setPorLlegar(detalle.getCantidad());
+                    inventario.setFechaAlta(fecha);
+                    inventario.setOperadorAlta(String.valueOf(idUsuario));
+                } else {
+                    inventario.setPorLlegar(inventario.getPorLlegar() + operador * detalle.getCantidad());
+                }
+                repository.save(inventario);
+
+            } else if (dominio.equals(UtilsDominio.TRANSFERENCIA) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
+                inventario.setPorEntregar(inventario.getPorEntregar() + operador * detalle.getCantidad());
+                inventario.setExistencia(inventario.getExistencia() - operador * detalle.getCantidad());
+                repository.save(inventario);
+
+                inventario = repository.getInventario(ambienteDestino, detalle.getCodigoArticulo());
+                inventario.setPorRecibir(inventario.getPorRecibir() + operador * detalle.getCantidad());
+                repository.save(inventario);
+
+            } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
+
+            }
+        }
+    }
+
+    private void getInventarioUpdate(InventarioRepository repository,
+                                     Integer idOrigen, String ambienteOrigen,
+                                     Integer idDestino, String ambienteDestino,
+                                     String dominio, String valor,
+                                     List<TransaccionDetalle> list) {
+        Inventario inventario = null;
+        for (TransaccionDetalle detalle : list) {
+            inventario = this.inventarioRepository.getInventario(ambienteOrigen, detalle.getCodigoArticulo());
+            if (dominio.equals(UtilsDominio.PEDIDO) && valor.equals(UtilsDominio.PEDIDO_LLEGADA)) {
+                inventario.setPorLlegar(inventario.getPorLlegar() - detalle.getCantidad());
+                inventario.setExistencia(inventario.getExistencia() + detalle.getCantidad());
+                this.inventarioRepository.save(inventario);
+
+            } else if (dominio.equals(UtilsDominio.TRANSFERENCIA) && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
+
+            }
+        }
+    }
+
     @Override
     public TransaccionResponse actualizar(String token, TransaccionRequest request, String dominio) throws Exception {
         TransaccionResponse response = new TransaccionResponse();
@@ -167,6 +236,14 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             Integer idUsuario = (Integer) arrayId[0];
             String codigoAmbiente = (String) arrayId[1];
             transaccion = this.transaccionRepository.findOne(request.getTransaccionObjeto().getId());
+
+            List<TransaccionDetalle> listaDetalle = this.detalleTransaccionRepository.listaDetalle(request.getTransaccionObjeto().getId());
+            this.getInventario(this.inventarioRepository,
+                    idUsuario, fecha,
+                    codigoAmbiente, transaccion.getCodigoAmbienteFin(),
+                    transaccion.getCodigoDominio(), transaccion.getCodigoValor(),
+                    listaDetalle, UtilsConstante.INVENTARIO_REMOVE);
+
             if (transaccion != null) {
 
                 this.getTransaccion(dominio, request, transaccion, codigoAmbiente);
@@ -223,6 +300,13 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     }
                 }
 
+                this.getInventario(this.inventarioRepository,
+                        idUsuario, fecha,
+                        codigoAmbiente, transaccion.getCodigoAmbienteFin(),
+                        transaccion.getCodigoDominio(), transaccion.getCodigoValor(),
+                        request.getTransaccionObjeto().getLista(),
+                        UtilsConstante.INVENTARIO_ADD);
+
                 if (response.getMensaje() == null) {
                     response.setTransaccionObjeto(request.getTransaccionObjeto());
                     response.setRespuesta(true);
@@ -276,9 +360,9 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             String codigoAmbiente = this.credencialRepository.getCodigoAmbienteByToken(token);
             Integer idCiclo = this.cicloRepository.getIdCiclo();
             List<TransaccionObjeto> lista = null;
-            if(dominio.equals(UtilsDominio.PEDIDO)) {
+            if (dominio.equals(UtilsDominio.PEDIDO)) {
                 lista = this.transaccionRepository.listaPedidos(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
-            } else if(dominio.equals(UtilsDominio.TRANSFERENCIA)){
+            } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)) {
                 lista = this.transaccionRepository.listaTransferencias(codigoAmbiente, dominio, valor, idCiclo);
             }
             for (TransaccionObjeto pedido : lista) {

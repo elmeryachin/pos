@@ -58,10 +58,10 @@ public class PedidoController {
 
     @CrossOrigin
     @PostMapping("/add")
-    public ResponseEntity<?> nuevo(@RequestBody TransaccionRequest request) {
+    public ResponseEntity<?> adicionar(@RequestBody TransaccionRequest request) {
         TransaccionResponse response = null;
         try {
-            response = solicitudServicio.nuevo(token, request);
+            response = solicitudServicio.adicionar(token, request);
         } catch (Exception e) {
             response = new TransaccionResponse();
             response.setMensaje(e.getMessage());

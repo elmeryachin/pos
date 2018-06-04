@@ -13,7 +13,7 @@ public interface SolicitudServicio {
 
     TransaccionResponseList lista(String token);
     TransaccionResponseInit init(String token);
-    TransaccionResponse nuevo(String token, TransaccionRequest request) throws Exception;
+    TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception;
     ServResponse eliminar(String token, String idTransaccion) throws Exception;
     TransaccionResponse obtener(String token, String id);

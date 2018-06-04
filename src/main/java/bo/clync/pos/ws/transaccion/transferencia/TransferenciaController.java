@@ -39,7 +39,7 @@ public class TransferenciaController {
     public ResponseEntity<?> nuevo(@RequestBody TransaccionRequest request) {
         TransaccionResponse response = null;
         try {
-            response = envioServicio.nuevo(token, request);
+            response = envioServicio.adicionar(token, request);
         } catch (Exception e) {
             response = new TransaccionResponse();
             response.setMensaje(e.getMessage());
@@ -105,6 +105,6 @@ public class TransferenciaController {
     @CrossOrigin
     @PostMapping("/ambiente/list")
     public ResponseEntity<?> listaAmbientePorPatron(@RequestBody ServPatron patron) {
-        return new ResponseEntity<>(articuloServicio.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
+        return new ResponseEntity<>(ambienteServicio.listaSurcursal(token, patron.getPatron()), HttpStatus.OK);
     }
 }

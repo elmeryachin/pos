@@ -2,12 +2,9 @@ package bo.clync.pos.servicios.transaccion.transferencia;
 
 import bo.clync.pos.dao.ServResponse;
 import bo.clync.pos.dao.inventario.SucursalesResponseList;
-import bo.clync.pos.dao.transaccion.generic.TransaccionRequest;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponse;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponseInit;
+import bo.clync.pos.dao.transaccion.generic.*;
 import bo.clync.pos.dao.articulo.ArticuloResponseList;
 import bo.clync.pos.dao.articulo.ArticuloResponseMin;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponseList;
 import bo.clync.pos.dao.transaccion.transferencia.*;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
@@ -19,18 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class EnvioServicioImpl implements EnvioServicio {
 
-    @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
-    @Autowired
-    private ConectadoRepository conectadoRepositor;
-    @Autowired
-    private TransaccionRepository transaccionRepository;
-    @Autowired
-    private CicloRepository cicloRepository;
     @Autowired
     private TransaccionServicio transaccionServicio;
 
@@ -40,10 +31,20 @@ public class EnvioServicioImpl implements EnvioServicio {
     }
 
     @Override
-    public TransaccionResponse nuevo(String token, TransaccionRequest request) throws Exception {
+    public TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception {
         //validarLISTA DETALLE DE ARTICULOS POR SUCURSAL
+        String[] codigoArticulo = arrayArticulos(request);
 
         return transaccionServicio.nuevo(token, request, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO, UtilsDominio.TIPO_PAGO_NO_REQUERIDO);
+    }
+
+    public String[] arrayArticulos(TransaccionRequest request) {
+        List<TransaccionDetalle> list = request.getTransaccionObjeto().getLista();
+        String[] array = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = list.get(i).getCodigoArticulo();
+        }
+        return array;
     }
 
     @Override
