@@ -1,8 +1,7 @@
 package bo.clync.pos.repository.common;
 
-import bo.clync.pos.dao.ambiente.generic.AmbienteResponseList;
-import bo.clync.pos.dao.ambiente.generic.AmbienteResponseMin;
-import bo.clync.pos.entity.Ambiente;
+import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin;
+import bo.clync.pos.arquetipo.tablas.Ambiente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,7 +21,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
             "  AND a.codigo = :codigo")
     Integer verificarSucursal(@Param("codigo") String codigo);
 
-    @Query("SELECT new bo.clync.pos.dao.ambiente.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE o.tipoAmbiente = :valor" +
             "  AND o.codigo = :codigo " +
@@ -31,7 +30,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
                                               @Param("codigo") String codigo,
                                               @Param("valor") String valor);
 
-    @Query("SELECT new bo.clync.pos.dao.ambiente.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE o.tipoAmbiente = :valor" +
             "  AND o.codigo like :patron " +
@@ -40,7 +39,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
                                                      @Param("patron") String patron,
                                                      @Param("valor") String valor);
 
-    @Query("SELECT new bo.clync.pos.dao.ambiente.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE o.tipoAmbiente = :valor" +
             "  AND o.codigo <> :codigoAmbiente" )

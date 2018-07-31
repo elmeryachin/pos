@@ -1,9 +1,9 @@
 package bo.clync.pos.servicios.acceso;
 
-import bo.clync.pos.entity.Conectado;
-import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.acceso.AccesoRequest;
-import bo.clync.pos.dao.acceso.AccesoResponse;
+import bo.clync.pos.arquetipo.tablas.Conectado;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.acceso.AccesoRequest;
+import bo.clync.pos.arquetipo.objetos.acceso.AccesoResponse;
 import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.CicloRepository;

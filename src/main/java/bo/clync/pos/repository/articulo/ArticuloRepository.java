@@ -1,9 +1,9 @@
 package bo.clync.pos.repository.articulo;
 
-import bo.clync.pos.entity.Articulo;
-import bo.clync.pos.dao.Resumen;
-import bo.clync.pos.dao.articulo.lista.ResumenArticulo;
-import bo.clync.pos.dao.articulo.obtener.ObjetoArticulo;
+import bo.clync.pos.arquetipo.tablas.Articulo;
+import bo.clync.pos.arquetipo.objetos.Resumen;
+import bo.clync.pos.arquetipo.objetos.articulo.lista.ResumenArticulo;
+import bo.clync.pos.arquetipo.objetos.articulo.obtener.ObjetoArticulo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,30 +18,30 @@ public interface ArticuloRepository extends JpaRepository<Articulo, String> {
 
     Articulo findByCodigoAndFechaBajaIsNull(String codigo);
 
-    @Query("SELECT new bo.clync.pos.dao.articulo.lista.ResumenArticulo(a) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.articulo.lista.ResumenArticulo(a) " +
             " FROM Articulo a " +
             "WHERE a.fechaBaja is null")
     List<ResumenArticulo> getListResumenArticulos();
 
-    @Query("SELECT new bo.clync.pos.dao.articulo.lista.ResumenArticulo(a) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.articulo.lista.ResumenArticulo(a) " +
             " FROM Articulo a " +
             "WHERE a.codigo like :patron " +
             "  AND a.fechaBaja IS NULL")
     List<ResumenArticulo> getListResumenArticulosPorPatron(@Param("patron") String patron);
 
-    @Query("SELECT new bo.clync.pos.dao.articulo.obtener.ObjetoArticulo(a) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.articulo.obtener.ObjetoArticulo(a) " +
             " FROM Articulo a " +
             "WHERE a.codigo=:codigo " +
             "  AND a.fechaBaja is null")
     ObjetoArticulo getObtenerArticuloPorCodigo(@Param("codigo") String codigo);
 
-    @Query("SELECT new bo.clync.pos.dao.Resumen(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.Resumen(o.codigo, o.nombre) " +
             " FROM Articulo o " +
             "WHERE o.codigo LIKE :patron " + //CONCAT('%',:codigo,'%')
             "  AND o.fechaBaja IS NULL")
     List<Resumen> getListaArticuloResumenPorCodigo(@Param("patron") String patron);
 
-    @Query("SELECT new bo.clync.pos.dao.Resumen(a.codigo, a.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.Resumen(a.codigo, a.nombre) " +
             " FROM Articulo a " +
             "WHERE a.fechaBaja is null")
     List<Resumen> getListaArticuloResumen();

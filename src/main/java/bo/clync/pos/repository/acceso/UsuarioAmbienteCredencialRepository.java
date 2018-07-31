@@ -1,6 +1,6 @@
 package bo.clync.pos.repository.acceso;
 
-import bo.clync.pos.entity.UsuarioAmbienteCredencial;
+import bo.clync.pos.arquetipo.tablas.UsuarioAmbienteCredencial;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,5 +41,12 @@ public interface UsuarioAmbienteCredencialRepository extends JpaRepository<Usuar
             "  AND o.fechaBaja is null " +
             "  AND cc.fechaFin is null ")
     public Object getIdUsuarioByToken(@Param("token") String token);
+
+    @Query("SELECT o.idUsuario " +
+            " FROM UsuarioAmbienteCredencial o " +
+            "WHERE o.codigoAmbiente = :codigoAmbiente" +
+            "  AND o.fechaBaja is null ")
+    public Integer getIdUsuarioByCodigoAmbiente(@Param("codigoAmbiente") String codigoAmbiente);
+
 
 }

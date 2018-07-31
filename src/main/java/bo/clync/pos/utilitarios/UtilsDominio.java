@@ -24,7 +24,7 @@ public class UtilsDominio {
     public static final String TRANSFERENCIA_RECIBIR = "RECIBIDO";
 
     public static final String VENTA = "VENTA";
-    public static final String VENTA_INICIAADA  = "INICIADA";
+    public static final String VENTA_INICIADA  = "INICIADA";
     public static final String VENTA_FINALIZADA = "FINALIZADA";
 
     //public static final String TIPO_PAGO = "TIPO_PAGO";

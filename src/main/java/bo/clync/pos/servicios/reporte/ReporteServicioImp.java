@@ -1,6 +1,6 @@
 package bo.clync.pos.servicios.reporte;
 
-import bo.clync.pos.entity.Ambiente;
+import bo.clync.pos.arquetipo.tablas.Ambiente;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.AmbienteRepository;
 import bo.clync.pos.utilitarios.reporte.UtilsReporte;

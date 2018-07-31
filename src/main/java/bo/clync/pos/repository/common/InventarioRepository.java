@@ -1,6 +1,6 @@
 package bo.clync.pos.repository.common;
 
-import bo.clync.pos.entity.Inventario;
+import bo.clync.pos.arquetipo.tablas.Inventario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

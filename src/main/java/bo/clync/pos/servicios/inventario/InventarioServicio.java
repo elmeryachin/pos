@@ -1,9 +1,7 @@
 package bo.clync.pos.servicios.inventario;
 
-import bo.clync.pos.dao.inventario.ExistenciaResponseList;
-import bo.clync.pos.dao.inventario.SucursalesResponseList;
-
-import java.util.List;
+import bo.clync.pos.arquetipo.objetos.inventario.ExistenciaResponseList;
+import bo.clync.pos.arquetipo.objetos.inventario.SucursalesResponseList;
 
 /**
  * Created by eyave on 03-12-17.

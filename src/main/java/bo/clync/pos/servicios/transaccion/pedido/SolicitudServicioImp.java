@@ -1,10 +1,10 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
-import bo.clync.pos.dao.transaccion.generic.*;
-import bo.clync.pos.entity.DetalleTransaccion;
-import bo.clync.pos.entity.Inventario;
-import bo.clync.pos.entity.Transaccion;
-import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
+import bo.clync.pos.arquetipo.tablas.DetalleTransaccion;
+import bo.clync.pos.arquetipo.tablas.Inventario;
+import bo.clync.pos.arquetipo.tablas.Transaccion;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
@@ -61,12 +61,12 @@ public class SolicitudServicioImp implements SolicitudServicio {
 
     @Override
     public ServResponse eliminar(String token, String idTransaccion) throws Exception {
-        return transaccionServicio.eliminar(token, idTransaccion);
+        return transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.PEDIDO_SOLICITUD);
     }
 
     @Override
     public TransaccionResponse obtener(String token, String id) {
-        return transaccionServicio.obtener(token, id);
+        return transaccionServicio.obtener(token, id, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_SOLICITUD);
     }
 
     @Override

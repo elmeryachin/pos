@@ -1,12 +1,9 @@
 package bo.clync.pos.repository.acceso;
 
-import bo.clync.pos.entity.Conectado;
-import bo.clync.pos.dao.ServResponse;
+import bo.clync.pos.arquetipo.tablas.Conectado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.Date;
 
 /**
  * Created by eyave on 28-10-17.

@@ -1,15 +1,7 @@
 package bo.clync.pos.servicios.transaccion.transferencia;
 
-import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.inventario.SucursalesResponseList;
-import bo.clync.pos.dao.transaccion.generic.*;
-import bo.clync.pos.dao.articulo.ArticuloResponseList;
-import bo.clync.pos.dao.articulo.ArticuloResponseMin;
-import bo.clync.pos.dao.transaccion.transferencia.*;
-import bo.clync.pos.repository.acceso.ConectadoRepository;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
-import bo.clync.pos.repository.common.CicloRepository;
-import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +46,7 @@ public class EnvioServicioImpl implements EnvioServicio {
 
     @Override
     public ServResponse eliminar(String token, String idTransaccion) throws Exception {
-        return transaccionServicio.eliminar(token, idTransaccion);
+        return transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.TRANSFERENCIA_ENVIO);
     }
 
     @Override
@@ -62,4 +54,8 @@ public class EnvioServicioImpl implements EnvioServicio {
         return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO, null);
     }
 
+    @Override
+    public TransaccionResponse obtener(String token, String id) {
+        return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO);
+    }
 }

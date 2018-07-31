@@ -1,8 +1,7 @@
 package bo.clync.pos.repository.common;
 
-import bo.clync.pos.dao.usuario.generic.UsuarioResponseMin;
-import bo.clync.pos.entity.Usuario;
-import bo.clync.pos.dao.Resumen;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
+import bo.clync.pos.arquetipo.tablas.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,7 +26,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
                                   @Param("codigoValorUsuario") String codigoValorUsuario,
                                   @Param("codigoAmbiente") String codigoAmbiente);
 
-    @Query("SELECT new bo.clync.pos.dao.usuario.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Usuario o " +
             "WHERE o.codigo LIKE :codigo" +
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
@@ -37,7 +36,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
                                                              @Param("codigoValorUsuario") String codigoValorUsuario,
                                                              @Param("codigoAmbiente") String codigoAmbiente);
 
-    @Query("SELECT new bo.clync.pos.dao.usuario.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Usuario o " +
             "WHERE o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente " +

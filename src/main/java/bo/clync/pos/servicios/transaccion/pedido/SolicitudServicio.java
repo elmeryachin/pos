@@ -1,10 +1,10 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
-import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.transaccion.generic.TransaccionRequest;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponse;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponseInit;
-import bo.clync.pos.dao.transaccion.generic.TransaccionResponseList;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionRequest;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseInit;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
 
 /**
  * Created by eyave on 27-10-17.

@@ -1,7 +1,7 @@
 package bo.clync.pos.servicios.ambiente;
 
-import bo.clync.pos.dao.ambiente.generic.AmbienteResponseMin;
-import bo.clync.pos.dao.ambiente.generic.AmbienteResponseList;
+import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin;
+import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseList;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.AmbienteRepository;
 import bo.clync.pos.utilitarios.UtilsDominio;

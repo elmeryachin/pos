@@ -1,11 +1,11 @@
 package bo.clync.pos.servicios.articulo;
 
-import bo.clync.pos.dao.articulo.ArticuloRequest;
-import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.articulo.obtener.ServObtenerResponse;
-import bo.clync.pos.dao.articulo.lista.ServListaResponse;
-import bo.clync.pos.dao.articulo.ArticuloResponseList;
-import bo.clync.pos.dao.articulo.ArticuloResponseMin;
+import bo.clync.pos.arquetipo.objetos.articulo.ArticuloRequest;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.articulo.obtener.ServObtenerResponse;
+import bo.clync.pos.arquetipo.objetos.articulo.lista.ServListaResponse;
+import bo.clync.pos.arquetipo.objetos.articulo.ArticuloResponseList;
+import bo.clync.pos.arquetipo.objetos.articulo.ArticuloResponseMin;
 
 /**
  * Created by eyave on 09-10-17.
@@ -13,8 +13,6 @@ import bo.clync.pos.dao.articulo.ArticuloResponseMin;
 public interface ArticuloServicio {
 
     ServListaResponse lista(String token);
-
-    ServListaResponse listaNativa(String token);
 
     ServListaResponse listaPorCodigo(String token, String patron);
 

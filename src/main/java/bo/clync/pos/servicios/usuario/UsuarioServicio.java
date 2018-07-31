@@ -1,9 +1,9 @@
 package bo.clync.pos.servicios.usuario;
 
-import bo.clync.pos.dao.ServResponse;
-import bo.clync.pos.dao.usuario.generic.UsuarioRequest;
-import bo.clync.pos.dao.usuario.generic.UsuarioResponseList;
-import bo.clync.pos.dao.usuario.generic.UsuarioResponseMin;
+import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioRequest;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseList;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
 
 public interface UsuarioServicio {
 

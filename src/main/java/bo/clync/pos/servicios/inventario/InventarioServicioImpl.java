@@ -1,10 +1,9 @@
 package bo.clync.pos.servicios.inventario;
 
-import bo.clync.pos.dao.ResumenExistencia;
-import bo.clync.pos.dao.inventario.ExistenciaResponseList;
-import bo.clync.pos.dao.inventario.Sucursales;
-import bo.clync.pos.dao.inventario.SucursalesResponseList;
-import bo.clync.pos.entity.Inventario;
+import bo.clync.pos.arquetipo.objetos.ResumenExistencia;
+import bo.clync.pos.arquetipo.objetos.inventario.ExistenciaResponseList;
+import bo.clync.pos.arquetipo.objetos.inventario.Sucursales;
+import bo.clync.pos.arquetipo.objetos.inventario.SucursalesResponseList;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
