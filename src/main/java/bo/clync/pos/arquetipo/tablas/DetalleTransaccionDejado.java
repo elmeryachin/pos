@@ -7,7 +7,7 @@ import java.util.Date;
 public class DetalleTransaccionDejado  implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id//@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Id//@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String codigoDominio;
     private String codigoValor;

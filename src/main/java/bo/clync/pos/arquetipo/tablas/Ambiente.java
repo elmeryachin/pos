@@ -25,7 +25,7 @@ public class Ambiente implements Serializable {
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
-    private String operadorActuaizacion;
+    private String operadorActualizacion;
     private Date fechaBaja;
     private String operadorBaja;
 
@@ -87,12 +87,12 @@ public class Ambiente implements Serializable {
         this.fechaActualizacion = fechaActualizacion;
     }
 
-    public String getOperadorActuaizacion() {
-        return operadorActuaizacion;
+    public String getOperadorActualizacion() {
+        return operadorActualizacion;
     }
 
-    public void setOperadorActuaizacion(String operadorActuaizacion) {
-        this.operadorActuaizacion = operadorActuaizacion;
+    public void setOperadorActualizacion(String operadorActualizacion) {
+        this.operadorActualizacion = operadorActualizacion;
     }
 
     public Date getFechaBaja() {

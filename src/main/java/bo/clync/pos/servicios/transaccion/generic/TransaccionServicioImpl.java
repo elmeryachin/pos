@@ -91,14 +91,15 @@ public class TransaccionServicioImpl implements TransaccionServicio {
      */
     private void getTransaccion(String dominio, TransaccionRequest request, Transaccion transaccion, String codigoAmbiente) {
         if (dominio.equals(UtilsDominio.PEDIDO)) {
-            transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioProveedor(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente));
+            transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioConAmbiente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente));
         } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)) {
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
             Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
             transaccion.setIdUsuarioFin(idUsuarioFin);
         } else if (dominio.equals(UtilsDominio.VENTA)) {
-            transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioProveedor(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_CLIENTE, codigoAmbiente));
+            transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioCliente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_CLIENTE));
         }
+
         transaccion.setObservacion(request.getTransaccionObjeto().getObservacion());
     }
 
@@ -153,11 +154,13 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             pedido.setId(detalle.getId());
                         }
 
-                        getInventario(this.inventarioRepository,
+                        String msgError = getInventario(this.inventarioRepository,
                                 idUsuario, fecha,
                                 codigoAmbiente, transaccion.getCodigoAmbienteFin(),
                                 dominio, valor, request.getTransaccionObjeto().getLista(),
                                 UtilsConstante.INVENTARIO_ADD);
+
+                        if(msgError != null) throw new Exception(msgError);
 
                         response.setTransaccionObjeto(request.getTransaccionObjeto());
                         response.setRespuesta(true);
@@ -173,20 +176,21 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         } catch (Exception e) {
             e.printStackTrace();
             response.setTransaccionObjeto(null);
-            response.setMensaje("Error al guardar la transaccion ");
+            response.setMensaje(e.getMessage());
         }
         if (!response.isRespuesta())
             throw new Exception(response.getMensaje());
         return response;
     }
 
-    private void getInventario(InventarioRepository repository,
-                               Integer idUsuario, Date fecha,
-                               String ambienteOrigen, String ambienteDestino,
-                               String dominio, String valor,
-                               List<TransaccionDetalle> list,
-                               Integer operador) throws Exception {
+    private String getInventario(InventarioRepository repository,
+                                 Integer idUsuario, Date fecha,
+                                 String ambienteOrigen, String ambienteDestino,
+                                 String dominio, String valor,
+                                 List<TransaccionDetalle> list,
+                                 Integer operador) throws Exception {
         Inventario inventario = null;
+        String msgError = null;
         for (TransaccionDetalle detalle : list) {
             inventario = repository.getInventario(ambienteOrigen, detalle.getCodigoArticulo());
             if (dominio.equals(UtilsDominio.PEDIDO) && valor.equals(UtilsDominio.PEDIDO_SOLICITUD)) {
@@ -220,10 +224,14 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 inventario.setPorRecibir(UtilsOperacion.getNumeroNoNulo(inventario.getPorRecibir()) + operador * detalle.getCantidad());
                 repository.save(inventario);
 
-            } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
-
+            } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.VENTA_REALIZADA)) {
+                inventario.setExistencia(inventario.getExistencia() - operador * detalle.getCantidad());
+                repository.save(inventario);
+                if (inventario.getExistencia() < 0) msgError = "No existe suficientes articulos";
             }
         }
+
+        return msgError;
     }
 
     @Override
@@ -302,13 +310,13 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                         }
                     }
 
-                    this.getInventario(this.inventarioRepository,
+                    String msgError = this.getInventario(this.inventarioRepository,
                             idUsuario, fecha,
                             codigoAmbiente, transaccion.getCodigoAmbienteFin(),
                             transaccion.getCodigoDominio(), transaccion.getCodigoValor(),
                             request.getTransaccionObjeto().getLista(),
                             UtilsConstante.INVENTARIO_ADD);
-
+                    response.setMensaje(msgError);
                     if (response.getMensaje() == null) {
                         response.setTransaccionObjeto(request.getTransaccionObjeto());
                         response.setRespuesta(true);
@@ -392,6 +400,8 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
                 lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, idCiclo);
+            } else if (dominio.equals(UtilsDominio.VENTA)) {
+                lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo);
             }
             for (TransaccionObjeto pedido : lista) {
                 pedido.setLista(this.detalleTransaccionRepository.listaDetalle(pedido.getId()));

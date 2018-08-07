@@ -38,12 +38,14 @@ public class AccesoServicioImpl implements AccesoServicio {
                 if(conectadoRepository.buscarToken(request.getUsuario()) == null) {
                     Conectado c = new Conectado((Integer) uac[1], tokn, new java.util.Date());
                     conectadoRepository.save(c);
+                    response.setToken(tokn);
+                } else {
+                    response.setToken(conectadoRepository.buscarToken(request.getUsuario()));
                 }
                 response.setRespuesta(true);
                 response.setFechaInicioCiclo(fechaI);
                 response.setNombreUsuario((String) uac[2]);
                 response.setNombreAmbiente((String) uac[3]);
-                response.setToken(tokn);
                 response.setTipo((String) uac[4]);
             } else {
                 response.setMensaje("Los datos de autenticacion son incorrectos");

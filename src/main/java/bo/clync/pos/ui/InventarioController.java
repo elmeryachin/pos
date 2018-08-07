@@ -16,11 +16,10 @@ public class InventarioController {
     @Autowired
     private InventarioServicio service;
 
-    private String token = "20171029130500-1-1";
-
     @CrossOrigin
     @GetMapping(value = "/articulo/{codigo}/existence")
-    public ResponseEntity<?> existenciaArticulo(@PathVariable("codigo") String codigo) {
+    public ResponseEntity<?> existenciaArticulo(@RequestHeader(value="token") String token,
+                                                @PathVariable("codigo") String codigo) {
         //Postergado
         return new ResponseEntity<>( service.existenciaArticulo(token, codigo), HttpStatus.OK);
     }
@@ -28,7 +27,7 @@ public class InventarioController {
 
     @CrossOrigin
     @GetMapping(value = "/articulo/sucursales")
-    public ResponseEntity<?> listaSucursales() {
+    public ResponseEntity<?> listaSucursales(@RequestHeader(value="token") String token) {
         //Postergado
         return new ResponseEntity<>( service.listaSucursales(token), HttpStatus.OK);
     }

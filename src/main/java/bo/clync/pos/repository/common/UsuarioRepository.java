@@ -22,9 +22,17 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente" +
             "  AND o.fechaBaja IS NULL")
-    Integer getIdUsuarioProveedor(@Param("codigo") String codigo,
-                                  @Param("codigoValorUsuario") String codigoValorUsuario,
-                                  @Param("codigoAmbiente") String codigoAmbiente);
+    Integer getIdUsuarioConAmbiente(@Param("codigo") String codigo,
+                                    @Param("codigoValorUsuario") String codigoValorUsuario,
+                                    @Param("codigoAmbiente") String codigoAmbiente);
+
+    @Query("SELECT o.id " +
+            " FROM Usuario o " +
+            "WHERE o.codigo = :codigo " +
+            "  AND o.codigoValorUsuario=:codigoValorUsuario " +
+            "  AND o.fechaBaja IS NULL")
+    Integer getIdUsuarioCliente(@Param("codigo") String codigo,
+                                    @Param("codigoValorUsuario") String codigoValorUsuario);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Usuario o " +
@@ -43,5 +51,23 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "  AND o.fechaBaja IS NULL")
     List<UsuarioResponseMin> getListaUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario,
                                                     @Param("codigoAmbiente") String codigoAmbiente);
+
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
+            " FROM Usuario o " +
+            "WHERE o.codigoValorUsuario=:codigoValorUsuario " +
+            "  AND o.fechaBaja IS NULL")
+    List<UsuarioResponseMin> getTodosUsuarioResumen(@Param("codigoValorUsuario") String codigoValorUsuario);
+
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
+            " FROM Usuario o " +
+            "WHERE o.codigo LIKE :codigo" +
+            "  AND o.codigoValorUsuario=:codigoValorUsuario " +
+            "  AND o.fechaBaja IS NULL")
+    List<UsuarioResponseMin> getTodosUsuarioResumenPorPatron(@Param("codigo") String codigo,
+                                                             @Param("codigoValorUsuario") String codigoValorUsuario);
+
+    @Query("SELECT count(id) " +
+            " FROM Usuario o ")
+    Integer maximoIdRegistro();
 
 }

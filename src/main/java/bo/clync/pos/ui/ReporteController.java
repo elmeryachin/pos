@@ -17,11 +17,10 @@ public class ReporteController {
     @Autowired
     private ReporteServicio service;
 
-    private String token = "20171029130500-1-1";
-
     @CrossOrigin
     @GetMapping(value = "/{nombre}/pdf/download", produces = {"application/pdf"})
-    public ResponseEntity<?> pdfDownload(@PathVariable("nombre") String nombre) {
+    public ResponseEntity<?> pdfDownload(@RequestHeader(value="token") String token,
+                                         @PathVariable("nombre") String nombre) {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"my-pdf-file.pdf\"")
                 .body(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_PDF));
@@ -29,7 +28,8 @@ public class ReporteController {
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/xls/download", produces = {"application/vnd.ms-excel"})
-    public ResponseEntity<?> xlsDownload(@PathVariable("nombre") String nombre) {
+    public ResponseEntity<?> xlsDownload(@RequestHeader(value="token") String token,
+                                         @PathVariable("nombre") String nombre) {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=\"my-xls-file.xls\"")
                 .body(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_XLS));
@@ -37,39 +37,45 @@ public class ReporteController {
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/pdf/view", produces = {"application/pdf"})
-    public ResponseEntity<?> pdfView(@PathVariable("nombre") String nombre) {
+    public ResponseEntity<?> pdfView(@RequestHeader(value="token") String token,
+                                     @PathVariable("nombre") String nombre) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_PDF), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/xls/view", produces = {"application/vnd.ms-excel"})
-    public ResponseEntity<?> xlsView(@PathVariable("nombre") String nombre) {
+    public ResponseEntity<?> xlsView(@RequestHeader(value="token") String token,
+                                     @PathVariable("nombre") String nombre) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_XLS), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/html/view", produces = {"text/plain"})
-    public ResponseEntity<?> htmlView(@PathVariable("nombre") String nombre) {
+    public ResponseEntity<?> htmlView(@RequestHeader(value="token") String token,
+                                      @PathVariable("nombre") String nombre) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_HTML), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/pdf/view/{id}", produces = {"application/pdf"})
-    public ResponseEntity<?> pdfViewId(@PathVariable("nombre") String nombre,
+    public ResponseEntity<?> pdfViewId(@RequestHeader(value="token") String token,
+                                       @PathVariable("nombre") String nombre,
                                        @PathVariable("id") String id) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_PDF, id), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/xls/view/{id}", produces = {"application/vnd.ms-excel"})
-    public ResponseEntity<?> xlsViewId(@PathVariable("nombre") String nombre,
+    public ResponseEntity<?> xlsViewId(@RequestHeader(value="token") String token,
+                                       @PathVariable("nombre") String nombre,
                                        @PathVariable("id") String id) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_XLS, id), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping(value = "/{nombre}/html/view/{id}", produces = {"text/plain"})
-    public ResponseEntity<?> htmlViewId(@PathVariable("nombre") String nombre,
+    public ResponseEntity<?> htmlViewId(@RequestHeader(value="token") String token,
+                                        @PathVariable("nombre") String nombre,
                                        @PathVariable("id") String id) {
         return new ResponseEntity<>(service.reporteArticulos(token, nombre, TipoDocumento.FORMAT_HTML, id), HttpStatus.OK);
     }

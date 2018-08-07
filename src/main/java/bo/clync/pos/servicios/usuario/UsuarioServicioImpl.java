@@ -22,7 +22,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
 
-    private UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario) {
+    @Override
+    public UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario) {
         Usuario usuario = null;
         UsuarioResponseMin response = new UsuarioResponseMin();
         String codigoAmbiente = null;
@@ -43,7 +44,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         return response;
     }
 
-    private ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario) {
+    @Override
+    public ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario) {
         ServResponse response = new ServResponse();
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
@@ -51,8 +53,10 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 Integer idUsuario = (Integer) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 Usuario usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(request.getCodigo(), tipoUsuario, codigoAmbiente);
+                Integer len = usuarioRepository.maximoIdRegistro();
                 if (usuario == null) {
                     usuario = new Usuario();
+                    usuario.setId(len);
                     usuario.setCodigo(request.getCodigo());
                     usuario.setNombre(request.getNombre());
                     usuario.setDireccion(request.getDireccion());
@@ -76,7 +80,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         return response;
     }
 
-    private UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario) {
+    @Override
+    public UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario) {
         UsuarioResponseList response = new UsuarioResponseList();
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
@@ -92,18 +97,35 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         return response;
     }
 
-    @Override
-    public UsuarioResponseList listaProveedor(String token, String patron) {
+    /*
+    public UsuarioResponseList listaUsuariosTodos(String token, String patron, String tipoUsuario) {
+        UsuarioResponseList response = new UsuarioResponseList();
+        try {
+            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
+            if (patron == null)
+                response.setList(usuarioRepository.getListaUsuarioResumen(tipoUsuario, codigoAmbiente));
+            else
+                response.setList(usuarioRepository.getListaUsuarioResumenPorPatron(patron, tipoUsuario, codigoAmbiente));
+            response.setRespuesta(true);
+        } catch (Exception e) {
+            response.setMensaje("Error al recuperar la lista de " + tipoUsuario);
+            e.printStackTrace();
+        }
+        return response;
+    }*/
+
+    //@Override
+    private UsuarioResponseList listaProveedor(String token, String patron) {
         return listaUsuario(token, patron, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
     }
 
-    @Override
-    public UsuarioResponseMin obtenerProveedor(String token, String codigo) {
+    //@Override
+    private UsuarioResponseMin obtenerProveedor(String token, String codigo) {
         return obtenerUsuario(token, codigo, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
     }
 
-    @Override
-    public ServResponse nuevoProveedor(String token, UsuarioRequest request) {
+    //@Override
+    private ServResponse nuevoProveedor(String token, UsuarioRequest request) {
         return nuevoUsuario(token, request, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
     }
 }

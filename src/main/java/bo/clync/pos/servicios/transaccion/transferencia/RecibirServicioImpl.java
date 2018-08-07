@@ -12,6 +12,7 @@ import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
 import bo.clync.pos.utilitarios.UtilsDominio;
+import bo.clync.pos.utilitarios.UtilsOperacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,21 +72,12 @@ public class RecibirServicioImpl implements RecibirServicio {
                                 dt.setOperadorActualizacion(String.valueOf(idUsuario));
                                 dt.setFechaActualizacion(fecha);
                                 detalleTransaccionRepository.save(dt);
-                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
-                                if (inventario == null) {
-                                    inventario = new Inventario();
-                                    inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
-                                    inventario.setCodigoArticulo(dt.getCodigoArticulo());
-                                    inventario.setExistencia(dt.getCantidad());
-                                    inventario.setFechaAlta(fecha);
-                                    inventario.setOperadorAlta(String.valueOf(idUsuario));
-                                } else {
-                                    Integer cantidad = inventario.getExistencia() + dt.getCantidad();
-                                    inventario.setExistencia(cantidad);
-                                    inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
-                                    inventario.setFechaActualizacion(fecha);
-                                    inventario.setOperadorActualizacion(String.valueOf(idUsuario));
-                                }
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteFin(), dt.getCodigoArticulo());
+                                Integer cantidad = inventario.getExistencia() + dt.getCantidad();
+                                inventario.setExistencia(cantidad);
+                                inventario.setPorRecibir(UtilsOperacion.getNumeroNoNulo(inventario.getPorRecibir()) - dt.getCantidad());
+                                inventario.setFechaActualizacion(fecha);
+                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario);
                             }
                             response.setRespuesta(true);
@@ -123,20 +115,22 @@ public class RecibirServicioImpl implements RecibirServicio {
                 String codigoAmbiente = (String) arrayId[1];
                 transaccion = transaccionRepository.getTransaccion(id);
                 if (transaccion != null) {
+
                     if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
-                        if(transaccion.getCodigoAmbienteFin().equals(codigoAmbiente)) {
+                        if (transaccion.getCodigoAmbienteFin().equals(codigoAmbiente)) {
                             transaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_ENVIO);
                             transaccion.setFechaActualizacion(fecha);
                             transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
                             transaccionRepository.save(transaccion);
                             List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
                             for (DetalleTransaccion detalle : detalles) {
-                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteFin(), detalle.getCodigoArticulo());
                                 Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
                                 if (cantidad < 0) {
                                     response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
                                 }
                                 inventario.setExistencia(cantidad);
+                                inventario.setPorRecibir(UtilsOperacion.getNumeroNoNulo(inventario.getPorRecibir()) + detalle.getCantidad());
                                 inventario.setFechaActualizacion(fecha);
                                 inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario);

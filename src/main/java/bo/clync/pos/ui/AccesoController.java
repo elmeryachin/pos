@@ -21,7 +21,6 @@ public class AccesoController {
 
     @Autowired
     private AccesoServicio servicio;
-    private String token = "20171029130500-1-1";
 
     @CrossOrigin
     @PostMapping("/login")
@@ -48,7 +47,7 @@ public class AccesoController {
 
     @CrossOrigin
     @PostMapping("/salir")
-    public ResponseEntity<?> salir(){
+    public ResponseEntity<?> salir(@RequestHeader(value="token") String token){
         return new ResponseEntity<>(servicio.salir(token), HttpStatus.OK);
     }
 }

@@ -7,9 +7,13 @@ import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
 
 public interface UsuarioServicio {
 
-    UsuarioResponseList listaProveedor(String token, String patron);
-    UsuarioResponseMin obtenerProveedor(String token, String codigo);
-    ServResponse nuevoProveedor(String token, UsuarioRequest request);
+    ///UsuarioResponseList listaProveedor(String token, String patron);
+    //UsuarioResponseMin obtenerProveedor(String token, String codigo);
+    //ServResponse nuevoProveedor(String token, UsuarioRequest request);
 
+    public UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario);
+    public ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario);
+    public UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario);
+    //public UsuarioResponseList listaUsuariosTodos(String token, String patron, String tipoUsuario);
 
 }

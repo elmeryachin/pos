@@ -18,28 +18,25 @@ public class RecibirController {
     @Autowired
     private RecibirServicio recibirServicio;
 
-    private String token = "123456789";
-
     @CrossOrigin
     @GetMapping("/recibidos/list")
-    public ResponseEntity<?> lista() {
-        token = "123456789";
+    public ResponseEntity<?> lista(@RequestHeader(value="token") String token) {
         return new ResponseEntity<>(recibirServicio.lista(token), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/recibidos/quest/{id}")
-    public ResponseEntity<?> obtener(@PathVariable("id") String id) {
-        token = "123456789";
+    public ResponseEntity<?> obtener(@RequestHeader(value="token") String token,
+                                     @PathVariable("id") String id) {
         return new ResponseEntity<>(recibirServicio.obtener(token, id), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PutMapping("/confirmar/recepcion/{id}")
-    public ResponseEntity<?> confirmar(@PathVariable("id") String id) {
+    public ResponseEntity<?> confirmar(@RequestHeader(value="token") String token,
+                                       @PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            token = "123456789";
             response = recibirServicio.confirmarRecepcion(token, id);
         } catch (Exception e) {
             response = new ServResponse();
@@ -50,10 +47,10 @@ public class RecibirController {
 
     @CrossOrigin
     @PutMapping("/cancelar/recepcion/{id}")
-    public ResponseEntity<?> cancelar(@PathVariable("id") String id) {
+    public ResponseEntity<?> cancelar(@RequestHeader(value="token") String token,
+                                      @PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            token = "123456789";
             response = recibirServicio.cancelarRecepcion(token, id);
         } catch (Exception e) {
             response = new ServResponse();
