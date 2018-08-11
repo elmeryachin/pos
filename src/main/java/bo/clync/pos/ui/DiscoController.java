@@ -14,23 +14,24 @@ public class DiscoController {
     @Autowired
     private DiscoServicio service;
 
-    private String token = "20171029130500-1-1";
-
     @CrossOrigin
     @PostMapping("/grabar")
-    public ResponseEntity<?> grabar(@RequestBody DiscoRequest request) {
+    public ResponseEntity<?> grabar(@RequestHeader(value="token") String token,
+                                    @RequestBody DiscoRequest request) {
         return new ResponseEntity<>( service.grabar (token, request), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/leer")
-    public ResponseEntity<?> leer(String token, Byte[] array) {
+    public ResponseEntity<?> leer(@RequestHeader(value="token") String token,
+                                  Byte[] array) {
         return new ResponseEntity<>(service.leer(token, array),HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/recuperar")
-    public ResponseEntity<?> recuperar(String token, DiscoRequest request) {
+    public ResponseEntity<?> recuperar(@RequestHeader(value="token") String token,
+                                       DiscoRequest request) {
         return new ResponseEntity<>(service.recuperar(token, request), HttpStatus.OK);
     }
 

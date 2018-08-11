@@ -33,6 +33,7 @@ public class EnvioController {
         return new ResponseEntity<>(envioServicio.init(token), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PostMapping("/add")
     public ResponseEntity<?> nuevo(@RequestHeader(value="token") String token,
                                    @RequestBody TransaccionRequest request) {
@@ -46,6 +47,7 @@ public class EnvioController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PutMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader(value="token") String token,
                                         @RequestBody TransaccionRequest request) {
