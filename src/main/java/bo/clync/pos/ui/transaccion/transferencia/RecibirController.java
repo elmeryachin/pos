@@ -19,6 +19,20 @@ public class RecibirController {
     private RecibirServicio recibirServicio;
 
     @CrossOrigin
+    @GetMapping("/porrecibir/list")
+    public ResponseEntity<?> listaPorRecibir(@RequestHeader(value="token") String token) {
+        return new ResponseEntity<>(recibirServicio.listaPorRecibir(token), HttpStatus.OK);
+    }
+
+
+    @CrossOrigin
+    @GetMapping("/porrecibir/quest/{id}")
+    public ResponseEntity<?> obtenerPorRecibir(@RequestHeader(value="token") String token,
+                                     @PathVariable("id") String id) {
+        return new ResponseEntity<>(recibirServicio.obtenerPorRecibir(token, id), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/recibidos/list")
     public ResponseEntity<?> lista(@RequestHeader(value="token") String token) {
         return new ResponseEntity<>(recibirServicio.lista(token), HttpStatus.OK);

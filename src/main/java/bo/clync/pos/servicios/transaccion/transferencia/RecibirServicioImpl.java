@@ -36,8 +36,18 @@ public class RecibirServicioImpl implements RecibirServicio {
     private DetalleTransaccionRepository detalleTransaccionRepository;
 
     @Override
+    public TransaccionResponseList listaPorRecibir(String token) {
+        return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO_DESTINO_AUX, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
+    }
+
+    @Override
     public TransaccionResponseList lista(String token) {
         return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_RECIBIR, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
+    }
+
+    @Override
+    public TransaccionResponse obtenerPorRecibir(String token, String id) {
+        return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO);
     }
 
     @Override

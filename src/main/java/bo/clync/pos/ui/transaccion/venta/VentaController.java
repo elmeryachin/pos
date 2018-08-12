@@ -31,6 +31,7 @@ public class VentaController {
         return new ResponseEntity<>(service.init(token), HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PostMapping("/add")
     public ResponseEntity<?> nuevo(@RequestHeader(value="token") String token,
                                    @RequestBody TransaccionRequest request) {
@@ -44,6 +45,7 @@ public class VentaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @CrossOrigin
     @PutMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader(value="token") String token,
                                         @RequestBody TransaccionRequest request) {

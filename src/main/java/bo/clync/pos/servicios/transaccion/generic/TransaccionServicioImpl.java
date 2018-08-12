@@ -396,7 +396,10 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 lista = this.transaccionRepository.listaPedidos(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
-                lista = this.transaccionRepository.listaTransferenciasEnvios(codigoAmbiente, dominio, valor, idCiclo);
+                lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
+            } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
+                    && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO_DESTINO_AUX)) {
+                lista = this.transaccionRepository.listaTransferenciasEnviosPorDestino(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_ENVIO, idCiclo);
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
                 lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, idCiclo);

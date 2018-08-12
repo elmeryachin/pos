@@ -6,7 +6,11 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseLis
 
 public interface RecibirServicio {
 
+    public TransaccionResponseList listaPorRecibir(String token);
+
     public TransaccionResponseList lista(String token);
+
+    public TransaccionResponse obtenerPorRecibir(String token, String id);
 
     public TransaccionResponse obtener(String token, String id);
 

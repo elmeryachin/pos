@@ -51,10 +51,23 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
             " ORDER BY o.fechaInicio DESC")
-    List<TransaccionObjeto> listaTransferenciasEnvios(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
+    List<TransaccionObjeto> listaTransferenciasEnviosPorOrigen(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                 @Param("dominio") String dominio,
                                                 @Param("codigoValor") String codigoValor,
                                                 @Param("idCiclo") Integer idCiclo);
+
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion) " +
+            " FROM Transaccion o " +
+            "WHERE o.codigoAmbienteFin=:codigoAmbienteFin" +
+            "  AND o.codigoDominio=:dominio " +
+            "  AND o.codigoValor=:codigoValor " +
+            "  AND o.idCiclo=:idCiclo " +
+            "  AND o.fechaBaja IS NULL" +
+            " ORDER BY o.fechaInicio DESC")
+    List<TransaccionObjeto> listaTransferenciasEnviosPorDestino(@Param("codigoAmbienteFin") String codigoAmbienteFin,
+                                                      @Param("dominio") String dominio,
+                                                      @Param("codigoValor") String codigoValor,
+                                                      @Param("idCiclo") Integer idCiclo);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion) " +
             " FROM Transaccion o " +
