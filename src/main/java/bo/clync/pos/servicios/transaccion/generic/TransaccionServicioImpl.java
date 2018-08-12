@@ -403,6 +403,9 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
                 lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, idCiclo);
+            }  else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
+                    && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_ORIGEN_AUX)) {
+                lista = this.transaccionRepository.listaTransferenciasRecibidosPorOrigen(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_RECIBIR, idCiclo);
             } else if (dominio.equals(UtilsDominio.VENTA)) {
                 lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo);
             }

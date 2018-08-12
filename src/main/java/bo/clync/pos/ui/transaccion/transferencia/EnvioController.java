@@ -82,6 +82,12 @@ public class EnvioController {
     }
 
     @CrossOrigin
+    @GetMapping("/confirmados/list")
+    public ResponseEntity<?> listaConfirmados(@RequestHeader(value="token") String token) {
+        return new ResponseEntity<>(envioServicio.listaConfirmados(token), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/quest/{id}")
     public ResponseEntity<?> obtener(@RequestHeader(value="token") String token,
                                      @PathVariable("id") String id) {

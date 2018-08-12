@@ -14,6 +14,7 @@ public interface EnvioServicio {
     TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception;
     ServResponse eliminar(String token, String idTransaccion) throws Exception;
     TransaccionResponseList lista(String token);
+    TransaccionResponseList listaConfirmados(String token);
     TransaccionResponse obtener(String token, String id);
 
 }

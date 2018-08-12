@@ -23,6 +23,7 @@ public class UtilsDominio {
     public static final String TRANSFERENCIA_ENVIO = "ENVIADO";
     public static final String TRANSFERENCIA_ENVIO_DESTINO_AUX = "ENVIADO_DESTINO";
     public static final String TRANSFERENCIA_RECIBIR = "RECIBIDO";
+    public static final String TRANSFERENCIA_RECIBIR_ORIGEN_AUX = "ENVIADO_POR_ORIGEN";
 
     public static final String VENTA = "VENTA";
     public static final String VENTA_REALIZADA  = "REALIZADA";

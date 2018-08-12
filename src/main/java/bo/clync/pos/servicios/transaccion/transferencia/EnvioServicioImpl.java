@@ -55,6 +55,11 @@ public class EnvioServicioImpl implements EnvioServicio {
     }
 
     @Override
+    public TransaccionResponseList listaConfirmados(String token) {
+        return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_RECIBIR_ORIGEN_AUX, null);
+    }
+
+    @Override
     public TransaccionResponse obtener(String token, String id) {
         return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO);
     }

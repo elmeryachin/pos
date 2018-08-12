@@ -82,6 +82,19 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                                 @Param("codigoValor") String codigoValor,
                                                 @Param("idCiclo") Integer idCiclo);
 
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion) " +
+            " FROM Transaccion o " +
+            "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
+            "  AND o.codigoDominio=:dominio " +
+            "  AND o.codigoValor=:codigoValor " +
+            "  AND o.idCiclo=:idCiclo " +
+            "  AND o.fechaBaja IS NULL" +
+            " ORDER BY o.fechaInicio DESC")
+    List<TransaccionObjeto> listaTransferenciasRecibidosPorOrigen(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
+                                                         @Param("dominio") String dominio,
+                                                         @Param("codigoValor") String codigoValor,
+                                                         @Param("idCiclo") Integer idCiclo);
+
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion) " +
             " FROM Transaccion o " +
