@@ -52,7 +52,7 @@ public class VentaServicioImpl implements VentaServicio {
 
     @Override
     public TransaccionResponseList lista(String token) {
-        return transaccionServicio.lista(token, UtilsDominio.VENTA, UtilsDominio.VENTA_REALIZADA, null);
+        return transaccionServicio.lista(token, UtilsDominio.VENTA, UtilsDominio.VENTA_REALIZADA, UtilsDominio.TIPO_USUARIO_CLIENTE);
     }
 
     @Override

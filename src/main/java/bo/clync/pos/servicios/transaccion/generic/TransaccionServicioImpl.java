@@ -407,7 +407,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_ORIGEN_AUX)) {
                 lista = this.transaccionRepository.listaTransferenciasRecibidosPorOrigen(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_RECIBIR, idCiclo);
             } else if (dominio.equals(UtilsDominio.VENTA)) {
-                lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo);
+                lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
             }
             for (TransaccionObjeto pedido : lista) {
                 pedido.setLista(this.detalleTransaccionRepository.listaDetalle(pedido.getId()));

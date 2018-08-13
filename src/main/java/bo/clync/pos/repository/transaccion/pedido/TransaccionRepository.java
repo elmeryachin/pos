@@ -95,19 +95,22 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
                                                          @Param("codigoValor") String codigoValor,
                                                          @Param("idCiclo") Integer idCiclo);
 
-
-    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion) " +
-            " FROM Transaccion o " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion) " +
+            " FROM Transaccion o, Usuario u " +
             "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
             "  AND o.codigoDominio=:dominio " +
             "  AND o.codigoValor=:codigoValor " +
             "  AND o.idCiclo=:idCiclo " +
+            "  AND o.idUsuarioFin=u.id " +
+            "  AND u.codigoValorUsuario=:codigoValorUsuario " +
+            "  AND u.codigoAmbiente=:codigoAmbienteInicio " +
             "  AND o.fechaBaja IS NULL" +
             " ORDER BY o.fechaInicio DESC")
     List<TransaccionObjeto> listaVentas(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                          @Param("dominio") String dominio,
                                                          @Param("codigoValor") String codigoValor,
-                                                         @Param("idCiclo") Integer idCiclo);
+                                                         @Param("idCiclo") Integer idCiclo,
+                                                         @Param("codigoValorUsuario") String codigoValorUsuario);
 
     @Query("SELECT o " +
             "  FROM Transaccion o " +
