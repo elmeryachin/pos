@@ -28,7 +28,7 @@ public class AmbienteServicioImpl implements AmbienteServicio {
             response = list.get(0);
             response.setRespuesta(true);
         } catch (Exception e) {
-            response.setMensaje("No existe el codigo del ambiente " + codigo);
+            response.setMensaje("No existe o es con el que esta conectado : " + codigo);
             e.printStackTrace();
         }
         return response;

@@ -82,16 +82,36 @@ public class EnvioController {
     }
 
     @CrossOrigin
+    @GetMapping("/quest/{id}")
+    public ResponseEntity<?> obtener(@RequestHeader(value="token") String token,
+                                     @PathVariable("id") String id) {
+        return new ResponseEntity<>(this.envioServicio.obtener(token, id), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PutMapping("/reconfirmar/{id}")
+    public ResponseEntity<?> reconfirmar(@RequestHeader(value="token") String token,
+                                         @PathVariable("id") String id) {
+        return new ResponseEntity<>(envioServicio.reconfirmar(token, id), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/reconfirmar/list")
+    public ResponseEntity<?> listaReConfirmados(@RequestHeader(value="token") String token) {
+        return new ResponseEntity<>(envioServicio.listaReConfirmados(token), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/confirmados/list")
     public ResponseEntity<?> listaConfirmados(@RequestHeader(value="token") String token) {
         return new ResponseEntity<>(envioServicio.listaConfirmados(token), HttpStatus.OK);
     }
 
     @CrossOrigin
-    @GetMapping("/quest/{id}")
-    public ResponseEntity<?> obtener(@RequestHeader(value="token") String token,
-                                     @PathVariable("id") String id) {
-        return new ResponseEntity<>(this.envioServicio.obtener(token, id), HttpStatus.OK);
+    @GetMapping("/diferencia/quest/{id}")
+    public ResponseEntity<?> obtenerDiferencia(@RequestHeader(value="token") String token,
+                                               @PathVariable("id") String id) {
+        return new ResponseEntity<>(this.envioServicio.obtenerDiferencia(token, id), HttpStatus.OK);
     }
 
     @CrossOrigin

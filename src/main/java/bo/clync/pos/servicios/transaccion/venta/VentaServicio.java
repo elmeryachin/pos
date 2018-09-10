@@ -13,4 +13,8 @@ public interface VentaServicio {
     ServResponse eliminar(String token, String idTransaccion) throws Exception;
     TransaccionResponseList lista(String token);
     TransaccionResponse obtener(String token, String id);
+
+    ServResponse confirmar(String token, String id);
+    TransaccionResponseList listaConfirmados(String token);
+
 }

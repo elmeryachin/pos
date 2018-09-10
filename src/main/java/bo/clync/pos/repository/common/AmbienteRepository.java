@@ -23,7 +23,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
-            "WHERE o.tipoAmbiente = :valor" +
+            "WHERE :valor = :valor" +
             "  AND o.codigo = :codigo " +
             "  AND o.codigo <> :codigoAmbiente")
     List<AmbienteResponseMin> obtenerAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
@@ -32,7 +32,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
-            "WHERE o.tipoAmbiente = :valor" +
+            "WHERE :valor = :valor" +
             "  AND o.codigo like :patron " +
             "  AND o.codigo <> :codigoAmbiente" )
     List<AmbienteResponseMin> listaAmbientePorPatron(@Param("codigoAmbiente") String codigoAmbiente,
@@ -41,7 +41,7 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
-            "WHERE o.tipoAmbiente = :valor" +
+            "WHERE :valor = :valor" +
             "  AND o.codigo <> :codigoAmbiente" )
     List<AmbienteResponseMin> listaAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
                                             @Param("valor") String valor);

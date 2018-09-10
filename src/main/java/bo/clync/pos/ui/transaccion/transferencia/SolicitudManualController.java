@@ -1,34 +1,33 @@
-package bo.clync.pos.ui.transaccion.venta;
+package bo.clync.pos.ui.transaccion.transferencia;
 
 import bo.clync.pos.arquetipo.objetos.ServPatron;
 import bo.clync.pos.arquetipo.objetos.ServResponse;
-import bo.clync.pos.arquetipo.objetos.generic.UsuarioRequest;
-import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionRequest;
-import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
+import bo.clync.pos.servicios.ambiente.AmbienteServicio;
 import bo.clync.pos.servicios.articulo.ArticuloServicio;
-import bo.clync.pos.servicios.transaccion.venta.VentaServicio;
-import bo.clync.pos.servicios.usuario.UsuarioServicio;
-import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionRequest;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
+import bo.clync.pos.servicios.transaccion.transferencia.SolicitudManualServicio;
+
 @RestController
-@RequestMapping("/ventas")
-public class VentaController {
+@RequestMapping("/transferencia/recibir/solicitud")
+public class SolicitudManualController {
 
     @Autowired
-    private VentaServicio service;
-    @Autowired
-    private UsuarioServicio usuarioServicio;
+    private AmbienteServicio ambienteServicio;
     @Autowired
     private ArticuloServicio articuloServicio;
-
-    @CrossOrigin
+    @Autowired
+    private SolicitudManualServicio solicitudManualServicio;
+    
+	@CrossOrigin
     @GetMapping("/init")
     public ResponseEntity<?> init(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>(service.init(token), HttpStatus.OK);
+        return new ResponseEntity<>(this.solicitudManualServicio.init(token), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -37,7 +36,7 @@ public class VentaController {
                                    @RequestBody TransaccionRequest request) {
         TransaccionResponse response = null;
         try {
-            response = service.adicionar(token, request);
+            response = this.solicitudManualServicio.adicionar(token, request);
         } catch (Exception e) {
             response = new TransaccionResponse();
             response.setMensaje(e.getMessage());
@@ -51,7 +50,7 @@ public class VentaController {
                                         @RequestBody TransaccionRequest request) {
         TransaccionResponse response = null;
         try {
-            response = service.actualizar(token, request);
+            response = this.solicitudManualServicio.actualizar(token, request);
         } catch (Exception e) {
             response = new TransaccionResponse();
             response.setMensaje(e.getMessage());
@@ -59,13 +58,14 @@ public class VentaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     @CrossOrigin
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> eliminar(@RequestHeader(value="token") String token,
                                       @PathVariable("id") String id) {
         ServResponse response = null;
         try {
-            response = service.eliminar(token, id);
+            response = this.solicitudManualServicio.eliminar(token, id);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -73,30 +73,44 @@ public class VentaController {
         return new ResponseEntity<>( response , HttpStatus.OK);
     }
 
+
     @CrossOrigin
     @GetMapping("/list")
     public ResponseEntity<?> lista(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>(service.lista(token), HttpStatus.OK);
+        return new ResponseEntity<>(solicitudManualServicio.lista(token), HttpStatus.OK);
     }
 
     @CrossOrigin
     @GetMapping("/quest/{id}")
     public ResponseEntity<?> obtener(@RequestHeader(value="token") String token,
                                      @PathVariable("id") String id) {
-        return new ResponseEntity<>(this.service.obtener(token, id), HttpStatus.OK);
+        return new ResponseEntity<>(this.solicitudManualServicio.obtener(token, id), HttpStatus.OK);
     }
 
     @CrossOrigin
-    @PutMapping("/confirmar/{id}")
-    public ResponseEntity<?> confirmar(@RequestHeader(value="token") String token,
-                                         @PathVariable("id") String id) {
-        return new ResponseEntity<>(this.service.confirmar(token, id), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/confirmar/list")
+    @GetMapping("/confirmados/list")
     public ResponseEntity<?> listaConfirmados(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>(this.service.listaConfirmados(token), HttpStatus.OK);
+        return new ResponseEntity<>(solicitudManualServicio.listaConfirmados(token), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/ambiente/quest/{codigo}")
+    public ResponseEntity<?> obtenerAmbiente(@RequestHeader(value="token") String token,
+                                             @PathVariable("codigo") String codigo) {
+        return new ResponseEntity<>(ambienteServicio.obtenerSucursal(token, codigo), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @GetMapping("/ambiente/list")
+    public ResponseEntity<?> listaAmbiente(@RequestHeader(value="token") String token) {
+        return new ResponseEntity<>(ambienteServicio.listaSurcursal(token, null), HttpStatus.OK);
+    }
+
+    @CrossOrigin
+    @PostMapping("/ambiente/list")
+    public ResponseEntity<?> listaAmbientePorPatron(@RequestHeader(value="token") String token,
+                                                    @RequestBody ServPatron patron) {
+        return new ResponseEntity<>(ambienteServicio.listaSurcursal(token, patron.getPatron()), HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -119,31 +133,4 @@ public class VentaController {
         return new ResponseEntity<>(articuloServicio.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
     }
 
-
-    @CrossOrigin
-    @PostMapping("/cliente/add")
-    public ResponseEntity<ServResponse> nuevo(@RequestHeader(value="token") String token,
-                                              @RequestBody UsuarioRequest request) {
-        return new ResponseEntity<>(usuarioServicio.nuevoUsuario(token, request, UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.CREATED);
-    }
-
-    @CrossOrigin
-    @GetMapping("/cliente/quest/{codigo}")
-    public ResponseEntity<?> obtenerProveedor(@RequestHeader(value="token") String token,
-                                              @PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>( usuarioServicio.obtenerUsuario(token, codigo, UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/cliente/list")
-    public ResponseEntity<?> listaClientes(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>( usuarioServicio.listaUsuario(token, null, UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/cliente/list")
-    public ResponseEntity<?> listaClientesPorCodigo(@RequestHeader(value="token") String token,
-                                                    @RequestBody ServPatron patron) {
-        return new ResponseEntity<>( usuarioServicio.listaUsuario(token, patron.getPatron(), UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
-    }
 }

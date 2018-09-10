@@ -36,7 +36,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND u.codigoValorUsuario=:codigoValorUsuario " +
             "  AND u.codigoAmbiente=:codigoAmbienteInicio " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaPedidos(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                          @Param("dominio") String dominio,
                                          @Param("codigoValor") String codigoValor,
@@ -50,7 +50,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND o.codigoValor=:codigoValor " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaTransferenciasEnviosPorOrigen(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                 @Param("dominio") String dominio,
                                                 @Param("codigoValor") String codigoValor,
@@ -63,7 +63,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND o.codigoValor=:codigoValor " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaTransferenciasEnviosPorDestino(@Param("codigoAmbienteFin") String codigoAmbienteFin,
                                                       @Param("dominio") String dominio,
                                                       @Param("codigoValor") String codigoValor,
@@ -76,7 +76,7 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND o.codigoValor=:codigoValor " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaTransferenciasRecibidos(@Param("codigoAmbienteFin") String codigoAmbienteFin,
                                                 @Param("dominio") String dominio,
                                                 @Param("codigoValor") String codigoValor,
@@ -86,13 +86,15 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             " FROM Transaccion o " +
             "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
             "  AND o.codigoDominio=:dominio " +
-            "  AND o.codigoValor=:codigoValor " +
+            "  AND (o.codigoValor=:codigoValor " +
+            "   OR o.codigoValor=:codigoValor2) " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaTransferenciasRecibidosPorOrigen(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                          @Param("dominio") String dominio,
                                                          @Param("codigoValor") String codigoValor,
+                                                         @Param("codigoValor2") String codigoValor2,
                                                          @Param("idCiclo") Integer idCiclo);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion) " +
@@ -102,10 +104,9 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             "  AND o.codigoValor=:codigoValor " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.idUsuarioFin=u.id " +
-            "  AND u.codigoValorUsuario=:codigoValorUsuario " +
-            "  AND u.codigoAmbiente=:codigoAmbienteInicio " +
+            "  AND u.codigoValorUsuario=:codigoValorUsuario " +//"  AND u.codigoAmbiente=:codigoAmbienteInicio " +
             "  AND o.fechaBaja IS NULL" +
-            " ORDER BY o.fechaInicio DESC")
+            " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaVentas(@Param("codigoAmbienteInicio") String codigoAmbienteInicio,
                                                          @Param("dominio") String dominio,
                                                          @Param("codigoValor") String codigoValor,

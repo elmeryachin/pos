@@ -96,8 +96,16 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
             Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
             transaccion.setIdUsuarioFin(idUsuarioFin);
+        } else if (dominio.equals(UtilsDominio.TRANSFERENCIA_NLL)) {
+            transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
+            Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
+            transaccion.setIdUsuarioFin(idUsuarioFin);
         } else if (dominio.equals(UtilsDominio.VENTA)) {
             transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioCliente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_CLIENTE));
+        } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA)) {
+        	Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
+            transaccion.setIdUsuarioFin(idUsuarioFin);
+            transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
         }
 
         transaccion.setObservacion(request.getTransaccionObjeto().getObservacion());
@@ -120,6 +128,13 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     if (verificacion == null || verificacion[0].equals(0l)) {
                         transaccion = new Transaccion();
                         String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + request.getTransaccionObjeto().getNroMovimiento();
+
+                        //Parche para crear registro de no llegadas tras una transferencia recibida con edicion
+                        if(valor.equals(UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO)) {
+                        	//Asignacion de id con el relacionado con sufijo "A"
+                        	sid = request.getTransaccionObjeto().getId() + "A";
+                        }
+                        
                         transaccion.setId(sid);
                         transaccion.setIdCiclo(idCiclo);
                         transaccion.setCodigoDominio(dominio);
@@ -223,7 +238,15 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 }
                 inventario.setPorRecibir(UtilsOperacion.getNumeroNoNulo(inventario.getPorRecibir()) + operador * detalle.getCantidad());
                 repository.save(inventario);
-
+            } else if (dominio.equals(UtilsDominio.TRANSFERENCIA_NLL) && valor.equals(UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO)) {
+            	// NOT IMPLEMENTS
+            	inventario.setExistencia( inventario.getExistencia() - detalle.getCantidad() );
+            	repository.save( inventario );
+            	
+            	inventario = repository.getInventario( ambienteDestino, detalle.getCodigoArticulo() );
+            	inventario.setExistencia( inventario.getExistencia() + detalle.getCantidad() );
+            	repository.save( inventario );
+            	
             } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.VENTA_REALIZADA)) {
                 inventario.setExistencia(inventario.getExistencia() - operador * detalle.getCantidad());
                 repository.save(inventario);
@@ -337,7 +360,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
     }
 
     @Override
-    public ServResponse eliminar(String token, String idTransaccion, String dominio) throws Exception {
+    public ServResponse eliminar(String token, String idTransaccion, String valor) throws Exception {
         ServResponse response = new ServResponse();
         try {
             Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
@@ -346,7 +369,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 String codigoAmbiente = (String) arrayId[1];
                 Date fecha = new Date();
                 Transaccion transaccion = this.transaccionRepository.findByIdAndFechaBajaIsNull(idTransaccion);
-                if (transaccion.getCodigoValor().equals(dominio)) {
+                if (transaccion.getCodigoValor().equals(valor)) {
                     transaccion.setFechaBaja(fecha);
                     transaccion.setOperadorBaja(String.valueOf(idUsuario));
                     this.transaccionRepository.save(transaccion);
@@ -404,13 +427,26 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
                 lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, idCiclo);
             }  else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
+                    && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_CONF)) {
+                lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
+            }  else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_ORIGEN_AUX)) {
-                lista = this.transaccionRepository.listaTransferenciasRecibidosPorOrigen(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_RECIBIR, idCiclo);
-            } else if (dominio.equals(UtilsDominio.VENTA)) {
+                lista = this.transaccionRepository.listaTransferenciasRecibidosPorOrigen(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_RECIBIR, UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT, idCiclo);
+            } else if (dominio.equals(UtilsDominio.VENTA)
+                    && valor.equals(UtilsDominio.VENTA_REALIZADA)) {
                 lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
+            } else if (dominio.equals(UtilsDominio.VENTA)
+                    && valor.equals(UtilsDominio.VENTA_CONFIRMADA)) {
+                System.out.println(String.format("%s, %s, %s, %s, %s, ", codigoAmbiente, dominio, valor, idCiclo, tipoUsuario));
+                lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
+            } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA)) {
+                System.out.println(String.format("%s, %s, %s, %s", codigoAmbiente, dominio, valor, idCiclo));
+                lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
             }
+            System.out.println("list transaccion > " + lista);
             for (TransaccionObjeto pedido : lista) {
                 pedido.setLista(this.detalleTransaccionRepository.listaDetalle(pedido.getId()));
+                System.out.println("lista detalle    > " + pedido.getLista());
                 if (pedido.getLista() == null || pedido.getLista().size() == 0) {
                     listAux.add(pedido);
                 }
@@ -431,6 +467,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
+
                 TransaccionObjeto tra = transaccionRepository.getTransaccionObjeto(id, dominio, valor);
                 System.out.println("transaccion : " + tra);
                 if (tra != null) {

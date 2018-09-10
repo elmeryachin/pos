@@ -11,7 +11,7 @@ public interface TransaccionServicio {
     TransaccionResponseInit init(String token, String dominio);
     TransaccionResponse nuevo(String token, TransaccionRequest request, String dominio, String valor, String tipoPago) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request, String dominio) throws Exception;
-    ServResponse eliminar(String token, String idTransaccion, String dominio) throws Exception;
+    ServResponse eliminar(String token, String idTransaccion, String valor) throws Exception;
     TransaccionResponseList lista(String token, String dominio, String valor, String tipoUsuario);
     TransaccionResponse obtener(String token, String id, String dominio, String valor);
 

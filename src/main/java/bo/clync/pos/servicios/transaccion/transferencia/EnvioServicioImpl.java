@@ -2,12 +2,16 @@ package bo.clync.pos.servicios.transaccion.transferencia;
 
 import bo.clync.pos.arquetipo.objetos.ServResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
+import bo.clync.pos.arquetipo.tablas.Transaccion;
+import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
+import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -16,6 +20,10 @@ public class EnvioServicioImpl implements EnvioServicio {
 
     @Autowired
     private TransaccionServicio transaccionServicio;
+    @Autowired
+    private UsuarioAmbienteCredencialRepository credencialRepository;
+    @Autowired
+    private TransaccionRepository transaccionRepository;
 
     @Override
     public TransaccionResponseInit init(String token) {
@@ -60,7 +68,45 @@ public class EnvioServicioImpl implements EnvioServicio {
     }
 
     @Override
+    public ServResponse reconfirmar(String token, String id){
+        ServResponse response = new ServResponse();
+        Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+        if(arrayId!=null) {
+            Integer idUsuario = (Integer) arrayId[0];
+            Transaccion transaccion = transaccionRepository.getTransaccion(id);
+            if (transaccion != null) {
+                if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)
+                        || transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
+                    transaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_RECIBIR_CONF);
+                    transaccion.setFechaActualizacion(new Date());
+                    transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                    this.transaccionRepository.save(transaccion);
+                    response.setRespuesta(true);
+                } else {
+                    response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                }
+            } else {
+                response.setMensaje("No se encontro la transaccion");
+            }
+        } else {
+            response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+        }
+        return response;
+    }
+
+    @Override
+    public TransaccionResponseList listaReConfirmados(String token) {
+        return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_RECIBIR_CONF, null);
+    }
+
+
+    @Override
     public TransaccionResponse obtener(String token, String id) {
         return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO);
+    }
+
+    @Override
+    public TransaccionResponse obtenerDiferencia(String token, String id) {
+        return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA_NLL, UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO);
     }
 }

@@ -21,10 +21,25 @@ public class UtilsDominio {
 
     public static final String TRANSFERENCIA = "TRANSFERENCIA";
     public static final String TRANSFERENCIA_ENVIO = "ENVIADO";
+    // Auxiliar para obtener lista enviados destinos por origien/destino
     public static final String TRANSFERENCIA_ENVIO_DESTINO_AUX = "ENVIADO_DESTINO";
     public static final String TRANSFERENCIA_RECIBIR = "RECIBIDO";
-    public static final String TRANSFERENCIA_RECIBIR_ORIGEN_AUX = "ENVIADO_POR_ORIGEN";
-
+    //Referencia que se recibio los articulos pero se tuvo que editar.
+    public static final String TRANSFERENCIA_RECIBIR_EDIT = "RECIBIDO_EDIT";
+    public static final String TRANSFERENCIA_RECIBIR_CONF = "RECIBIDO_CONF";
+    // Auxiliar para obtener lista recibidos confirmados destinos por origien/destino 
+    public static final String TRANSFERENCIA_RECIBIR_ORIGEN_AUX = "RECIBIDO_POR_ORIGEN";
+    
+    public static final String TRANSFERENCIA_NLL = "TRANSFERENCIA_NLL";
+    // Solo se genera tras editar lo recibido por almacen.
+    public static final String TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO = "RECIBIDO_NO_LLE";
+    
+    // Lo generan las tiendas cuando solicitan a otra tienda u almacen articulos.
+    // No descarta ni adiciona a inventarios.
+    public static final String SOLICITUD_INTERNA = "SOLICITUD_INTERNA";
+    public static final String SOLICITUD_INTERNA_PEDIDO = "SOLIC_SUCURSAL";
+    public static final String SOLICITUD_INTERNA_CONFIRMADO = "SOLIC_CONFIRM";
+    
     public static final String VENTA = "VENTA";
     public static final String VENTA_REALIZADA  = "REALIZADA";
     public static final String VENTA_CONFIRMADA = "CONSOLIDA";

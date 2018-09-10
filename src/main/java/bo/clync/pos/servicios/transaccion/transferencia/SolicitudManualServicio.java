@@ -5,18 +5,16 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionRequest;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseInit;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
+import bo.clync.pos.utilitarios.UtilsDominio;
 
-public interface EnvioServicio {
+public interface SolicitudManualServicio {
 
     TransaccionResponseInit init(String token);
 
-    TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception;
+	TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception;
-    ServResponse eliminar(String token, String idTransaccion) throws Exception;
+	ServResponse eliminar(String token, String idTransaccion) throws Exception;
     TransaccionResponseList lista(String token);
     TransaccionResponseList listaConfirmados(String token);
-    ServResponse reconfirmar(String token, String id);
-    TransaccionResponseList listaReConfirmados(String token);
     TransaccionResponse obtener(String token, String id);
-    TransaccionResponse obtenerDiferencia(String token, String id);
 }

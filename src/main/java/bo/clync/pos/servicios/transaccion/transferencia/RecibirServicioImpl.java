@@ -1,7 +1,10 @@
 package bo.clync.pos.servicios.transaccion.transferencia;
 
 import bo.clync.pos.arquetipo.objetos.ServResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionDetalle;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionRequest;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
+import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseInit;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
 import bo.clync.pos.arquetipo.tablas.DetalleTransaccion;
 import bo.clync.pos.arquetipo.tablas.Inventario;
@@ -18,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -34,7 +39,7 @@ public class RecibirServicioImpl implements RecibirServicio {
     private TransaccionRepository transaccionRepository;
     @Autowired
     private DetalleTransaccionRepository detalleTransaccionRepository;
-
+    
     @Override
     public TransaccionResponseList listaPorRecibir(String token) {
         return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO_DESTINO_AUX, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
@@ -56,11 +61,18 @@ public class RecibirServicioImpl implements RecibirServicio {
     }
 
     @Override
-    public ServResponse confirmarRecepcion(String token, String id) throws Exception {
+    public ServResponse confirmarRecepcion(String token, String id, TransaccionRequest request) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;
         Date fecha = null;
+        String dominio = null;
         try {
+        	if(request == null || request.getTransaccionObjeto() == null || !request.getTransaccionObjeto().getId().equals(id)) {
+        		dominio = UtilsDominio.TRANSFERENCIA_RECIBIR;
+        	} else {
+        		dominio = UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT;
+        	}
+            System.out.println("DOMINIO SELECIONADO " + dominio);
             fecha = new Date();
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
@@ -72,10 +84,16 @@ public class RecibirServicioImpl implements RecibirServicio {
                 if (transaccion != null) {
                     if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
                         if (codigoAmbiente.equals(transaccion.getCodigoAmbienteFin())) {
-                            transaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_RECIBIR);
+                            transaccion.setCodigoValor(dominio);
                             transaccion.setFechaFin(fecha);
                             transaccion.setFechaActualizacion(fecha);
                             transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+
+                            if(dominio == UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT) {
+                                //Identificado directo para ver que la transaccion fue editada por una sucursal.
+                                transaccion.setObservacion("<editado>" + transaccion.getObservacion());
+                            }
+
                             transaccionRepository.save(transaccion);
                             List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
                             for (DetalleTransaccion dt : detalles) {
@@ -90,6 +108,33 @@ public class RecibirServicioImpl implements RecibirServicio {
                                 inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario);
                             }
+                            
+                            // Cuando se edita la transaccion se adiciona este registro.
+                            if(dominio.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)) {
+                            	String dominioNuevo = UtilsDominio.TRANSFERENCIA_NLL;
+                            	String valorNuevo = UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO;
+                            	String tipoPagoNuevo = UtilsDominio.TIPO_PAGO_NO_REQUERIDO;
+                            	
+                            	List<TransaccionDetalle> listNuevo = request.getTransaccionObjeto().getLista();
+                            	Map<String, Integer> mapReal = new HashMap<>(); 
+                            	
+                            	for(DetalleTransaccion dt : detalles) {
+                            		mapReal.put(dt.getCodigoArticulo(), dt.getCantidad());
+                            	}
+                            	
+                            	for( TransaccionDetalle dt : listNuevo ) {
+                            		Integer cantidad = mapReal.get(dt.getCodigoArticulo());
+                            		if( cantidad != null ) {
+                            			dt.setCantidad( cantidad - dt.getCantidad() );
+                            		} else {
+                            			dt.setCantidad( - dt.getCantidad() );
+                            		}
+                            	}
+                            	//En codigo destino se ingresa el codigo del ambiente que creo la primera transaccion
+                            	request.getTransaccionObjeto().setCodigo(transaccion.getCodigoAmbienteInicio());
+                            	this.transaccionServicio.nuevo(token, request, dominioNuevo, valorNuevo, tipoPagoNuevo);
+                            }
+                            
                             response.setRespuesta(true);
                         } else {
                             response.setMensaje("La transaccion solo lo puede recepcionar " + transaccion.getCodigoAmbienteFin());
