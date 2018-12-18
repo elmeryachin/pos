@@ -9,7 +9,9 @@ import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +40,8 @@ public class SolicitudServicioImp implements SolicitudServicio {
     private InventarioRepository inventarioRepository;
     @Autowired
     private TransaccionServicio transaccionServicio;
+    @Autowired
+    private DiscoServicio discoServicio;
     @PersistenceContext
     private EntityManager em;
 
@@ -48,20 +53,33 @@ public class SolicitudServicioImp implements SolicitudServicio {
     private java.math.BigInteger getSecuencialDetalleTransaccion() {
         return (java.math.BigInteger) em.createNativeQuery("SELECT nextval('detalle_transaccion_id_seq')").getSingleResult();
     }
-
     @Override
-    public TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception {
-        return transaccionServicio.nuevo(token, request, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_SOLICITUD, UtilsDominio.TIPO_PAGO_PAGADO);
+    public String getIdTransaccion( String nroMovimiento, String token ) {
+        return transaccionServicio.getIdTransaccion(UtilsDominio.PEDIDO, nroMovimiento, token);
+    }
+    @Override
+    public TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception {
+
+        TransaccionResponse response = transaccionServicio.nuevo(token, request, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_SOLICITUD, UtilsDominio.TIPO_PAGO_PAGADO);
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+        return response;
     }
 
     @Override
-    public TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception {
-        return transaccionServicio.actualizar(token, request, UtilsDominio.PEDIDO);
+    public TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception {
+        TransaccionResponse response = transaccionServicio.actualizar(token, request, UtilsDominio.PEDIDO);
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+        return response;
     }
 
     @Override
-    public ServResponse eliminar(String token, String idTransaccion) throws Exception {
-        return transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.PEDIDO_SOLICITUD);
+    public ServResponse eliminar(String token, String idTransaccion, HttpServletRequest http) throws Exception {
+        ServResponse response = transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.PEDIDO_SOLICITUD);
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+        return response;
     }
 
     @Override
@@ -70,7 +88,7 @@ public class SolicitudServicioImp implements SolicitudServicio {
     }
 
     @Override
-    public ServResponse confirmarLlegada(String token, String id) throws Exception {
+    public ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;
         Date fecha = null;
@@ -78,38 +96,43 @@ public class SolicitudServicioImp implements SolicitudServicio {
             fecha = new Date();
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 transaccion = transaccionRepository.getTransaccion(id);
                 if (transaccion != null) {
                     if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
-                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
-                        transaccion.setFechaFin(fecha);
-                        transaccion.setFechaActualizacion(fecha);
-                        transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-                        transaccionRepository.save(transaccion);
-                        List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
-                        for (DetalleTransaccion dt : detalles) {
-                            dt.setOperadorActualizacion(String.valueOf(idUsuario));
-                            dt.setFechaActualizacion(fecha);
-                            detalleTransaccionRepository.save(dt);
-                            Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
-                            if (inventario == null) {
-                                inventario = new Inventario();
-                                inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
-                                inventario.setCodigoArticulo(dt.getCodigoArticulo());
-                                inventario.setExistencia(dt.getCantidad());
-                                inventario.setFechaAlta(fecha);
-                                inventario.setOperadorAlta(String.valueOf(idUsuario));
-                            } else {
-                                Integer cantidad = inventario.getExistencia() + dt.getCantidad();
-                                inventario.setExistencia(cantidad);
-                                inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
-                                inventario.setFechaActualizacion(fecha);
-                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                        if(transaccion.getIdUsuarioInicio().equals(idUsuario)) {
+                            transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
+                            transaccion.setFechaFin(fecha);
+                            transaccion.setFechaActualizacion(fecha);
+                            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                            transaccionRepository.save(transaccion);
+                            List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                            for (DetalleTransaccion dt : detalles) {
+                                dt.setOperadorActualizacion(String.valueOf(idUsuario));
+                                dt.setFechaActualizacion(fecha);
+                                detalleTransaccionRepository.save(dt);
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
+                                if (inventario == null) {
+                                    inventario = new Inventario();
+                                    inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
+                                    inventario.setCodigoArticulo(dt.getCodigoArticulo());
+                                    inventario.setExistencia(dt.getCantidad());
+                                    inventario.setFechaAlta(fecha);
+                                    inventario.setOperadorAlta(String.valueOf(idUsuario));
+                                } else {
+                                    Integer cantidad = inventario.getExistencia() + dt.getCantidad();
+                                    inventario.setExistencia(cantidad);
+                                    inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
+                                    inventario.setFechaActualizacion(fecha);
+                                    inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                                }
+                                inventarioRepository.save(inventario);
                             }
-                            inventarioRepository.save(inventario);
+                            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                            response.setRespuesta(true);
+                        } else {
+                            response.setMensaje("Solo el usuario que creo la transaccion puede Confirmar la llegada");
                         }
-                        response.setRespuesta(true);
                     } else {
                         response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
                     }

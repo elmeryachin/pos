@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/transferencia/recibir")
 public class RecibirController {
@@ -33,6 +36,17 @@ public class RecibirController {
     }
 
     @CrossOrigin
+    @GetMapping("/porrecibir/quest/movimiento/{nro}")
+    public ResponseEntity<?> obtenerPorNroMovimiento(@RequestHeader(value="token") String token,
+                                                     @PathVariable("nro") String nro) {
+        String tokenAlmacen = "12345-1";
+        //Se quema el token para salvar este caso, considerando que es unico q envia
+        String id = this.recibirServicio.getIdTransaccionPorRecibir(nro, tokenAlmacen);
+        System.out.println("Print id generado de nro mmovimiento " + id);
+        return new ResponseEntity<>(this.recibirServicio.obtenerPorRecibir(token, id), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/recibidos/list")
     public ResponseEntity<?> lista(@RequestHeader(value="token") String token) {
         return new ResponseEntity<>(recibirServicio.lista(token), HttpStatus.OK);
@@ -48,11 +62,12 @@ public class RecibirController {
     @CrossOrigin
     @PutMapping("/confirmar/recepcion/{id}")
     public ResponseEntity<?> confirmar(@RequestHeader(value="token") String token,
-                                       @PathVariable("id") String id, 
-                                       @RequestBody TransaccionRequest request) {
+                                       @PathVariable("id") String id,
+                                       @RequestBody TransaccionRequest request,
+                                       HttpServletRequest http) {
         ServResponse response = null;
         try {
-            response = recibirServicio.confirmarRecepcion(token, id, request);
+            response = recibirServicio.confirmarRecepcion(token, id, request, http);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -63,10 +78,11 @@ public class RecibirController {
     @CrossOrigin
     @PutMapping("/cancelar/recepcion/{id}")
     public ResponseEntity<?> cancelar(@RequestHeader(value="token") String token,
-                                      @PathVariable("id") String id) {
+                                      @PathVariable("id") String id,
+                                      HttpServletRequest http) {
         ServResponse response = null;
         try {
-            response = recibirServicio.cancelarRecepcion(token, id);
+            response = recibirServicio.cancelarRecepcion(token, id, http);
         } catch (Exception e) {
             response = new ServResponse();
             response.setMensaje(e.getMessage());
@@ -74,23 +90,5 @@ public class RecibirController {
         return new ResponseEntity<>( response, HttpStatus.OK);
     }
 
-    @CrossOrigin
-    @GetMapping("/articulo/quest/{codigo}")
-    public ResponseEntity<?> obtenerArticulo(@RequestHeader(value="token") String token,
-                                             @PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>(articuloServicio.obtenerArticulo(token, codigo), HttpStatus.OK);
-    }
 
-    @CrossOrigin
-    @GetMapping("/articulo/list")
-    public ResponseEntity<?> listaArticulo(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>(articuloServicio.listaArticulo(token, null), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/articulo/list")
-    public ResponseEntity<?> listaArticuloPorPatron(@RequestHeader(value="token") String token,
-                                                    @RequestBody ServPatron patron) {
-        return new ResponseEntity<>(articuloServicio.listaArticulo(token, patron.getPatron()), HttpStatus.OK);
-    }
 }

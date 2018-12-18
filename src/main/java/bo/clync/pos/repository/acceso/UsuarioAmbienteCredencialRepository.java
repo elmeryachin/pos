@@ -46,7 +46,7 @@ public interface UsuarioAmbienteCredencialRepository extends JpaRepository<Usuar
             " FROM UsuarioAmbienteCredencial o " +
             "WHERE o.codigoAmbiente = :codigoAmbiente" +
             "  AND o.fechaBaja is null ")
-    public Integer getIdUsuarioByCodigoAmbiente(@Param("codigoAmbiente") String codigoAmbiente);
+    public Long getIdUsuarioByCodigoAmbiente(@Param("codigoAmbiente") String codigoAmbiente);
 
 
 }

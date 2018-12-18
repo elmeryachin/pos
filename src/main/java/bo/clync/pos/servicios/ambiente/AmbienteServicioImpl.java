@@ -1,7 +1,7 @@
 package bo.clync.pos.servicios.ambiente;
 
-import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin;
-import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseList;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseList;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.AmbienteRepository;
 import bo.clync.pos.utilitarios.UtilsDominio;
@@ -20,11 +20,11 @@ public class AmbienteServicioImpl implements AmbienteServicio {
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
 
-    private AmbienteResponseMin obtenerAmbiente(String token, String codigo, String valor) {
-        AmbienteResponseMin response = new AmbienteResponseMin();
+    private UsuarioResponseMin obtenerAmbiente(String token, String codigo, String valor) {
+        UsuarioResponseMin response = new UsuarioResponseMin();
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
-            List<AmbienteResponseMin> list = ambienteRepository.obtenerAmbiente(codigoAmbiente, codigo, valor);
+            List<UsuarioResponseMin> list = ambienteRepository.obtenerAmbiente(codigoAmbiente, codigo, valor);
             response = list.get(0);
             response.setRespuesta(true);
         } catch (Exception e) {
@@ -34,11 +34,11 @@ public class AmbienteServicioImpl implements AmbienteServicio {
         return response;
     }
 
-    private AmbienteResponseList listaAmbiente(String token, String patron, String valor) {
-        AmbienteResponseList response = new AmbienteResponseList();
+    private UsuarioResponseList listaAmbiente(String token, String patron, String valor) {
+        UsuarioResponseList response = new UsuarioResponseList();
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
-            List<AmbienteResponseMin> list = null;
+            List<UsuarioResponseMin> list = null;
             if(patron == null) {
                 list = ambienteRepository.listaAmbiente(codigoAmbiente, valor);
             } else {
@@ -55,12 +55,12 @@ public class AmbienteServicioImpl implements AmbienteServicio {
 
 
     @Override
-    public AmbienteResponseMin obtenerSucursal(String token, String codigo) {
+    public UsuarioResponseMin obtenerSucursal(String token, String codigo) {
         return obtenerAmbiente(token, codigo, UtilsDominio.TIPO_AMBIENTE_SUCURSAL);
     }
 
     @Override
-    public AmbienteResponseList listaSurcursal(String token, String patron) {
+    public UsuarioResponseList listaSurcursal(String token, String patron) {
         return listaAmbiente(token, patron, UtilsDominio.TIPO_AMBIENTE_SUCURSAL);
     }
 }

@@ -13,13 +13,17 @@ import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import bo.clync.pos.utilitarios.UtilsOperacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +43,9 @@ public class RecibirServicioImpl implements RecibirServicio {
     private TransaccionRepository transaccionRepository;
     @Autowired
     private DetalleTransaccionRepository detalleTransaccionRepository;
-    
+    @Autowired
+    private DiscoServicio discoServicio;
+
     @Override
     public TransaccionResponseList listaPorRecibir(String token) {
         return transaccionServicio.lista(token, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO_DESTINO_AUX, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
@@ -56,18 +62,24 @@ public class RecibirServicioImpl implements RecibirServicio {
     }
 
     @Override
+    public String getIdTransaccionPorRecibir( String nroMovimiento, String token ) {
+        return transaccionServicio.getIdTransaccion(UtilsDominio.TRANSFERENCIA, nroMovimiento, token);
+    }
+
+
+    @Override
     public TransaccionResponse obtener(String token, String id) {
         return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_RECIBIR);
     }
 
     @Override
-    public ServResponse confirmarRecepcion(String token, String id, TransaccionRequest request) throws Exception {
+    public ServResponse confirmarRecepcion(String token, String id, TransaccionRequest request, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;
         Date fecha = null;
         String dominio = null;
         try {
-        	if(request == null || request.getTransaccionObjeto() == null || !request.getTransaccionObjeto().getId().equals(id)) {
+            if(request == null || request.getTransaccionObjeto() == null || !request.getTransaccionObjeto().getId().equals(id)) {
         		dominio = UtilsDominio.TRANSFERENCIA_RECIBIR;
         	} else {
         		dominio = UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT;
@@ -76,7 +88,7 @@ public class RecibirServicioImpl implements RecibirServicio {
             fecha = new Date();
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 System.out.println("idUsuario > " + idUsuario);
                 System.out.println("codAmbient> " + codigoAmbiente);
@@ -97,9 +109,9 @@ public class RecibirServicioImpl implements RecibirServicio {
                             transaccionRepository.save(transaccion);
                             List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
                             for (DetalleTransaccion dt : detalles) {
-                                dt.setOperadorActualizacion(String.valueOf(idUsuario));
-                                dt.setFechaActualizacion(fecha);
-                                detalleTransaccionRepository.save(dt);
+                                //dt.setOperadorActualizacion(String.valueOf(idUsuario));
+                                //dt.setFechaActualizacion(fecha);
+                                //detalleTransaccionRepository.save(dt);
                                 Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteFin(), dt.getCodigoArticulo());
                                 Integer cantidad = inventario.getExistencia() + dt.getCantidad();
                                 inventario.setExistencia(cantidad);
@@ -107,6 +119,12 @@ public class RecibirServicioImpl implements RecibirServicio {
                                 inventario.setFechaActualizacion(fecha);
                                 inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario);
+
+                                Inventario inventario2 = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
+                                inventario2.setPorEntregar(inventario2.getPorEntregar() - dt.getCantidad());
+                                inventario2.setFechaActualizacion(fecha);
+                                inventario2.setOperadorActualizacion(String.valueOf(idUsuario));
+                                inventarioRepository.save(inventario2);
                             }
                             
                             // Cuando se edita la transaccion se adiciona este registro.
@@ -134,7 +152,7 @@ public class RecibirServicioImpl implements RecibirServicio {
                             	request.getTransaccionObjeto().setCodigo(transaccion.getCodigoAmbienteInicio());
                             	this.transaccionServicio.nuevo(token, request, dominioNuevo, valorNuevo, tipoPagoNuevo);
                             }
-                            
+                            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                             response.setRespuesta(true);
                         } else {
                             response.setMensaje("La transaccion solo lo puede recepcionar " + transaccion.getCodigoAmbienteFin());
@@ -158,7 +176,7 @@ public class RecibirServicioImpl implements RecibirServicio {
     }
 
     @Override
-    public ServResponse cancelarRecepcion(String token, String id) throws Exception {
+    public ServResponse cancelarRecepcion(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;
         Date fecha = null;
@@ -166,7 +184,7 @@ public class RecibirServicioImpl implements RecibirServicio {
             fecha = new Date();
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 transaccion = transaccionRepository.getTransaccion(id);
                 if (transaccion != null) {
@@ -189,8 +207,15 @@ public class RecibirServicioImpl implements RecibirServicio {
                                 inventario.setFechaActualizacion(fecha);
                                 inventario.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario);
+
+                                Inventario inventario2 = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                                inventario2.setPorEntregar(inventario2.getPorEntregar() + detalle.getCantidad());
+                                inventario2.setFechaActualizacion(fecha);
+                                inventario2.setOperadorActualizacion(String.valueOf(idUsuario));
+                                inventarioRepository.save(inventario2);
                             }
                             if (response.getMensaje() == null) {
+                                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                                 response.setRespuesta(true);
                             }
                         } else {

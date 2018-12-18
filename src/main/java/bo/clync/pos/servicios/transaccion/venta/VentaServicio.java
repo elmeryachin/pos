@@ -6,15 +6,18 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseInit;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface VentaServicio {
     TransaccionResponseInit init(String token);
-    TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception;
-    TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception;
-    ServResponse eliminar(String token, String idTransaccion) throws Exception;
+    TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
+    TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
+    ServResponse eliminar(String token, String idTransaccion, HttpServletRequest http) throws Exception;
     TransaccionResponseList lista(String token);
     TransaccionResponse obtener(String token, String id);
+    String getIdTransaccion( String nroMovimiento, String token );
 
-    ServResponse confirmar(String token, String id);
+    ServResponse confirmar(String token, String id, HttpServletRequest http) throws Exception;
     TransaccionResponseList listaConfirmados(String token);
 
 }

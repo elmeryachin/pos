@@ -9,6 +9,7 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseLis
 public interface TransaccionServicio {
 
     TransaccionResponseInit init(String token, String dominio);
+    String getIdTransaccion( String dominio, String nroMovimiento, String token );
     TransaccionResponse nuevo(String token, TransaccionRequest request, String dominio, String valor, String tipoPago) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request, String dominio) throws Exception;
     ServResponse eliminar(String token, String idTransaccion, String valor) throws Exception;

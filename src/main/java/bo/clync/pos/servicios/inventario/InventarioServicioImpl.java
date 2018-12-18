@@ -36,7 +36,7 @@ public class InventarioServicioImpl implements InventarioServicio {
             try {
                 Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
                 if (arrayId != null) {
-                    Integer idUsuario = (Integer) arrayId[0];
+                    Long idUsuario = (Long ) arrayId[0];
                     String codigoAmbiente = (String) arrayId[1];
                     List<ResumenExistencia> lista = new ArrayList<>();
                     String sql = "   SELECT a.nombre, a.codigo, i.existencia, i.por_llegar, i.por_entregar, i.por_recibir " +
@@ -107,7 +107,7 @@ public class InventarioServicioImpl implements InventarioServicio {
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 List<Sucursales> lista = new ArrayList<>();
                 String sql = "   SELECT a.codigo, a.nombre, a.tipo_ambiente " +

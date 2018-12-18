@@ -2,6 +2,7 @@ package bo.clync.pos.arquetipo.objetos.transaccion.generic;
 
 import bo.clync.pos.utilitarios.UtilsGeneral;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -14,14 +15,18 @@ public class TransaccionObjeto {
     private String observacion;
     private List<TransaccionDetalle> lista;
 
+    private BigDecimal precio;
+    private Integer cantidad;
     public TransaccionObjeto(){}
 
-    public TransaccionObjeto(String id, Date fechaMovimiento, Integer nroMovimiento, String codigo, String observacion){
+    public TransaccionObjeto(String id, Date fechaMovimiento, Integer nroMovimiento, String codigo, String observacion, Integer cantidad, BigDecimal precio){
         this.id = id;
         this.fechaMovimiento = UtilsGeneral.fecha(fechaMovimiento);
         this.nroMovimiento = nroMovimiento;
         this.codigo = codigo;
         this.observacion = observacion;
+        this.setCantidad(cantidad);
+        this.setPrecio(precio);
     }
 
     public String getId() {
@@ -72,4 +77,19 @@ public class TransaccionObjeto {
         this.lista = lista;
     }
 
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
 }

@@ -10,12 +10,15 @@ import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -33,14 +36,15 @@ public class LlegadaServicioImpl implements LlegadaServicio {
     private UsuarioAmbienteCredencialRepository credencialRepository;
     @Autowired
     private InventarioRepository inventarioRepository;
-
+    @Autowired
+    private DiscoServicio discoServicio;
     @Override
     public TransaccionResponseList lista(String token) {
         return transaccionServicio.lista(token, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_LLEGADA, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
     }
 
     @Override
-    public ServResponse cancelarLlegada(String token, String id) throws Exception {
+    public ServResponse cancelarLlegada(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;
         Date fecha = null;
@@ -48,28 +52,34 @@ public class LlegadaServicioImpl implements LlegadaServicio {
             fecha = new Date();
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 transaccion = transaccionRepository.getTransaccion(id);
                 if (transaccion != null) {
                     if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_LLEGADA)) {
-                        transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
-                        transaccion.setFechaActualizacion(fecha);
-                        transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-                        transaccionRepository.save(transaccion);
-                        List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
-                        for (DetalleTransaccion detalle : detalles) {
-                            Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
-                            Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
-                            if (cantidad < 0) {
-                                response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                        if(transaccion.getIdUsuarioInicio().equals(idUsuario)) {
+                            transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
+                            transaccion.setFechaActualizacion(fecha);
+                            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                            transaccionRepository.save(transaccion);
+                            List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                            for (DetalleTransaccion detalle : detalles) {
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                                Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
+                                if (cantidad < 0) {
+                                    response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                                }
+                                inventario.setExistencia(cantidad);
+                                inventario.setPorLlegar(detalle.getCantidad());
+                                inventario.setFechaActualizacion(fecha);
+                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                                inventarioRepository.save(inventario);
                             }
-                            inventario.setExistencia(cantidad);
-                            inventario.setFechaActualizacion(fecha);
-                            inventario.setOperadorActualizacion(String.valueOf(idUsuario));
-                            inventarioRepository.save(inventario);
-                        }
-                        if (response.getMensaje() == null) {
-                            response.setRespuesta(true);
+                            if (response.getMensaje() == null) {
+                                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                                response.setRespuesta(true);
+                            }
+                        } else {
+                            response.setMensaje("Solo el usuario que creo la transaccion puede cancelar la llegada");
                         }
                     } else {
                         response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());

@@ -37,7 +37,9 @@ public class UtilsDominio {
     // Lo generan las tiendas cuando solicitan a otra tienda u almacen articulos.
     // No descarta ni adiciona a inventarios.
     public static final String SOLICITUD_INTERNA = "SOLICITUD_INTERNA";
+    public static final String SOLICITUD_INTERNA_AUX = "SOLICITUD_INTERNA_AUX";
     public static final String SOLICITUD_INTERNA_PEDIDO = "SOLIC_SUCURSAL";
+    //public static final String SOLICITUD_INTERNA_ATENDIDO = "SOLIC_SUCURSAL";
     public static final String SOLICITUD_INTERNA_CONFIRMADO = "SOLIC_CONFIRM";
     
     public static final String VENTA = "VENTA";

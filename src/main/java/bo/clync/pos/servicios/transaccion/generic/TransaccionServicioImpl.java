@@ -13,16 +13,15 @@ import bo.clync.pos.repository.common.InventarioRepository;
 import bo.clync.pos.repository.common.UsuarioRepository;
 import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
-import bo.clync.pos.utilitarios.UtilsConstante;
-import bo.clync.pos.utilitarios.UtilsDominio;
-import bo.clync.pos.utilitarios.UtilsGeneral;
-import bo.clync.pos.utilitarios.UtilsOperacion;
+import bo.clync.pos.utilitarios.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,22 +59,29 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         return (java.math.BigInteger) em.createNativeQuery("SELECT nextval('transaccion_id_seq')").getSingleResult();
     }
 
-    private java.math.BigInteger getSecuencialDetalleTransaccion() {
+    private java.math.BigInteger getSecuencialDetalleTransaccion11() {
         return (java.math.BigInteger) em.createNativeQuery("SELECT nextval('detalle_transaccion_id_seq')").getSingleResult();
     }
 
+    private Long getContadorDetalle(String idTransaccion) {
+        // cuantos detalles existen por id transaccion
+        // No se discrimina nada.
+        Long count = detalleTransaccionRepository.getDetalleTransaccionMaximoAll(idTransaccion) + 1l;
+        return count;
+    }
 
     @Override
     public TransaccionResponseInit init(String token, String dominio) {
         TransaccionResponseInit init = new TransaccionResponseInit();
         try {
             Object[] o = getConectados(token);
-            Integer nro = transaccionRepository.initMovimiento((Integer) o[0], (String) o[1], dominio, cicloRepository.getIdCiclo());
+            Integer nro = transaccionRepository.initMovimiento((Long) o[0], (String) o[1], dominio, cicloRepository.getIdCiclo());
             nro = nro == null ? 1 : nro + 1;
             init.setNroMovimiento(nro);
             init.setFechaMovimiento(UtilsGeneral.fechaActual());
             init.setRespuesta(true);
         } catch (Exception e) {
+            e.printStackTrace();
             init.setMensaje("Error al generar el nro de movimiento para " + dominio);
         }
         return init;
@@ -91,24 +97,38 @@ public class TransaccionServicioImpl implements TransaccionServicio {
      */
     private void getTransaccion(String dominio, TransaccionRequest request, Transaccion transaccion, String codigoAmbiente) {
         if (dominio.equals(UtilsDominio.PEDIDO)) {
+            System.out.println("@#@@@@@@@@@@@@@@@@@@@@@@ ");
+            System.out.println(request.getTransaccionObjeto().getCodigo());
+            System.out.println(UtilsDominio.TIPO_USUARIO_PROVEEDOR);
+            System.out.println(codigoAmbiente);
+            System.out.println(usuarioRepository.getIdUsuarioConAmbiente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente));
             transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioConAmbiente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_PROVEEDOR, codigoAmbiente));
         } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)) {
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
-            Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
+            Long idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
             transaccion.setIdUsuarioFin(idUsuarioFin);
         } else if (dominio.equals(UtilsDominio.TRANSFERENCIA_NLL)) {
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
-            Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
+            Long idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
             transaccion.setIdUsuarioFin(idUsuarioFin);
         } else if (dominio.equals(UtilsDominio.VENTA)) {
             transaccion.setIdUsuarioFin(usuarioRepository.getIdUsuarioCliente(request.getTransaccionObjeto().getCodigo(), UtilsDominio.TIPO_USUARIO_CLIENTE));
         } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA)) {
-        	Integer idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
+            Long idUsuarioFin = this.usuarioAmbienteCredencialRepository.getIdUsuarioByCodigoAmbiente(request.getTransaccionObjeto().getCodigo());
             transaccion.setIdUsuarioFin(idUsuarioFin);
             transaccion.setCodigoAmbienteFin(request.getTransaccionObjeto().getCodigo());
         }
 
         transaccion.setObservacion(request.getTransaccionObjeto().getObservacion());
+    }
+
+    @Override
+    public String getIdTransaccion( String dominio, String nroMovimiento, String token ) {
+        Integer idCiclo = this.cicloRepository.getIdCiclo();
+        Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
+        Long idUsuario = (Long) arrayId[0];
+        String codigoAmbiente = (String) arrayId[1];
+        return idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + dominio + nroMovimiento;
     }
 
     @Override
@@ -122,12 +142,12 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 if (request.getTransaccionObjeto().getLista() != null && request.getTransaccionObjeto().getLista().size() > 0) {
                     Integer idCiclo = this.cicloRepository.getIdCiclo();
                     Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
-                    Integer idUsuario = (Integer) arrayId[0];
+                    Long idUsuario = (Long) arrayId[0];
                     String codigoAmbiente = (String) arrayId[1];
                     Object[] verificacion = (Object[]) this.transaccionRepository.existeNroMovimiento(idUsuario, codigoAmbiente, dominio, idCiclo, request.getTransaccionObjeto().getNroMovimiento());
                     if (verificacion == null || verificacion[0].equals(0l)) {
                         transaccion = new Transaccion();
-                        String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + request.getTransaccionObjeto().getNroMovimiento();
+                        String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + dominio + request.getTransaccionObjeto().getNroMovimiento();
 
                         //Parche para crear registro de no llegadas tras una transferencia recibida con edicion
                         if(valor.equals(UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO)) {
@@ -145,6 +165,9 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                         transaccion.setCodigoAmbienteInicio(codigoAmbiente);
                         transaccion.setFechaInicio(UtilsGeneral.convertirFecha(request.getTransaccionObjeto().getFechaMovimiento()));
 
+                        transaccion.setCantidad(request.getTransaccionObjeto().getCantidad());
+                        transaccion.setPrecio(request.getTransaccionObjeto().getPrecio().add(new BigDecimal("0.00")));
+
                         this.getTransaccion(dominio, request, transaccion, codigoAmbiente);
 
                         transaccion.setFechaAlta(fecha);
@@ -153,9 +176,14 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                         this.transaccionRepository.save(transaccion);
                         request.getTransaccionObjeto().setId(transaccion.getId());
 
+                        Long idDetalle = getContadorDetalle(transaccion.getId());
+                        Integer cantidadDetalle = 0 ;
+                        BigDecimal precioDetalle =  new BigDecimal("0.00");
                         for (TransaccionDetalle pedido : request.getTransaccionObjeto().getLista()) {
                             detalle = new DetalleTransaccion();
-                            String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
+                            String uid = transaccion.getId() + idDetalle.toString();
+                            idDetalle = idDetalle + 1L;
+                            //String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
                             detalle.setId(uid);
                             detalle.setIdTransaccion(transaccion.getId());
                             detalle.setCodigoArticulo(pedido.getCodigoArticulo());
@@ -167,6 +195,16 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             detalle.setFechaAlta(fecha);
                             this.detalleTransaccionRepository.save(detalle);
                             pedido.setId(detalle.getId());
+                            cantidadDetalle = cantidadDetalle + detalle.getCantidad();
+                            precioDetalle = precioDetalle.add( detalle.getPrecio().multiply(new BigDecimal(detalle.getCantidad())) );
+                        }
+                        System.out.println(!cantidadDetalle.equals(transaccion.getCantidad()));
+
+                        System.out.println(!precioDetalle.subtract(transaccion.getPrecio()).toString().equals("0.00"));
+                        // Validacion de monto y cantidad entre el detalle y la cabecera principal
+                        if ( !cantidadDetalle.equals(transaccion.getCantidad())
+                                || !precioDetalle.subtract(transaccion.getPrecio()).toString().equals("0.00") ) {
+                            throw new Exception("Cantidad y/o Montos distintos (principal) : Precio: " + transaccion.getPrecio() + " Cantidad: " + transaccion.getCantidad());
                         }
 
                         String msgError = getInventario(this.inventarioRepository,
@@ -186,7 +224,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     response.setMensaje("Adicione al menos un articulo al detalle");
                 }
             } else {
-                response.setMensaje("El transaccion recibida se encuentra vacia.");
+                response.setMensaje("La transaccion recibida se encuentra vacia.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,7 +237,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
     }
 
     private String getInventario(InventarioRepository repository,
-                                 Integer idUsuario, Date fecha,
+                                 Long idUsuario, Date fecha,
                                  String ambienteOrigen, String ambienteDestino,
                                  String dominio, String valor,
                                  List<TransaccionDetalle> list,
@@ -265,7 +303,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         Date fecha = new Date();
         try {
             Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
-            Integer idUsuario = (Integer) arrayId[0];
+            Long idUsuario = (Long) arrayId[0];
             String codigoAmbiente = (String) arrayId[1];
             transaccion = this.transaccionRepository.findOne(request.getTransaccionObjeto().getId());
 
@@ -284,9 +322,14 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     transaccion.setFechaActualizacion(fecha);
                     transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
 
+                    transaccion.setPrecio(request.getTransaccionObjeto().getPrecio().add(new BigDecimal("0.00")));
+                    transaccion.setCantidad(request.getTransaccionObjeto().getCantidad());
+
                     this.transaccionRepository.save(transaccion);
                     request.getTransaccionObjeto().setId(transaccion.getId());
 
+                    BigDecimal precioDetalle = new BigDecimal(("0.00"));
+                    Integer cantidadDetalle = 0;
                     List<String> listaActualizada = new ArrayList<>();
                     for (TransaccionDetalle de : request.getTransaccionObjeto().getLista()) {
                         if (de.getId() != null) {
@@ -299,10 +342,15 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             detalle.setOperadorActualizacion(String.valueOf(idUsuario));
                             detalle.setFechaActualizacion(fecha);
                             this.detalleTransaccionRepository.save(detalle);
+
+                            precioDetalle = precioDetalle.add(detalle.getPrecio().multiply(new BigDecimal(detalle.getCantidad())));
+                            cantidadDetalle = cantidadDetalle + detalle.getCantidad();
                         }
                     }
 
-                    List<DetalleTransaccion> listBaja = this.detalleTransaccionRepository.findByIdNotInAndFechaBajaIsNull(listaActualizada);
+                    List<DetalleTransaccion> listBaja = this.detalleTransaccionRepository.findByIdTransaccionAndIdNotInAndFechaBajaIsNull( transaccion.getId(), listaActualizada);
+
+                    System.out.println("listaBaja: " + listBaja.size());
 
                     for (DetalleTransaccion de : listBaja) {
                         de.setFechaBaja(fecha);
@@ -315,7 +363,8 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             String idDetalleExistente = this.detalleTransaccionRepository.existeArticuloEnTransaccion(transaccion.getId(), de.getCodigoArticulo());
                             if (idDetalleExistente == null) {
                                 detalle = new DetalleTransaccion();
-                                detalle.setId(transaccion.getId() + this.getSecuencialDetalleTransaccion().toString());
+                                detalle.setId(transaccion.getId() + getContadorDetalle(transaccion.getId()).toString());
+                                //detalle.setId(transaccion.getId() + this.getSecuencialDetalleTransaccion().toString());
                                 detalle.setIdTransaccion(transaccion.getId());
                                 detalle.setCodigoArticulo(de.getCodigoArticulo());
                                 detalle.setCantidad(de.getCantidad());
@@ -325,12 +374,21 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                                 detalle.setOperadorAlta(String.valueOf(idUsuario));
                                 detalle.setFechaAlta(fecha);
                                 detalleTransaccionRepository.save(detalle);
+
+                                precioDetalle = precioDetalle.add(detalle.getPrecio().multiply(new BigDecimal(detalle.getCantidad())));
+                                cantidadDetalle = cantidadDetalle + detalle.getCantidad();
+
                                 de.setId(detalle.getId());
                                 listaActualizada.add(de.getId());
                             } else {
                                 response.setMensaje("Esta volviendo a insertar un articulo");
                             }
                         }
+                    }
+
+                    if ( !cantidadDetalle.equals(transaccion.getCantidad())
+                            || !precioDetalle.subtract(transaccion.getPrecio()).toString().equals("0.00")) {
+                        throw new Exception("Cantidad y/o Montos distintos (principal) : Precio: " + transaccion.getPrecio() + " Cantidad: " + transaccion.getCantidad());
                     }
 
                     String msgError = this.getInventario(this.inventarioRepository,
@@ -351,6 +409,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 response.setMensaje("Transaccion no editable   (Se encuentra dada de baja)");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.setTransaccionObjeto(null);
             response.setMensaje("Error al actualizar la transaccion ");
         }
@@ -365,7 +424,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         try {
             Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 Date fecha = new Date();
                 Transaccion transaccion = this.transaccionRepository.findByIdAndFechaBajaIsNull(idTransaccion);
@@ -391,7 +450,6 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             transaccion.getCodigoDominio(), transaccion.getCodigoValor(),
                             listAux,
                             UtilsConstante.INVENTARIO_REMOVE);
-
                     response.setRespuesta(true);
                 } else {
                     response.setMensaje("No se puede dar de baja la transaccion , los permitidos {PEDIDO SOLICITUD, TRANSFERENCIA ENVIADO}");
@@ -442,6 +500,9 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA)) {
                 System.out.println(String.format("%s, %s, %s, %s", codigoAmbiente, dominio, valor, idCiclo));
                 lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
+            } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA_AUX)) {
+                System.out.println(String.format("%s, %s, %s",  dominio, valor, idCiclo));
+                lista = this.transaccionRepository.listaTransferenciasEnviosTodos(dominio, valor, idCiclo);
             }
             System.out.println("list transaccion > " + lista);
             for (TransaccionObjeto pedido : lista) {
@@ -467,15 +528,29 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
+                TransaccionObjeto tra = null;
+                if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
+                    tra = transaccionRepository.getTransaccionObjetoAmbiente(id, dominio, valor);
+                } else {
+                    tra = transaccionRepository.getTransaccionObjeto(id, dominio, valor);
+                }
 
-                TransaccionObjeto tra = transaccionRepository.getTransaccionObjeto(id, dominio, valor);
-                System.out.println("transaccion : " + tra);
+                //System.out.println("transaccion : " + tra);
                 if (tra != null) {
                     tra.setLista(detalleTransaccionRepository.listaDetalle(id));
                     response.setTransaccionObjeto(tra);
                     response.setRespuesta(true);
                 } else {
-                    response.setMensaje("No se encontrol el registro");
+                    if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
+                        tra = transaccionRepository.getTransaccionObjetoAmbienteAll(id, dominio, valor);
+                    } else {
+                        tra = transaccionRepository.getTransaccionObjetoAll(id, dominio, valor);
+                    }
+                    if( tra == null) {
+                        response.setRespuesta(true);
+                        response.setMensaje("El Nro Movimiento no existe, puede usarse");
+                    }
+                    else response.setMensaje("Existe pero esta dado de baja. (No se puede usar)");
                 }
             } else {
                 response.setMensaje("Las credenciales estan vencidas, ingrese desde el login nuevamente");

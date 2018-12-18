@@ -1,16 +1,22 @@
 package bo.clync.pos.arquetipo.objetos;
 
-public class DiscoResponse {
+import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
 
-    private Byte[] array;
+import java.util.List;
+
+public class DiscoResponse {
+    private String ruta;
+    private String nombre;
+    private List<AbcOperaciones> list;
+    private byte[] array;
     private boolean respuesta;
     private String mensaje;
 
-    public Byte[] getArray() {
+    public byte[] getArray() {
         return array;
     }
 
-    public void setArray(Byte[] array) {
+    public void setArray(byte[] array) {
         this.array = array;
     }
 
@@ -28,5 +34,29 @@ public class DiscoResponse {
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
+    }
+
+    public List<AbcOperaciones> getList() {
+        return list;
+    }
+
+    public void setList(List<AbcOperaciones> list) {
+        this.list = list;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
     }
 }

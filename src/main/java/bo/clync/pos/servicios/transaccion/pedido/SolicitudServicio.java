@@ -6,6 +6,8 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseInit;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by eyave on 27-10-17.
  */
@@ -13,12 +15,13 @@ public interface SolicitudServicio {
 
     TransaccionResponseList lista(String token);
     TransaccionResponseInit init(String token);
-    TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception;
-    TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception;
-    ServResponse eliminar(String token, String idTransaccion) throws Exception;
+    String getIdTransaccion( String nroMovimiento, String token );
+    TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
+    TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
+    ServResponse eliminar(String token, String idTransaccion, HttpServletRequest http) throws Exception;
     TransaccionResponse obtener(String token, String id);
 
-    ServResponse confirmarLlegada(String token, String id) throws Exception ;
+    ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception ;
 
 
 

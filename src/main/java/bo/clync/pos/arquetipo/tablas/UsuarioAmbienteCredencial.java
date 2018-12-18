@@ -23,7 +23,7 @@ public class UsuarioAmbienteCredencial implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idUsuario;
+    private Long idUsuario;
     private String codigoAmbiente;
     private String usuario;
     private String contrasenia;
@@ -62,11 +62,11 @@ public class UsuarioAmbienteCredencial implements Serializable {
         this.id = id;
     }
 
-    public Integer getIdUsuario() {
+    public Long getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
+    public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
     }
 

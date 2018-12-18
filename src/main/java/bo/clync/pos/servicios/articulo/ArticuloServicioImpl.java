@@ -13,10 +13,13 @@ import bo.clync.pos.arquetipo.objetos.articulo.obtener.ServObtenerResponse;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
 import bo.clync.pos.repository.common.AmbienteRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -41,37 +44,26 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     private ArticuloRepository articuloRepository;
     @Autowired
     private AmbienteRepository ambienteRepository;
+    @Autowired
+    private DiscoServicio discoServicio;
 
     @Override
     public ServListaResponse lista(String token) {
         ServListaResponse response = new ServListaResponse();
-        try {
-            long ini = System.currentTimeMillis();
-            response.setLista(repository.getListResumenArticulos());
-            long res = ini - System.currentTimeMillis();
-            System.out.println("TIEMPO TRANSCURRIDO : " + res);
-            response.setRespuesta(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setMensaje("Error al recuperar los registros");
-        }
+        response.setLista(repository.getListResumenArticulos());
+        response.setRespuesta(true);
         return response;
     }
 
     @Override
     public ServListaResponse listaPorCodigo(String token, String patron) {
         ServListaResponse response = new ServListaResponse();
-        try {
-            response.setLista(repository.getListResumenArticulosPorPatron(patron));
-            if (response.getLista().size() == 0) {
-                response.setRespuesta(false);
-                response.setMensaje("true");
-            } else {
-                response.setRespuesta(true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setMensaje("Error al recuperar los registros");
+        response.setLista(repository.getListResumenArticulosPorPatron(patron));
+        if (response.getLista().size() == 0) {
+            response.setRespuesta(false);
+            response.setMensaje("true");
+        } else {
+            response.setRespuesta(true);
         }
         return response;
     }
@@ -79,20 +71,15 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     @Override
     public ServObtenerResponse obtener(String codigo, String token) {
         ServObtenerResponse response = new ServObtenerResponse();
-        try {
-            response.setArticulo(repository.getObtenerArticuloPorCodigo(codigo));
-            if (response.getArticulo() == null)
-                response.setMensaje("No se encontro un articulo con codigo " + codigo);
-            else response.setRespuesta(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setMensaje("Error al recuperar el articulo");
-        }
+        response.setArticulo(repository.getObtenerArticuloPorCodigo(codigo));
+        if (response.getArticulo() == null)
+            response.setMensaje("No se encontro un articulo con codigo " + codigo);
+        else response.setRespuesta(true);
         return response;
     }
 
     @Override
-    public ServResponse nuevo(ArticuloRequest request, String token) {
+    public ServResponse nuevo(ArticuloRequest request, String token, HttpServletRequest http) {
         String operador = null;
         Articulo articulo = null;
         ServResponse response = new ServResponse();
@@ -114,6 +101,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                 articulo.setFechaAlta(new Date());
                 articulo.setOperadorAlta(operador);
                 repository.save(articulo);
+                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                 response.setRespuesta(true);
             } else {
                 response.setMensaje("El codigo de articulo ya existe ingreso otro.");
@@ -126,7 +114,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     }
 
     @Override
-    public ServResponse actualizar(String codigo, ArticuloRequest request, String token) {
+    public ServResponse actualizar(String codigo, ArticuloRequest request, String token, HttpServletRequest http) {
         Articulo articulo = null;
         String operador = null;
         ServResponse response = new ServResponse();
@@ -147,6 +135,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                 articulo.setFechaActualizacion(new Date());
                 articulo.setOperadorActualizacion(operador);
                 repository.save(articulo);
+                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                 response.setRespuesta(true);
             } else {
                 response.setMensaje("No se encontro ningun articulo con el codigo enviado");
@@ -159,7 +148,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     }
 
     @Override
-    public ServResponse eliminar(String codigo, String token) {
+    public ServResponse eliminar(String codigo, String token, HttpServletRequest http) {
         Articulo articulo = null;
         String operador = null;
         Object[] arrayId = null;
@@ -175,6 +164,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                         articulo.setFechaBaja(new Date());
                         articulo.setOperadorBaja(operador);
                         repository.save(articulo);
+                        this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                         response.setRespuesta(true);
                     } else {
                         response.setMensaje("No existe el articulo que quiere eliminar");

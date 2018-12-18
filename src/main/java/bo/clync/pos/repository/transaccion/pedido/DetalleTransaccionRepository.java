@@ -22,7 +22,10 @@ public interface DetalleTransaccionRepository extends JpaRepository<DetalleTrans
     public List<TransaccionDetalle> listaDetalle(@Param("idTransaccion") String idTransaccion);
 
 
-    List<DetalleTransaccion> findByIdNotInAndFechaBajaIsNull(Collection<String> ids);
+    //List<DetalleTransaccion> findByIdNotInAndFechaBajaIsNull(Collection<String> ids);
+
+    List<DetalleTransaccion> findByIdTransaccionAndIdNotInAndFechaBajaIsNull(String idTransaccion, Collection<String> ids);
+
 
     List<DetalleTransaccion> findByIdTransaccionAndFechaBajaIsNull(String id);
 
@@ -39,4 +42,9 @@ public interface DetalleTransaccionRepository extends JpaRepository<DetalleTrans
            " WHERE o.id = :id " +
            "   AND o.fechaBaja IS NULL")
     public DetalleTransaccion getDetalleTransaccion(@Param("id") String id);
+
+    @Query("SELECT count(o) " +
+            "  FROM DetalleTransaccion  o " +
+            " WHERE o.idTransaccion = :id ")
+    public Long getDetalleTransaccionMaximoAll(@Param("id") String id);
 }

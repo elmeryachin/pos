@@ -12,9 +12,9 @@ import java.util.List;
  * Created by eyave on 28-10-17.
  */
 
-public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    Usuario findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(String codigo, String codigoValorUsuario, String codigoAmbiente);
+    Usuario findByCodigoAndCodigoValorUsuarioAndFechaBajaIsNull(String codigo, String codigoValorUsuario);
 
     @Query("SELECT o.id " +
             " FROM Usuario o " +
@@ -22,7 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.codigoAmbiente=:codigoAmbiente" +
             "  AND o.fechaBaja IS NULL")
-    Integer getIdUsuarioConAmbiente(@Param("codigo") String codigo,
+    Long getIdUsuarioConAmbiente(@Param("codigo") String codigo,
                                     @Param("codigoValorUsuario") String codigoValorUsuario,
                                     @Param("codigoAmbiente") String codigoAmbiente);
 
@@ -31,7 +31,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "WHERE o.codigo = :codigo " +
             "  AND o.codigoValorUsuario=:codigoValorUsuario " +
             "  AND o.fechaBaja IS NULL")
-    Integer getIdUsuarioCliente(@Param("codigo") String codigo,
+    Long getIdUsuarioCliente(@Param("codigo") String codigo,
                                     @Param("codigoValorUsuario") String codigoValorUsuario);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +

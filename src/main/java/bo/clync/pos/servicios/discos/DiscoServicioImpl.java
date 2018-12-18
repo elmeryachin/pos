@@ -2,48 +2,64 @@ package bo.clync.pos.servicios.discos;
 
 import bo.clync.pos.arquetipo.objetos.DiscoRequest;
 import bo.clync.pos.arquetipo.objetos.DiscoResponse;
+import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
+import bo.clync.pos.repository.acceso.ConectadoRepository;
+import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
+import bo.clync.pos.repository.disco.AbcOperacionesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.util.Map;
+
+import javax.inject.Inject;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class DiscoServicioImpl implements DiscoServicio {
 
+    @Autowired
+    private AbcOperacionesRepository operacionesRepository;
+    @Autowired
+    private UsuarioAmbienteCredencialRepository credencialRepository;
 
-    /*private DiscoResponse nuevaSucursal() {
-        return null;
-    }*/
-
-    @Override
-    public DiscoResponse grabar(String token, DiscoRequest request) {
-        /*Firma firma = new Firma();
-        List<Ambiente> listaAmbiente = new ArrayList<Ambiente>();
-        List<Ciclo> listaCiclo = new ArrayList<Ciclo>();
-        List<Inventario> listInventario = new ArrayList<Inventario>();
-        List<Usuario> listUsuario = new ArrayList<Usuario>();
-        List<UsuarioAmbienteCredencial> listUsuarioAmbienteCredencial = new ArrayList<UsuarioAmbienteCredencial>();
-        List<Articulo> listArticulo = new ArrayList<Articulo>();
-        List<Transaccion> listaTransaccion = new ArrayList<Transaccion>();
-        List<DetalleTransaccion> listaDetalleTransaccion = new ArrayList<DetalleTransaccion>();*/
-        return null;
+    public void guardarOperaciones(AbcOperaciones operaciones) {
+        this.operacionesRepository.save(operaciones);
     }
 
     @Override
-    public DiscoResponse leer(String token, Byte[] array) {
-        return null;
-    }
-/*
-    private Object mapearObjetoDesdeJson(File file ) {//new File("employee.json")
-        ObjectMapper objectMapper = new ObjectMapper();
-        Object emp = objectMapper.readValue(file, Object.class);
-        logger.info(emp.toString());
-        return emp;
-    }*/
+    public DiscoResponse recuperar(String token, String process) {
+        DiscoResponse response = new DiscoResponse();
 
+        String proceso = null;
+        if(process == null || process.equals("")) {
+            Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
+            proceso = getNombre((String) arrayId[1], (Long) arrayId[0]);
+            operacionesRepository.actualizar(token, proceso);
+        } else {
+            proceso = process;
+        }
+        response.setNombre(proceso);
+        response.setList(operacionesRepository.operacionesPorProceso(proceso));
+        response.setRespuesta(true);
+        return response;
+    }
+
+    private String getNombre(String codigoAmbiente, Long idUsuario) {
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
+        return sdf.format(new Date()) + "_" + codigoAmbiente + "_" + idUsuario;
+
+    }
 
     @Override
-    public DiscoResponse recuperar(String token, DiscoRequest request) {
-        return null;
+    public boolean verificarProcesoExterno(String proceso) {
+        List list = operacionesRepository.findAllByProceso(proceso);
+        if(list != null && list.size() > 0 ) return true;
+        else return false;
+    }
+
+    @Override
+    public boolean getGrabarCodigoProceso(String token, String proceso) {
+        operacionesRepository.actualizar(token, proceso);
+        return true;
     }
 }

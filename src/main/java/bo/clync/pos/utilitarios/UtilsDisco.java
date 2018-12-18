@@ -1,5 +1,9 @@
 package bo.clync.pos.utilitarios;
 
+import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,6 +13,28 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class UtilsDisco {
+
+    public static AbcOperaciones getOperaciones(HttpServletRequest http, Object objecto, String token) throws Exception {
+        String json = null;
+        AbcOperaciones operaciones = null;
+        try {
+            if (objecto != null)
+                json = new ObjectMapper().writeValueAsString(objecto);
+
+            operaciones = new AbcOperaciones();
+            //Integer id = 1;
+            operaciones.setId(null);
+            operaciones.setTipo(http.getMethod());
+            operaciones.setUrl(http.getRequestURI());
+            operaciones.setJson(json);
+            operaciones.setToken(token) ;
+            operaciones.setProceso(null);
+        } catch (Exception e) { e.printStackTrace(); }
+        return operaciones;
+    }
+
+
+
     public static void zip(String sourceFile, String fileZip) throws IOException {
         //String sourceFile = "C:\\Users\\eyave\\Desktop\\misarchivos";
         //String fileZip = "C:\\Users\\eyave\\Desktop\\source.zip";

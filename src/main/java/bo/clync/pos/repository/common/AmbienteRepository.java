@@ -1,6 +1,7 @@
 package bo.clync.pos.repository.common;
 
 import bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin;
+import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
 import bo.clync.pos.arquetipo.tablas.Ambiente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,28 +22,28 @@ public interface AmbienteRepository extends JpaRepository<Ambiente, String> {
             "  AND a.codigo = :codigo")
     Integer verificarSucursal(@Param("codigo") String codigo);
 
-    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE :valor = :valor" +
             "  AND o.codigo = :codigo " +
             "  AND o.codigo <> :codigoAmbiente")
-    List<AmbienteResponseMin> obtenerAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
+    List<UsuarioResponseMin> obtenerAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
                                               @Param("codigo") String codigo,
                                               @Param("valor") String valor);
 
-    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE :valor = :valor" +
             "  AND o.codigo like :patron " +
             "  AND o.codigo <> :codigoAmbiente" )
-    List<AmbienteResponseMin> listaAmbientePorPatron(@Param("codigoAmbiente") String codigoAmbiente,
-                                                     @Param("patron") String patron,
-                                                     @Param("valor") String valor);
+    List<UsuarioResponseMin> listaAmbientePorPatron(@Param("codigoAmbiente") String codigoAmbiente,
+                                                    @Param("patron") String patron,
+                                                    @Param("valor") String valor);
 
-    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.AmbienteResponseMin(o.codigo, o.nombre) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin(o.codigo, o.nombre) " +
             " FROM Ambiente o " +
             "WHERE :valor = :valor" +
             "  AND o.codigo <> :codigoAmbiente" )
-    List<AmbienteResponseMin> listaAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
+    List<UsuarioResponseMin> listaAmbiente(@Param("codigoAmbiente") String codigoAmbiente,
                                             @Param("valor") String valor);
 }

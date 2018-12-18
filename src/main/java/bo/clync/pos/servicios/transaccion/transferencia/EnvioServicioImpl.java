@@ -5,12 +5,15 @@ import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
 import bo.clync.pos.arquetipo.tablas.Transaccion;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -24,18 +27,24 @@ public class EnvioServicioImpl implements EnvioServicio {
     private UsuarioAmbienteCredencialRepository credencialRepository;
     @Autowired
     private TransaccionRepository transaccionRepository;
-
+    @Autowired
+    private DiscoServicio discoServicio;
     @Override
     public TransaccionResponseInit init(String token) {
         return transaccionServicio.init(token, UtilsDominio.TRANSFERENCIA);
     }
 
     @Override
-    public TransaccionResponse adicionar(String token, TransaccionRequest request) throws Exception {
+    public TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception {
         //validarLISTA DETALLE DE ARTICULOS POR SUCURSAL
         String[] codigoArticulo = arrayArticulos(request);
 
-        return transaccionServicio.nuevo(token, request, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO, UtilsDominio.TIPO_PAGO_NO_REQUERIDO);
+        TransaccionResponse response = transaccionServicio.nuevo(token, request, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO, UtilsDominio.TIPO_PAGO_NO_REQUERIDO);
+
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+
+        return response;
     }
 
     public String[] arrayArticulos(TransaccionRequest request) {
@@ -48,13 +57,23 @@ public class EnvioServicioImpl implements EnvioServicio {
     }
 
     @Override
-    public TransaccionResponse actualizar(String token, TransaccionRequest request) throws Exception {
-        return transaccionServicio.actualizar(token, request, UtilsDominio.TRANSFERENCIA);
+    public TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception {
+        TransaccionResponse response = transaccionServicio.actualizar(token, request, UtilsDominio.TRANSFERENCIA);
+
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+
+        return response;
     }
 
     @Override
-    public ServResponse eliminar(String token, String idTransaccion) throws Exception {
-        return transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.TRANSFERENCIA_ENVIO);
+    public ServResponse eliminar(String token, String idTransaccion, HttpServletRequest http) throws Exception {
+        ServResponse response = transaccionServicio.eliminar(token, idTransaccion, UtilsDominio.TRANSFERENCIA_ENVIO);
+
+        if(response.isRespuesta())
+            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+
+        return response;
     }
 
     @Override
@@ -68,11 +87,11 @@ public class EnvioServicioImpl implements EnvioServicio {
     }
 
     @Override
-    public ServResponse reconfirmar(String token, String id){
+    public ServResponse reconfirmar(String token, String id, HttpServletRequest http) throws Exception{
         ServResponse response = new ServResponse();
         Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
         if(arrayId!=null) {
-            Integer idUsuario = (Integer) arrayId[0];
+            Long idUsuario = (Long) arrayId[0];
             Transaccion transaccion = transaccionRepository.getTransaccion(id);
             if (transaccion != null) {
                 if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)
@@ -81,6 +100,7 @@ public class EnvioServicioImpl implements EnvioServicio {
                     transaccion.setFechaActualizacion(new Date());
                     transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
                     this.transaccionRepository.save(transaccion);
+                    this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                     response.setRespuesta(true);
                 } else {
                     response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
@@ -103,6 +123,11 @@ public class EnvioServicioImpl implements EnvioServicio {
     @Override
     public TransaccionResponse obtener(String token, String id) {
         return transaccionServicio.obtener(token, id, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO);
+    }
+
+    @Override
+    public String getIdTransaccion( String nroMovimiento, String token ) {
+        return transaccionServicio.getIdTransaccion(UtilsDominio.TRANSFERENCIA, nroMovimiento, token);
     }
 
     @Override

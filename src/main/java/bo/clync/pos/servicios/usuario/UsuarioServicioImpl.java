@@ -7,11 +7,14 @@ import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
 import bo.clync.pos.arquetipo.tablas.Usuario;
 import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.common.UsuarioRepository;
+import bo.clync.pos.servicios.discos.DiscoServicio;
+import bo.clync.pos.utilitarios.UtilsDisco;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Service
@@ -21,7 +24,8 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
-
+    @Autowired
+    private DiscoServicio discoServicio;
     @Override
     public UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario) {
         Usuario usuario = null;
@@ -29,7 +33,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         String codigoAmbiente = null;
         try {
             codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
-            usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(codigo, tipoUsuario, codigoAmbiente);
+            usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndFechaBajaIsNull(codigo, tipoUsuario);
             if (usuario == null) {
                 response.setMensaje("No existe el codigo del " + tipoUsuario);
             } else {
@@ -44,19 +48,28 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         return response;
     }
 
+    private static Long getId(String codigo) {
+        String id = "";
+        for (int i = 0; i < codigo.length(); i++) {
+            char c = codigo.charAt(i);
+            id = id + (int) c;
+        }
+        return Long.valueOf(id);
+    }
+
     @Override
-    public ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario) {
+    public ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario, HttpServletRequest http) {
         ServResponse response = new ServResponse();
         try {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
-                Integer idUsuario = (Integer) arrayId[0];
+                Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
-                Usuario usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndCodigoAmbienteAndFechaBajaIsNull(request.getCodigo(), tipoUsuario, codigoAmbiente);
-                Integer len = usuarioRepository.maximoIdRegistro();
+                Usuario usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndFechaBajaIsNull(request.getCodigo(), tipoUsuario);
+                //Integer len = usuarioRepository.maximoIdRegistro();
                 if (usuario == null) {
                     usuario = new Usuario();
-                    usuario.setId(len);
+                    usuario.setId(getId(request.getCodigo()));
                     usuario.setCodigo(request.getCodigo());
                     usuario.setNombre(request.getNombre());
                     usuario.setDireccion(request.getDireccion());
@@ -66,6 +79,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                     usuario.setFechaAlta(new Date());
                     usuario.setOperadorAlta(String.valueOf(idUsuario));
                     usuarioRepository.save(usuario);
+                    this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                     response.setRespuesta(true);
                 } else {
                     response.setMensaje("El codigo ya existe");
@@ -86,46 +100,14 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
             if (patron == null)
-                response.setList(usuarioRepository.getListaUsuarioResumen(tipoUsuario, codigoAmbiente));
+                response.setList(usuarioRepository.getTodosUsuarioResumen(tipoUsuario));
             else
-                response.setList(usuarioRepository.getListaUsuarioResumenPorPatron(patron, tipoUsuario, codigoAmbiente));
+                response.setList(usuarioRepository.getTodosUsuarioResumenPorPatron(patron, tipoUsuario));
             response.setRespuesta(true);
         } catch (Exception e) {
             response.setMensaje("Error al recuperar la lista de " + tipoUsuario);
             e.printStackTrace();
         }
         return response;
-    }
-
-    /*
-    public UsuarioResponseList listaUsuariosTodos(String token, String patron, String tipoUsuario) {
-        UsuarioResponseList response = new UsuarioResponseList();
-        try {
-            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
-            if (patron == null)
-                response.setList(usuarioRepository.getListaUsuarioResumen(tipoUsuario, codigoAmbiente));
-            else
-                response.setList(usuarioRepository.getListaUsuarioResumenPorPatron(patron, tipoUsuario, codigoAmbiente));
-            response.setRespuesta(true);
-        } catch (Exception e) {
-            response.setMensaje("Error al recuperar la lista de " + tipoUsuario);
-            e.printStackTrace();
-        }
-        return response;
-    }*/
-
-    //@Override
-    private UsuarioResponseList listaProveedor(String token, String patron) {
-        return listaUsuario(token, patron, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
-    }
-
-    //@Override
-    private UsuarioResponseMin obtenerProveedor(String token, String codigo) {
-        return obtenerUsuario(token, codigo, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
-    }
-
-    //@Override
-    private ServResponse nuevoProveedor(String token, UsuarioRequest request) {
-        return nuevoUsuario(token, request, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
     }
 }

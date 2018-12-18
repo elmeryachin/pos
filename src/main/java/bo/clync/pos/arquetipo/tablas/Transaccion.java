@@ -26,10 +26,10 @@ public class Transaccion implements Serializable {
     private Integer nroMovimiento;
     private String codigoValor;
     private String codigoValorPago;
-    private Integer idUsuarioInicio;
+    private Long idUsuarioInicio;
     private String codigoAmbienteInicio;
     private Date fechaInicio;
-    private Integer idUsuarioFin;
+    private Long idUsuarioFin;
     private String codigoAmbienteFin;
     private Date fechaFin;
     private Integer cantidad;
@@ -103,11 +103,11 @@ public class Transaccion implements Serializable {
         this.codigoValorPago = codigoValorPago;
     }
 
-    public Integer getIdUsuarioInicio() {
+    public Long getIdUsuarioInicio() {
         return idUsuarioInicio;
     }
 
-    public void setIdUsuarioInicio(Integer idUsuarioInicio) {
+    public void setIdUsuarioInicio(Long idUsuarioInicio) {
         this.idUsuarioInicio = idUsuarioInicio;
     }
 
@@ -127,11 +127,11 @@ public class Transaccion implements Serializable {
         this.fechaInicio = fechaInicio;
     }
 
-    public Integer getIdUsuarioFin() {
+    public Long getIdUsuarioFin() {
         return idUsuarioFin;
     }
 
-    public void setIdUsuarioFin(Integer idUsuarioFin) {
+    public void setIdUsuarioFin(Long idUsuarioFin) {
         this.idUsuarioFin = idUsuarioFin;
     }
 
