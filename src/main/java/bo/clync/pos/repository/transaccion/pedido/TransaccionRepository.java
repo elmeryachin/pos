@@ -83,13 +83,15 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
             " FROM Transaccion o " +
             "WHERE o.codigoAmbienteFin=:codigoAmbienteFin" +
             "  AND o.codigoDominio=:dominio " +
-            "  AND o.codigoValor=:codigoValor " +
+            "  AND (o.codigoValor=:codigoValor " +
+            "   OR o.codigoValor=:codigoValor2) " +
             "  AND o.idCiclo=:idCiclo " +
             "  AND o.fechaBaja IS NULL" +
             " ORDER BY o.fechaInicio DESC, o.nroMovimiento DESC")
     List<TransaccionObjeto> listaTransferenciasRecibidos(@Param("codigoAmbienteFin") String codigoAmbienteFin,
                                                          @Param("dominio") String dominio,
                                                          @Param("codigoValor") String codigoValor,
+                                                         @Param("codigoValor2") String codigoValor2,
                                                          @Param("idCiclo") Integer idCiclo);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, o.codigoAmbienteFin, o.observacion, o.cantidad, o.precio) " +
@@ -165,6 +167,28 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, String
     public TransaccionObjeto getTransaccionObjetoAmbiente(@Param("id") String id,
                                                           @Param("dominio") String dominio,
                                                           @Param("valor") String valor);
+
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
+            "  FROM Transaccion o, Ambiente a " +
+            " WHERE o.id = :id " +
+            "   AND o.codigoAmbienteInicio=a.codigo " +
+            "   AND o.codigoDominio = :dominio " +
+            "   AND o.codigoValor = :valor " +
+            "   AND o.fechaBaja IS NULL")
+    public TransaccionObjeto getTransaccionObjetoAmbientePorOrigen(@Param("id") String id,
+                                                          @Param("dominio") String dominio,
+                                                          @Param("valor") String valor);
+
+    @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
+            "  FROM Transaccion o, Ambiente a " +
+            " WHERE o.id = :id " +
+            "   AND o.codigoAmbienteInicio=a.codigo " +
+            "   AND o.codigoDominio = :dominio " +
+            "   AND o.codigoValor = :valor " +
+            "   AND o.fechaBaja IS NULL")
+    public TransaccionObjeto getTransaccionObjetoAmbientePorOrigenAll(@Param("id") String id,
+                                                                   @Param("dominio") String dominio,
+                                                                   @Param("valor") String valor);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion, o.cantidad, o.precio ) " +
             "  FROM Transaccion o, Usuario u " +

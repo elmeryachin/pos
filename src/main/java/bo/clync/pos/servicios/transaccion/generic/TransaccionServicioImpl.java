@@ -144,7 +144,11 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
                     Long idUsuario = (Long) arrayId[0];
                     String codigoAmbiente = (String) arrayId[1];
-                    Object[] verificacion = (Object[]) this.transaccionRepository.existeNroMovimiento(idUsuario, codigoAmbiente, dominio, idCiclo, request.getTransaccionObjeto().getNroMovimiento());
+                    //Parche para crear registro de no llegadas tras una transferencia recibida con edicion
+                    Object[] verificacion = null;
+                    if(!valor.equals(UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO)) {
+                        verificacion = (Object[]) this.transaccionRepository.existeNroMovimiento(idUsuario, codigoAmbiente, dominio, idCiclo, request.getTransaccionObjeto().getNroMovimiento());
+                    }
                     if (verificacion == null || verificacion[0].equals(0l)) {
                         transaccion = new Transaccion();
                         String sid = idCiclo + "f" + codigoAmbiente + "f" + idUsuario + "f" + dominio + request.getTransaccionObjeto().getNroMovimiento();
@@ -173,6 +177,8 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                         transaccion.setFechaAlta(fecha);
                         transaccion.setOperadorAlta(String.valueOf(idUsuario));
 
+                        transaccion.setFechaBaja(null);
+                        transaccion.setOperadorBaja(null);
                         this.transaccionRepository.save(transaccion);
                         request.getTransaccionObjeto().setId(transaccion.getId());
 
@@ -184,6 +190,9 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             String uid = transaccion.getId() + idDetalle.toString();
                             idDetalle = idDetalle + 1L;
                             //String uid = transaccion.getId() + getSecuencialDetalleTransaccion().toString();
+                            System.out.println("uid:::: " + uid);
+                            System.out.println("pedido.getCantidad():: " + pedido.getCantidad());
+                            System.out.println("pedido.getPrecio(): " + pedido.getPrecio());
                             detalle.setId(uid);
                             detalle.setIdTransaccion(transaccion.getId());
                             detalle.setCodigoArticulo(pedido.getCodigoArticulo());
@@ -198,9 +207,12 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                             cantidadDetalle = cantidadDetalle + detalle.getCantidad();
                             precioDetalle = precioDetalle.add( detalle.getPrecio().multiply(new BigDecimal(detalle.getCantidad())) );
                         }
-                        System.out.println(!cantidadDetalle.equals(transaccion.getCantidad()));
+                        System.out.println("cantidadDetalle : " + cantidadDetalle);
+                        System.out.println("transaccion.getCantidad(): " + transaccion.getCantidad());
 
-                        System.out.println(!precioDetalle.subtract(transaccion.getPrecio()).toString().equals("0.00"));
+                        System.out.println("precioDetalle " + precioDetalle);
+                        System.out.println("transaccion.getPrecio() " + transaccion.getPrecio());
+
                         // Validacion de monto y cantidad entre el detalle y la cabecera principal
                         if ( !cantidadDetalle.equals(transaccion.getCantidad())
                                 || !precioDetalle.subtract(transaccion.getPrecio()).toString().equals("0.00") ) {
@@ -278,11 +290,11 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 repository.save(inventario);
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA_NLL) && valor.equals(UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO)) {
             	// NOT IMPLEMENTS
-            	inventario.setExistencia( inventario.getExistencia() - detalle.getCantidad() );
+            	inventario.setExistencia( inventario.getExistencia() - operador * detalle.getCantidad() );
             	repository.save( inventario );
             	
             	inventario = repository.getInventario( ambienteDestino, detalle.getCodigoArticulo() );
-            	inventario.setExistencia( inventario.getExistencia() + detalle.getCantidad() );
+            	inventario.setExistencia( inventario.getExistencia() + operador * detalle.getCantidad() );
             	repository.save( inventario );
             	
             } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.VENTA_REALIZADA)) {
@@ -483,7 +495,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 lista = this.transaccionRepository.listaTransferenciasEnviosPorDestino(codigoAmbiente, dominio, UtilsDominio.TRANSFERENCIA_ENVIO, idCiclo);
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
-                lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, idCiclo);
+                lista = this.transaccionRepository.listaTransferenciasRecibidos(codigoAmbiente, dominio, valor, UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT, idCiclo);
             }  else if (dominio.equals(UtilsDominio.TRANSFERENCIA)
                     && valor.equals(UtilsDominio.TRANSFERENCIA_RECIBIR_CONF)) {
                 lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
@@ -531,6 +543,10 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 TransaccionObjeto tra = null;
                 if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
                     tra = transaccionRepository.getTransaccionObjetoAmbiente(id, dominio, valor);
+                    if( arrayId[1].equals(tra.getCodigo())
+                            && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
+                        tra = transaccionRepository.getTransaccionObjetoAmbientePorOrigen(id, dominio, valor);
+                    }
                 } else {
                     tra = transaccionRepository.getTransaccionObjeto(id, dominio, valor);
                 }
@@ -541,9 +557,11 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                     response.setTransaccionObjeto(tra);
                     response.setRespuesta(true);
                 } else {
-                    if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
+                    if( dominio.equals( UtilsDominio.TRANSFERENCIA ) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO) ) {
+                        tra = transaccionRepository.getTransaccionObjetoAmbientePorOrigenAll(id, dominio, valor);
+                    } else if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
                         tra = transaccionRepository.getTransaccionObjetoAmbienteAll(id, dominio, valor);
-                    } else {
+                    }  else {
                         tra = transaccionRepository.getTransaccionObjetoAll(id, dominio, valor);
                     }
                     if( tra == null) {

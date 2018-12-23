@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +140,8 @@ public class RecibirServicioImpl implements RecibirServicio {
                             	for(DetalleTransaccion dt : detalles) {
                             		mapReal.put(dt.getCodigoArticulo(), dt.getCantidad());
                             	}
-                            	
+                                Integer cantidadDetalle = 0 ;
+                                BigDecimal precioDetalle =  new BigDecimal("0.00");
                             	for( TransaccionDetalle dt : listNuevo ) {
                             		Integer cantidad = mapReal.get(dt.getCodigoArticulo());
                             		if( cantidad != null ) {
@@ -147,7 +149,11 @@ public class RecibirServicioImpl implements RecibirServicio {
                             		} else {
                             			dt.setCantidad( - dt.getCantidad() );
                             		}
+                                    cantidadDetalle = cantidadDetalle + dt.getCantidad();
+                                    precioDetalle = precioDetalle.add( dt.getPrecio().multiply(new BigDecimal(dt.getCantidad())) );
                             	}
+                                request.getTransaccionObjeto().setPrecio(precioDetalle);
+                                request.getTransaccionObjeto().setCantidad(cantidadDetalle);
                             	//En codigo destino se ingresa el codigo del ambiente que creo la primera transaccion
                             	request.getTransaccionObjeto().setCodigo(transaccion.getCodigoAmbienteInicio());
                             	this.transaccionServicio.nuevo(token, request, dominioNuevo, valorNuevo, tipoPagoNuevo);
@@ -189,11 +195,17 @@ public class RecibirServicioImpl implements RecibirServicio {
                 transaccion = transaccionRepository.getTransaccion(id);
                 if (transaccion != null) {
 
-                    if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
+                    if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)
+                        || transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
                         if (transaccion.getCodigoAmbienteFin().equals(codigoAmbiente)) {
+                            if(transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)) {
+                                transaccionServicio.eliminar(token, id + "A", UtilsDominio.TRANSFERENCIA_NLL_RECIBIR_NO_LLEGO );
+                            }
+
                             transaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_ENVIO);
                             transaccion.setFechaActualizacion(fecha);
                             transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                            transaccion.setObservacion(transaccion.getObservacion().replaceAll("<editado>",""));
                             transaccionRepository.save(transaccion);
                             List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
                             for (DetalleTransaccion detalle : detalles) {
@@ -214,6 +226,9 @@ public class RecibirServicioImpl implements RecibirServicio {
                                 inventario2.setOperadorActualizacion(String.valueOf(idUsuario));
                                 inventarioRepository.save(inventario2);
                             }
+
+                            //....
+
                             if (response.getMensaje() == null) {
                                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                                 response.setRespuesta(true);

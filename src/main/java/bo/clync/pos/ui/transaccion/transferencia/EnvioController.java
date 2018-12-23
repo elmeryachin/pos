@@ -124,7 +124,8 @@ public class EnvioController {
     @GetMapping("/diferencia/quest/{id}")
     public ResponseEntity<?> obtenerDiferencia(@RequestHeader(value="token") String token,
                                                @PathVariable("id") String id) {
-        return new ResponseEntity<>(this.envioServicio.obtenerDiferencia(token, id), HttpStatus.OK);
+        //Donde "A" es el generado para registros extras por q no llegaron.
+        return new ResponseEntity<>(this.envioServicio.obtenerDiferencia(token, id + "A"), HttpStatus.OK);
     }
 
 

@@ -42,7 +42,7 @@ public class RecibirController {
         String tokenAlmacen = "12345-1";
         //Se quema el token para salvar este caso, considerando que es unico q envia
         String id = this.recibirServicio.getIdTransaccionPorRecibir(nro, tokenAlmacen);
-        System.out.println("Print id generado de nro mmovimiento " + id);
+        System.out.println("Print id generado de nro movimiento " + id);
         return new ResponseEntity<>(this.recibirServicio.obtenerPorRecibir(token, id), HttpStatus.OK);
     }
 
