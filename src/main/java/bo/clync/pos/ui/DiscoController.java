@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -43,6 +44,12 @@ public class DiscoController {
     private DiscoServicio service;
 
     private String tmpdir = "/home/eyave/Desktop/";//System.getProperty("java.io.tmpdir");
+
+    @CrossOrigin
+    @RequestMapping(value="/procesos", method = RequestMethod.GET)
+    public ResponseEntity<?> grabando(@RequestHeader(value="token") String token) throws Exception {
+        return new ResponseEntity<>( this.service.listaProcesos(token), HttpStatus.OK);
+    }
 
     @CrossOrigin
     @RequestMapping(value="/grabando", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -103,9 +110,11 @@ public class DiscoController {
 
         String http =  "http://localhost:8080";
         String tokenProceso = null;
+        Date fecha = null;
         for (int i = 0; i < lst.size(); i++) {
             AbcOperaciones operaciones = lst.get(i);
             tokenProceso = operaciones.getToken();
+            fecha = operaciones.getFecha();
             String url = http + operaciones.getUrl();
             if(operaciones.getTipo().equals("POST")) {
                 getEnviarPeticionPost(url, operaciones.getJson(), operaciones.getToken());
@@ -124,7 +133,7 @@ public class DiscoController {
         }
 
         //Se guardar el id proceso en los registros segun el token
-        service.getGrabarCodigoProceso(tokenProceso, nombre);
+        service.getGrabarCodigoProceso(tokenProceso, nombre, fecha);
 
         return new ResponseEntity<>( "Se actualizo exitosamente la base de datos", HttpStatus.OK);
     }
@@ -259,19 +268,12 @@ public class DiscoController {
         return respuesta;
     }
 
-
-
     @CrossOrigin
     @RequestMapping(value = "/lista/procesados", method = RequestMethod.GET)
     public ResponseEntity<Object> getProcesados(@RequestHeader(value="token") String token ) {
 
         return null;
     }
-
-
-
-
-
 
     @CrossOrigin
     @RequestMapping(value="/upload", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -308,7 +310,6 @@ public class DiscoController {
 
         return new ResponseEntity<>( "Subida Exitosa", HttpStatus.OK);
     }
-
 
     @CrossOrigin
     @RequestMapping(value = "/downloadFile/{fileName:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class AbcOperaciones {
@@ -17,7 +18,9 @@ public class AbcOperaciones {
     private String json;
     private String token;
     private String proceso;
-
+    private Date fecha;
+    private String codigoAmbiente;
+    private String operador;
 
     public Integer getId() {
         return id;
@@ -67,4 +70,27 @@ public class AbcOperaciones {
         this.proceso = proceso;
     }
 
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
+    }
+
+    public void setCodigoAmbiente(String codigoAmbiente) {
+        this.codigoAmbiente = codigoAmbiente;
+    }
+
+    public String getOperador() {
+        return operador;
+    }
+
+    public void setOperador(String operador) {
+        this.operador = operador;
+    }
 }

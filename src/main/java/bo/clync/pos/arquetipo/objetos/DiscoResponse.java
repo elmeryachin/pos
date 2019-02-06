@@ -2,6 +2,7 @@ package bo.clync.pos.arquetipo.objetos;
 
 import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
 
+import java.util.Date;
 import java.util.List;
 
 public class DiscoResponse {
