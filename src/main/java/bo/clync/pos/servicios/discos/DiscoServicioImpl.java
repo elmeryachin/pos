@@ -44,7 +44,7 @@ public class DiscoServicioImpl implements DiscoServicio {
 
     public void guardarOperaciones(AbcOperaciones operaciones) {
         Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(operaciones.getToken());
-        operaciones.setOperador((String) arrayId[0]);
+        operaciones.setOperador(String.valueOf(arrayId[0]));
         operaciones.setCodigoAmbiente((String) arrayId[1]);
         this.operacionesRepository.save(operaciones);
     }

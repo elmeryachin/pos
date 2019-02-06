@@ -101,7 +101,7 @@ public class RecibirServicioImpl implements RecibirServicio {
                             transaccion.setFechaFin(fecha);
                             transaccion.setFechaActualizacion(fecha);
                             transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-
+                            //transaccion.setObservacion(request.getTransaccionObjeto().getObservacion());
                             if(dominio == UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT) {
                                 //Identificado directo para ver que la transaccion fue editada por una sucursal.
                                 transaccion.setObservacion("<editado>" + transaccion.getObservacion());
