@@ -135,15 +135,31 @@ public class RecibirServicioImpl implements RecibirServicio {
                             	String tipoPagoNuevo = UtilsDominio.TIPO_PAGO_NO_REQUERIDO;
                             	
                             	List<TransaccionDetalle> listNuevo = request.getTransaccionObjeto().getLista();
-                            	Map<String, Integer> mapReal = new HashMap<>(); 
+                            	Map<String, Integer> mapDatosOrigen = new HashMap<>();
                             	
                             	for(DetalleTransaccion dt : detalles) {
-                            		mapReal.put(dt.getCodigoArticulo(), dt.getCantidad());
+                            		mapDatosOrigen.put(dt.getCodigoArticulo(), dt.getCantidad());
                             	}
                                 Integer cantidadDetalle = 0 ;
                                 BigDecimal precioDetalle =  new BigDecimal("0.00");
+
+                                Map<String, Integer> mapDatosEditador = new HashMap<>();
+                                for( TransaccionDetalle dt : listNuevo ) {
+                                    mapDatosEditador.put(dt.getCodigoArticulo(), dt.getCantidad());
+                                }
+                                for(DetalleTransaccion dt : detalles) {
+                                    if( mapDatosEditador.get(dt.getCodigoArticulo()) == null ) {
+                                        // El registro eliminado se adiciona con cantidad 0
+                                        TransaccionDetalle regEliminado = new TransaccionDetalle();
+                                        regEliminado.setCodigoArticulo(dt.getCodigoArticulo());
+                                        regEliminado.setCantidad(0);
+                                        regEliminado.setPrecio(dt.getPrecio());
+                                        listNuevo.add(regEliminado);
+                                    }
+                                }
+
                             	for( TransaccionDetalle dt : listNuevo ) {
-                            		Integer cantidad = mapReal.get(dt.getCodigoArticulo());
+                            		Integer cantidad = mapDatosOrigen.get(dt.getCodigoArticulo());
                             		if( cantidad != null ) {
                             			dt.setCantidad( cantidad - dt.getCantidad() );
                             		} else {
@@ -151,6 +167,7 @@ public class RecibirServicioImpl implements RecibirServicio {
                             		}
                                     cantidadDetalle = cantidadDetalle + dt.getCantidad();
                                     precioDetalle = precioDetalle.add( dt.getPrecio().multiply(new BigDecimal(dt.getCantidad())) );
+                                    System.out.println("###### " + dt.getCodigoArticulo() + " : Cantidad : " + dt.getCantidad());
                             	}
                                 request.getTransaccionObjeto().setPrecio(precioDetalle);
                                 request.getTransaccionObjeto().setCantidad(cantidadDetalle);
