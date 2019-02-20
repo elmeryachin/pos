@@ -300,7 +300,7 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             } else if (dominio.equals(UtilsDominio.VENTA) && valor.equals(UtilsDominio.VENTA_REALIZADA)) {
                 inventario.setExistencia(inventario.getExistencia() - operador * detalle.getCantidad());
                 repository.save(inventario);
-                if (inventario.getExistencia() < 0) msgError = "No existe suficientes articulos";
+                //if (inventario.getExistencia() < 0) msgError = "No existe suficientes articulos";
             }
         }
 

@@ -225,12 +225,19 @@ public class RecibirServicioImpl implements RecibirServicio {
                             transaccion.setObservacion(transaccion.getObservacion().replaceAll("<editado>",""));
                             transaccionRepository.save(transaccion);
                             List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                            StringBuilder msjProdNegativos = null;
                             for (DetalleTransaccion detalle : detalles) {
                                 Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteFin(), detalle.getCodigoArticulo());
                                 Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
-                                if (cantidad < 0) {
-                                    response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                                if ( cantidad < 0 ) {
+                                    if( msjProdNegativos == null ) {
+                                        msjProdNegativos = new StringBuilder("Con Cantidad negativa: ");
+                                    }
+                                    msjProdNegativos.append( detalle.getCodigoArticulo() ) .append( ", ");
                                 }
+                                /*if (cantidad < 0) {
+                                    response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
+                                }*/
                                 inventario.setExistencia(cantidad);
                                 inventario.setPorRecibir(UtilsOperacion.getNumeroNoNulo(inventario.getPorRecibir()) + detalle.getCantidad());
                                 inventario.setFechaActualizacion(fecha);
@@ -249,6 +256,7 @@ public class RecibirServicioImpl implements RecibirServicio {
                             if (response.getMensaje() == null) {
                                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                                 response.setRespuesta(true);
+                                if (msjProdNegativos != null ) response.setMensaje(msjProdNegativos.toString());
                             }
                         } else {
                             response.setMensaje("La transaccion solo lo puede revertir " + transaccion.getCodigoAmbienteFin());
