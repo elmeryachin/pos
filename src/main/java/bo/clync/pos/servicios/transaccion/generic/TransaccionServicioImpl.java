@@ -258,18 +258,19 @@ public class TransaccionServicioImpl implements TransaccionServicio {
         String msgError = null;
         for (TransaccionDetalle detalle : list) {
             inventario = repository.getInventario(ambienteOrigen, detalle.getCodigoArticulo());
+            if (inventario == null) {
+                inventario = new Inventario();
+                inventario.setCodigoAmbiente(ambienteOrigen);
+                inventario.setCodigoArticulo(detalle.getCodigoArticulo());
+                inventario.setExistencia(0);
+                inventario.setPorLlegar(detalle.getCantidad());
+                inventario.setFechaAlta(fecha);
+                inventario.setOperadorAlta(String.valueOf(idUsuario));
+            }
             if (dominio.equals(UtilsDominio.PEDIDO) && valor.equals(UtilsDominio.PEDIDO_SOLICITUD)) {
-                if (inventario == null) {
-                    inventario = new Inventario();
-                    inventario.setCodigoAmbiente(ambienteOrigen);
-                    inventario.setCodigoArticulo(detalle.getCodigoArticulo());
-                    inventario.setExistencia(0);
-                    inventario.setPorLlegar(detalle.getCantidad());
-                    inventario.setFechaAlta(fecha);
-                    inventario.setOperadorAlta(String.valueOf(idUsuario));
-                } else {
-                    inventario.setPorLlegar(UtilsOperacion.getNumeroNoNulo(inventario.getPorLlegar()) + operador * detalle.getCantidad());
-                }
+
+                inventario.setPorLlegar(UtilsOperacion.getNumeroNoNulo(inventario.getPorLlegar()) + operador * detalle.getCantidad());
+
                 repository.save(inventario);
 
             } else if (dominio.equals(UtilsDominio.TRANSFERENCIA) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
