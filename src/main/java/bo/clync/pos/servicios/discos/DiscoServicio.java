@@ -19,5 +19,5 @@ public interface DiscoServicio {
 
     boolean verificarProcesoExterno(String proceso);
 
-    boolean getGrabarCodigoProceso(String token, String proceso, Date fecha);
+    List<AbcOperaciones> getGrabarCodigoProceso(String token, String proceso, Date fecha);
 }

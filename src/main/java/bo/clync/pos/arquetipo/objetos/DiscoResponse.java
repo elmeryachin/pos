@@ -9,18 +9,10 @@ public class DiscoResponse {
     private String ruta;
     private String nombre;
     private List<AbcOperaciones> list;
-    private byte[] array;
+    private String documento;
     private boolean respuesta;
     private String mensaje;
-
-    public byte[] getArray() {
-        return array;
-    }
-
-    public void setArray(byte[] array) {
-        this.array = array;
-    }
-
+    
     public boolean isRespuesta() {
         return respuesta;
     }
@@ -59,5 +51,13 @@ public class DiscoResponse {
 
     public void setRuta(String ruta) {
         this.ruta = ruta;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 }

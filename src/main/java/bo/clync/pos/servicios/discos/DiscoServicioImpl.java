@@ -9,6 +9,7 @@ import bo.clync.pos.repository.disco.AbcOperacionesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,8 @@ public class DiscoServicioImpl implements DiscoServicio {
     private AbcOperacionesRepository operacionesRepository;
     @Autowired
     private UsuarioAmbienteCredencialRepository credencialRepository;
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
 
     public DiscoProcesoResponse listaProcesos(String token) {
         DiscoProcesoResponse response = new DiscoProcesoResponse();
@@ -46,31 +49,29 @@ public class DiscoServicioImpl implements DiscoServicio {
         Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(operaciones.getToken());
         operaciones.setOperador(String.valueOf(arrayId[0]));
         operaciones.setCodigoAmbiente((String) arrayId[1]);
+        operaciones.setFechaRegistro(new Date());
         this.operacionesRepository.save(operaciones);
     }
 
     @Override
-    public DiscoResponse recuperar(String token, String process) {
+    public DiscoResponse recuperar(String token, String nombreEnviado) {
         DiscoResponse response = new DiscoResponse();
 
-        String proceso = null;
-        if(process == null || process.equals("")) {
+        if(nombreEnviado.equals("")) {
+
             Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
-            proceso = getNombre((String) arrayId[1], (Long) arrayId[0]);
-            operacionesRepository.actualizar(token, proceso, new Date());
+
+            nombreEnviado = sdf.format(new Date()) + "_" + (String) arrayId[1] + "_" + (Long) arrayId[0];
+
+            response.setList(getGrabarCodigoProceso(token, nombreEnviado, new Date()));
+
         } else {
-            proceso = process;
+            response.setList(operacionesRepository.operacionesPorProceso(nombreEnviado));
         }
-        response.setNombre(proceso);
-        response.setList(operacionesRepository.operacionesPorProceso(proceso));
+
+        response.setNombre(nombreEnviado);
         response.setRespuesta(true);
         return response;
-    }
-
-    private String getNombre(String codigoAmbiente, Long idUsuario) {
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
-        return sdf.format(new Date()) + "_" + codigoAmbiente + "_" + idUsuario;
-
     }
 
     @Override
@@ -81,8 +82,19 @@ public class DiscoServicioImpl implements DiscoServicio {
     }
 
     @Override
-    public boolean getGrabarCodigoProceso(String token, String proceso, Date fecha) {
-        operacionesRepository.actualizar(token, proceso, fecha);
-        return true;
+    public List<AbcOperaciones>  getGrabarCodigoProceso(String token, String proceso, Date fecha) {
+        AbcOperaciones operaciones = null;
+        System.out.println("token:: " + token);
+        List<AbcOperaciones> list = operacionesRepository.findAllByTokenAndProcesoIsNull(token);
+
+        System.out.println("list::::: " + list.size());
+
+        for (int i = 0; i < list.size(); i++) {
+            operaciones = list.get(i);
+            operaciones.setProceso(proceso);
+            operaciones.setFecha(fecha);
+            operacionesRepository.save(operaciones);
+        }
+        return list;
     }
 }

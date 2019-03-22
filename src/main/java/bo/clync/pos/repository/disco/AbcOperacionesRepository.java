@@ -22,17 +22,6 @@ public interface AbcOperacionesRepository extends JpaRepository<AbcOperaciones, 
             " ORDER BY o.fecha asc ")
     List<Object[]> procesoPorToken(@Param("token") String token);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE AbcOperaciones o " +
-            " SET o.proceso =:proceso " +
-            " ,   o.fecha =:fecha " +
-            " WHERE o.token=:token " +
-            "   AND o.proceso is null")
-    void actualizar(@Param("token") String token,
-                    @Param("proceso") String proceso,
-                    @Param("fecha") Date fecha);
-
     @Query("SELECT o " +
             " FROM AbcOperaciones o " +
             "WHERE o.proceso=:proceso " +
@@ -41,4 +30,5 @@ public interface AbcOperacionesRepository extends JpaRepository<AbcOperaciones, 
 
     List<AbcOperaciones> findAllByProceso(String proceso);
 
+    List<AbcOperaciones> findAllByTokenAndProcesoIsNull(String token);
 }

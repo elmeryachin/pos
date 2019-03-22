@@ -1,6 +1,5 @@
 package bo.clync.pos.ui;
 
-import bo.clync.pos.arquetipo.objetos.DiscoRequest;
 import bo.clync.pos.arquetipo.objetos.DiscoResponse;
 import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
 import bo.clync.pos.servicios.discos.DiscoServicio;
@@ -17,22 +16,16 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +36,7 @@ public class DiscoController {
     @Autowired
     private DiscoServicio service;
 
-    private String tmpdir = "/home/eyave/Desktop/";//System.getProperty("java.io.tmpdir");
+    private String tmpdir = System.getProperty("java.io.tmpdir") + "/";//"/home/eyave/Desktop/";//
 
     @CrossOrigin
     @RequestMapping(value="/procesos", method = RequestMethod.GET)
@@ -56,9 +49,11 @@ public class DiscoController {
     public ResponseEntity<?> grabando(@RequestHeader(value="token") String token,
                                       @RequestParam("file") MultipartFile file) throws Exception {
         try {
+            System.out.println("Grabando en la base de datos .......");
             String nombreCompleto = file.getOriginalFilename();
-            String nombre = file.getName();
-
+            String nombre = nombreCompleto.replace(".zip", ""); //file.getName();
+            System.out.println("nombre:::::: " + nombre);
+            System.out.println("nombreCompleto::: " + nombreCompleto);
             if (service.verificarProcesoExterno(nombre)) {
                 throw new Exception("El proceso ya existe");
             }
@@ -136,6 +131,7 @@ public class DiscoController {
 
             return new ResponseEntity<>("Se actualizo exitosamente la base de datos", HttpStatus.OK);
         } catch (Exception e ) {
+            e.printStackTrace();
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.OK);
         }
     }
@@ -143,34 +139,48 @@ public class DiscoController {
     @CrossOrigin
     @RequestMapping(value = "/generar", method = RequestMethod.GET)
     public ResponseEntity<Object> generar(@RequestHeader(value="token") String token,
-                                          @RequestParam(value = "proceso", defaultValue = "") String proceso) throws Exception {
+                                          @RequestHeader(value = "proceso", defaultValue = "") String proceso) {
+        DiscoResponse response = null;
+        try {
 
-        DiscoResponse response = this.service.recuperar( token , proceso);
-        ObjectMapper mapper = new ObjectMapper();
+            response = this.service.recuperar(token, proceso);
 
-        String nombreFile = response.getNombre() + ".json";
-        File file = new File(nombreFile);
-        mapper.writeValue(file, response.getList());
+            ObjectMapper mapper = new ObjectMapper();
 
-        String nombreZip = tmpdir + response.getNombre() + ".zip";
-        File fZip = new File(nombreZip);
-        ZipFile zipFile = new ZipFile(fZip);
-        ArrayList<File> fileToAdd = new ArrayList<File>();
-        fileToAdd.add(file);
+            String nombreFile = response.getNombre() + ".json";
+            File file = new File(nombreFile);
+            mapper.writeValue(file, response.getList());
 
-        ZipParameters parameters = new ZipParameters();
-        parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-        parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-        parameters.setEncryptFiles(true);
-        parameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_AES);
-        parameters.setAesKeyStrength(Zip4jConstants.AES_STRENGTH_256);
-        parameters.setPassword("elmeryachin");
-        zipFile.addFiles(fileToAdd, parameters);
+            String nombreZip = tmpdir + response.getNombre() + ".zip";
 
-        response.setArray(Files.readAllBytes(zipFile.getFile().toPath()));
-        response.setList(null);
-        response.setRuta(tmpdir);
+            System.out.println("nombreFile " + nombreFile);
+            System.out.println("nombreZip " + nombreZip);
+            System.out.println("response.getList() " + response.getList().size());
+            File fZip = new File(nombreZip);
+            ZipFile zipFile = new ZipFile(fZip);
+            ArrayList<File> fileToAdd = new ArrayList<File>();
+            fileToAdd.add(file);
 
+            ZipParameters parameters = new ZipParameters();
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+            parameters.setEncryptFiles(true);
+            parameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_AES);
+            parameters.setAesKeyStrength(Zip4jConstants.AES_STRENGTH_256);
+            parameters.setPassword("elmeryachin");
+            zipFile.addFiles(fileToAdd, parameters);
+
+            String documento = Base64.getEncoder().encodeToString(Files.readAllBytes(zipFile.getFile().toPath()));
+            response.setDocumento(documento);
+            response.setList(null);
+            response.setRuta(tmpdir);
+
+        } catch (Exception e){
+            e.printStackTrace();
+            response = new DiscoResponse();
+            response.setRespuesta(false);
+            response.setMensaje(e.getMessage());
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

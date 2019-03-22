@@ -21,6 +21,7 @@ public class AbcOperaciones {
     private Date fecha;
     private String codigoAmbiente;
     private String operador;
+    private Date fechaRegistro;
 
     public Integer getId() {
         return id;
@@ -92,5 +93,13 @@ public class AbcOperaciones {
 
     public void setOperador(String operador) {
         this.operador = operador;
+    }
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 }

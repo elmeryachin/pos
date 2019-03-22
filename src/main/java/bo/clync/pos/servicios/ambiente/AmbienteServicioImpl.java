@@ -25,11 +25,12 @@ public class AmbienteServicioImpl implements AmbienteServicio {
         try {
             String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
             List<UsuarioResponseMin> list = ambienteRepository.obtenerAmbiente(codigoAmbiente, codigo, valor);
-            response = list.get(0);
-            response.setRespuesta(true);
+            if(list != null && list.size() > 0) {
+                response = list.get(0);
+                response.setRespuesta(true);
+            }
         } catch (Exception e) {
             response.setMensaje("No existe o es con el que esta conectado : " + codigo);
-            e.printStackTrace();
         }
         return response;
     }
