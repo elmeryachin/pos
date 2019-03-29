@@ -96,10 +96,10 @@ public class VentaController {
     public ResponseEntity<?> obtenerPorNroMovimiento(@RequestHeader(value="token") String token,
                                                      @PathVariable("nro") String nro) {
         String id = service.getIdTransaccion(nro, token);
-        System.out.println("Print id generado de nro mmovimiento " + id);
         return new ResponseEntity<>(this.service.obtener(token, id), HttpStatus.OK);
     }
 
+    // ################## CONFIRMAR LA VENTA REALIZADA ###################
     @CrossOrigin
     @PutMapping("/confirmar/{id}")
     public ResponseEntity<?> confirmar(@RequestHeader(value="token") String token,
@@ -112,33 +112,5 @@ public class VentaController {
     @GetMapping("/confirmar/list")
     public ResponseEntity<?> listaConfirmados(@RequestHeader(value="token") String token) {
         return new ResponseEntity<>(this.service.listaConfirmados(token), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/cliente/add")
-    public ResponseEntity<ServResponse> nuevo(@RequestHeader(value="token") String token,
-                                              @RequestBody UsuarioRequest request,
-                                              HttpServletRequest http) {
-        return new ResponseEntity<>(usuarioServicio.nuevoUsuario(token, request, UtilsDominio.TIPO_USUARIO_CLIENTE, http), HttpStatus.CREATED);
-    }
-
-    @CrossOrigin
-    @GetMapping("/cliente/quest/{codigo}")
-    public ResponseEntity<?> obtenerCliente(@RequestHeader(value="token") String token,
-                                              @PathVariable("codigo") String codigo) {
-        return new ResponseEntity<>( usuarioServicio.obtenerUsuario(token, codigo, UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @GetMapping("/cliente/list")
-    public ResponseEntity<?> listaClientes(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>( usuarioServicio.listaUsuario(token, null, UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
-    }
-
-    @CrossOrigin
-    @PostMapping("/cliente/list")
-    public ResponseEntity<?> listaClientesPorCodigo(@RequestHeader(value="token") String token,
-                                                    @RequestBody ServPatron patron) {
-        return new ResponseEntity<>( usuarioServicio.listaUsuario(token, patron.getPatron(), UtilsDominio.TIPO_USUARIO_CLIENTE), HttpStatus.OK);
     }
 }

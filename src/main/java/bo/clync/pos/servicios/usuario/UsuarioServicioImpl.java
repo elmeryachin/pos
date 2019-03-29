@@ -26,13 +26,12 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     private UsuarioAmbienteCredencialRepository credencialRepository;
     @Autowired
     private DiscoServicio discoServicio;
+
     @Override
     public UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario) {
         Usuario usuario = null;
         UsuarioResponseMin response = new UsuarioResponseMin();
-        String codigoAmbiente = null;
         try {
-            codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
             usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndFechaBajaIsNull(codigo, tipoUsuario);
             if (usuario == null) {
                 response.setMensaje("No existe el codigo del " + tipoUsuario);
@@ -66,7 +65,6 @@ public class UsuarioServicioImpl implements UsuarioServicio {
                 Long idUsuario = (Long) arrayId[0];
                 String codigoAmbiente = (String) arrayId[1];
                 Usuario usuario = usuarioRepository.findByCodigoAndCodigoValorUsuarioAndFechaBajaIsNull(request.getCodigo(), tipoUsuario);
-                //Integer len = usuarioRepository.maximoIdRegistro();
                 if (usuario == null) {
                     usuario = new Usuario();
                     usuario.setId(getId(request.getCodigo()));
@@ -98,7 +96,6 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     public UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario) {
         UsuarioResponseList response = new UsuarioResponseList();
         try {
-            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
             if (patron == null)
                 response.setList(usuarioRepository.getTodosUsuarioResumen(tipoUsuario));
             else

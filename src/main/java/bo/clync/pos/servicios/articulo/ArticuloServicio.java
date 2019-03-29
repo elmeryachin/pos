@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ArticuloServicio {
 
-    ServListaResponse lista(String token);
+    //ServListaResponse lista(String token);
 
     ServListaResponse listaPorCodigo(String token, String patron);
 
@@ -22,13 +22,11 @@ public interface ArticuloServicio {
 
     ServResponse nuevo(ArticuloRequest request, String token, HttpServletRequest http);
 
-    public ServResponse actualizar(String codigo, ArticuloRequest request, String token, HttpServletRequest http);
+    ServResponse actualizar(String codigo, ArticuloRequest request, String token, HttpServletRequest http);
 
-    public ServResponse eliminar(String codigo, String token, HttpServletRequest http);
+    ServResponse eliminar(String codigo, String token, HttpServletRequest http);
 
-    public byte[] reporteListaArticulos(String token, String tipo);
+    byte[] reporteListaArticulos(String token, String tipo);
 
     ArticuloResponseMin obtenerArticulo(String token, String codigo);
-
-    ArticuloResponseList listaArticulo(String token, String patron);
 }

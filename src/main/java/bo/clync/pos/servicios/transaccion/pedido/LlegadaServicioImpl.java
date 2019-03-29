@@ -44,6 +44,70 @@ public class LlegadaServicioImpl implements LlegadaServicio {
     }
 
     @Override
+    public ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception {
+        ServResponse response = new ServResponse();
+        Transaccion transaccion = null;
+        Date fecha = null;
+        try {
+            fecha = new Date();
+            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            if (arrayId != null) {
+                Long idUsuario = (Long) arrayId[0];
+                transaccion = transaccionRepository.getTransaccion(id);
+                if (transaccion != null) {
+                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
+                        if(transaccion.getIdUsuarioInicio().equals(idUsuario)) {
+                            transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
+                            transaccion.setFechaFin(fecha);
+                            transaccion.setFechaActualizacion(fecha);
+                            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
+                            transaccionRepository.save(transaccion);
+                            List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                            for (DetalleTransaccion dt : detalles) {
+                                dt.setOperadorActualizacion(String.valueOf(idUsuario));
+                                dt.setFechaActualizacion(fecha);
+                                detalleTransaccionRepository.save(dt);
+                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
+                                if (inventario == null) {
+                                    inventario = new Inventario();
+                                    inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
+                                    inventario.setCodigoArticulo(dt.getCodigoArticulo());
+                                    inventario.setExistencia(dt.getCantidad());
+                                    inventario.setFechaAlta(fecha);
+                                    inventario.setOperadorAlta(String.valueOf(idUsuario));
+                                } else {
+                                    Integer cantidad = inventario.getExistencia() + dt.getCantidad();
+                                    inventario.setExistencia(cantidad);
+                                    inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
+                                    inventario.setFechaActualizacion(fecha);
+                                    inventario.setOperadorActualizacion(String.valueOf(idUsuario));
+                                }
+                                inventarioRepository.save(inventario);
+                            }
+                            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                            response.setRespuesta(true);
+                        } else {
+                            response.setMensaje("Solo el usuario que creo la transaccion puede Confirmar la llegada");
+                        }
+                    } else {
+                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                    }
+                } else {
+                    response.setMensaje("No se encontro la transaccion");
+                }
+            } else {
+                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setMensaje("Error al confirmar la llegada ");
+        }
+        if (!response.isRespuesta())
+            throw new Exception(response.getMensaje());
+        return response;
+    }
+
+    @Override
     public ServResponse cancelarLlegada(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
         Transaccion transaccion = null;

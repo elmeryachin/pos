@@ -25,12 +25,6 @@ public class ArticuloController {
     private ArticuloServicio service;
 
     @CrossOrigin
-    @GetMapping("/list")
-    public ResponseEntity<ServListaResponse> lista(@RequestHeader(value="token") String token) {
-        return new ResponseEntity<>(service.lista(token), HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @PostMapping("/list")
     public ResponseEntity<ServListaResponse> listaPorCodigo(@RequestHeader(value="token") String token,
                                                             @RequestBody ServPatron patron) {

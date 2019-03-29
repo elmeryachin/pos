@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface SolicitudManualServicio {
 
     TransaccionResponseInit init(String token);
+    String getIdTransaccion( String nroMovimiento, String token );
 
 	TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;

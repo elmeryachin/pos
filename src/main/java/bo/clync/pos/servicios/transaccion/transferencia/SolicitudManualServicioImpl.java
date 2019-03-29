@@ -29,7 +29,12 @@ public class SolicitudManualServicioImpl implements SolicitudManualServicio {
     public TransaccionResponseInit init(String token) {
         return transaccionServicio.init(token, UtilsDominio.SOLICITUD_INTERNA);
     }
-    
+
+    @Override
+    public String getIdTransaccion( String nroMovimiento, String token ) {
+        return transaccionServicio.getIdTransaccion(UtilsDominio.SOLICITUD_INTERNA, nroMovimiento, token);
+    }
+
     @Override
     public TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http)  throws Exception {
 

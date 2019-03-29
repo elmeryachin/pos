@@ -9,13 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface UsuarioServicio {
 
-    ///UsuarioResponseList listaProveedor(String token, String patron);
-    //UsuarioResponseMin obtenerProveedor(String token, String codigo);
-    //ServResponse nuevoProveedor(String token, UsuarioRequest request);
-
-    public UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario);
-    public ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario, HttpServletRequest http);
-    public UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario);
-    //public UsuarioResponseList listaUsuariosTodos(String token, String patron, String tipoUsuario);
+    UsuarioResponseMin obtenerUsuario(String token, String codigo, String tipoUsuario);
+    ServResponse nuevoUsuario(String token, UsuarioRequest request, String tipoUsuario, HttpServletRequest http);
+    UsuarioResponseList listaUsuario(String token, String patron, String tipoUsuario);
 
 }

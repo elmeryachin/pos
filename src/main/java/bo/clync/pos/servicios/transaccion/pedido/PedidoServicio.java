@@ -11,18 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by eyave on 27-10-17.
  */
-public interface SolicitudServicio {
+public interface PedidoServicio {
 
-    TransaccionResponseList lista(String token);
     TransaccionResponseInit init(String token);
     String getIdTransaccion( String nroMovimiento, String token );
+
     TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
     TransaccionResponse actualizar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception;
     ServResponse eliminar(String token, String idTransaccion, HttpServletRequest http) throws Exception;
     TransaccionResponse obtener(String token, String id);
-
-    ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception ;
-
-
-
+    TransaccionResponseList lista(String token);
 }

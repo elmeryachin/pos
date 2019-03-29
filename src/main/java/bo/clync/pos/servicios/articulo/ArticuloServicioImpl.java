@@ -14,6 +14,7 @@ import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
 import bo.clync.pos.repository.articulo.ArticuloRepository;
 import bo.clync.pos.repository.common.AmbienteRepository;
 import bo.clync.pos.servicios.discos.DiscoServicio;
+import bo.clync.pos.utilitarios.UtilsArticulo;
 import bo.clync.pos.utilitarios.UtilsDisco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,13 +48,13 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     @Autowired
     private DiscoServicio discoServicio;
 
-    @Override
+    /*@Override
     public ServListaResponse lista(String token) {
         ServListaResponse response = new ServListaResponse();
         response.setLista(repository.getListResumenArticulos());
         response.setRespuesta(true);
         return response;
-    }
+    }*/
 
     @Override
     public ServListaResponse listaPorCodigo(String token, String patron) {
@@ -89,15 +90,9 @@ public class ArticuloServicioImpl implements ArticuloServicio {
             if (repository.getObtenerArticuloPorCodigo(request.getObjetoArticulo().getCodigo()) == null) {
                 articulo = new Articulo();
                 articulo.setCodigo(request.getObjetoArticulo().getCodigo());
-                articulo.setNombre(request.getObjetoArticulo().getNombre());
-                articulo.setDescripcion(request.getObjetoArticulo().getDescripcion());
-                articulo.setPrecioKilo(request.getObjetoArticulo().getPrecioKilo());
-                articulo.setPeso(request.getObjetoArticulo().getPeso());
-                articulo.setPrecioZonaLibre(request.getObjetoArticulo().getPrecioZonaLibre());
-                articulo.setPorcentajeGasto(request.getObjetoArticulo().getPorcentajeGasto());
-                articulo.setPrecioCompra(request.getObjetoArticulo().getPrecioCompra());
-                articulo.setPrecioVenta(request.getObjetoArticulo().getPrecioVenta());
-                articulo.setPrecioMercado(request.getObjetoArticulo().getPrecioMercado());
+
+                UtilsArticulo.getArticulo(articulo, request);
+
                 articulo.setFechaAlta(new Date());
                 articulo.setOperadorAlta(operador);
                 repository.save(articulo);
@@ -123,15 +118,9 @@ public class ArticuloServicioImpl implements ArticuloServicio {
             operador = String.valueOf(arrayId[0]);
             articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
             if (articulo != null) {
-                articulo.setNombre(request.getObjetoArticulo().getNombre());
-                articulo.setDescripcion(request.getObjetoArticulo().getDescripcion());
-                articulo.setPrecioKilo(request.getObjetoArticulo().getPrecioKilo());
-                articulo.setPeso(request.getObjetoArticulo().getPeso());
-                articulo.setPrecioZonaLibre(request.getObjetoArticulo().getPrecioZonaLibre());
-                articulo.setPorcentajeGasto(request.getObjetoArticulo().getPorcentajeGasto());
-                articulo.setPrecioCompra(request.getObjetoArticulo().getPrecioCompra());
-                articulo.setPrecioVenta(request.getObjetoArticulo().getPrecioVenta());
-                articulo.setPrecioMercado(request.getObjetoArticulo().getPrecioMercado());
+
+                UtilsArticulo.getArticulo(articulo, request);
+
                 articulo.setFechaActualizacion(new Date());
                 articulo.setOperadorActualizacion(operador);
                 repository.save(articulo);
@@ -215,19 +204,4 @@ public class ArticuloServicioImpl implements ArticuloServicio {
         }
         return response;
     }
-
-    @Override
-    public ArticuloResponseList listaArticulo(String token, String patron) {
-        ArticuloResponseList response = new ArticuloResponseList();
-        try {
-            if (patron == null) response.setList(articuloRepository.getListaArticuloResumen());
-            else response.setList(articuloRepository.getListaArticuloResumenPorCodigo(patron));
-            response.setRespuesta(true);
-        } catch (Exception e) {
-            response.setMensaje("Error al listar los Articulos");
-            e.printStackTrace();
-        }
-        return response;
-    }
-
 }

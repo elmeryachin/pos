@@ -508,13 +508,10 @@ public class TransaccionServicioImpl implements TransaccionServicio {
                 lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
             } else if (dominio.equals(UtilsDominio.VENTA)
                     && valor.equals(UtilsDominio.VENTA_CONFIRMADA)) {
-                System.out.println(String.format("%s, %s, %s, %s, %s, ", codigoAmbiente, dominio, valor, idCiclo, tipoUsuario));
                 lista = this.transaccionRepository.listaVentas(codigoAmbiente, dominio, valor, idCiclo, tipoUsuario);
             } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA)) {
-                System.out.println(String.format("%s, %s, %s, %s", codigoAmbiente, dominio, valor, idCiclo));
                 lista = this.transaccionRepository.listaTransferenciasEnviosPorOrigen(codigoAmbiente, dominio, valor, idCiclo);
             } else if (dominio.equals(UtilsDominio.SOLICITUD_INTERNA_AUX)) {
-                System.out.println(String.format("%s, %s, %s",  dominio, valor, idCiclo));
                 lista = this.transaccionRepository.listaTransferenciasEnviosTodos(dominio, valor, idCiclo);
             }
             System.out.println("list transaccion > " + lista);
@@ -542,12 +539,14 @@ public class TransaccionServicioImpl implements TransaccionServicio {
             Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
             if (arrayId != null) {
                 TransaccionObjeto tra = null;
-                if( dominio.equals( UtilsDominio.TRANSFERENCIA )) {
+                if( dominio.equals( UtilsDominio.TRANSFERENCIA ) || dominio.equals( UtilsDominio.SOLICITUD_INTERNA )) {
+
                     tra = transaccionRepository.getTransaccionObjetoAmbiente(id, dominio, valor);
-                    if( arrayId[1].equals(tra.getCodigo())
-                            && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO)) {
+
+                    if( arrayId[1].equals(tra.getCodigo()) && valor.equals(UtilsDominio.TRANSFERENCIA_ENVIO) ) {
                         tra = transaccionRepository.getTransaccionObjetoAmbientePorOrigen(id, dominio, valor);
                     }
+
                 } else {
                     tra = transaccionRepository.getTransaccionObjeto(id, dominio, valor);
                 }

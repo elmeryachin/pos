@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface LlegadaServicio {
 
     TransaccionResponseList lista(String token);
+    ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception ;
     ServResponse cancelarLlegada(String token, String id, HttpServletRequest http)  throws Exception ;
     TransaccionResponse obtener(String token, String id);
 }

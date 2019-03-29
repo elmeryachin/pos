@@ -198,5 +198,5 @@ public class Articulo implements Serializable {
     public String toString() {
         return "bo.clync.pos.entity.Articulo[ codigo=" + codigo + " ]";
     }
-    
+
 }
