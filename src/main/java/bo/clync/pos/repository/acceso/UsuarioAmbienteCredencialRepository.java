@@ -18,13 +18,13 @@ public interface UsuarioAmbienteCredencialRepository extends JpaRepository<Usuar
             "  AND o.fechaBaja is null " +
             "  AND a.fechaBaja is null " +
             "  AND u.fechaBaja is null")
-    public Object getAutenticacion(@Param("usuario") String usuario);
+    Object getAutenticacion(@Param("usuario") String usuario);
 
     @Query("SELECT o.idUsuario, o.codigoAmbiente " +
             " FROM UsuarioAmbienteCredencial o " +
             "WHERE o.id=:id " +
             "  AND o.fechaBaja is null")
-    public Object origenCredencial(@Param("id") Integer id);
+    Object origenCredencial(@Param("id") Integer id);
 
     @Query("SELECT o.codigoAmbiente " +
             " FROM UsuarioAmbienteCredencial o, Conectado cc " +
@@ -32,7 +32,7 @@ public interface UsuarioAmbienteCredencialRepository extends JpaRepository<Usuar
             "  AND cc.token = :token " +
             "  AND o.fechaBaja is null " +
             "  AND cc.fechaFin is null ")
-    public String getCodigoAmbienteByToken (@Param("token") String token);
+    String getCodigoAmbienteByToken (@Param("token") String token);
 
     @Query("SELECT o.idUsuario, o.codigoAmbiente " +
             " FROM UsuarioAmbienteCredencial o, Conectado cc " +
@@ -40,13 +40,13 @@ public interface UsuarioAmbienteCredencialRepository extends JpaRepository<Usuar
             "  AND cc.token = :token " +
             "  AND o.fechaBaja is null " +
             "  AND cc.fechaFin is null ")
-    public Object getIdUsuarioByToken(@Param("token") String token);
+    Object getIdUsuarioByToken(@Param("token") String token);
 
     @Query("SELECT o.idUsuario " +
             " FROM UsuarioAmbienteCredencial o " +
             "WHERE o.codigoAmbiente = :codigoAmbiente" +
             "  AND o.fechaBaja is null ")
-    public Long getIdUsuarioByCodigoAmbiente(@Param("codigoAmbiente") String codigoAmbiente);
+    Long getIdUsuarioByCodigoAmbiente(@Param("codigoAmbiente") String codigoAmbiente);
 
 
 }

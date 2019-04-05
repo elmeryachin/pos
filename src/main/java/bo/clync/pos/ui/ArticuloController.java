@@ -63,11 +63,11 @@ public class ArticuloController {
         return new ResponseEntity<>(service.eliminar(codigo, token, http), HttpStatus.OK);
     }
 
-    @CrossOrigin
+    /*@CrossOrigin
     @GetMapping("/reporte/list/{tipo}")
     public ResponseEntity<byte[]> reporteListaArticulos(@RequestHeader(value="token") String token,
                                                         @PathVariable("tipo") String tipo) {
         return new ResponseEntity<>(service.reporteListaArticulos(token, tipo), HttpStatus.OK);
-    }
+    }*/
 
 }

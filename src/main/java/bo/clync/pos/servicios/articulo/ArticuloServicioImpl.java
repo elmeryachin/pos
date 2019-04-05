@@ -48,13 +48,6 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     @Autowired
     private DiscoServicio discoServicio;
 
-    /*@Override
-    public ServListaResponse lista(String token) {
-        ServListaResponse response = new ServListaResponse();
-        response.setLista(repository.getListResumenArticulos());
-        response.setRespuesta(true);
-        return response;
-    }*/
 
     @Override
     public ServListaResponse listaPorCodigo(String token, String patron) {
@@ -98,6 +91,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                 repository.save(articulo);
                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                 response.setRespuesta(true);
+                response.setMensaje("Se guardo el nuevo articulo: " + articulo.getCodigo());
             } else {
                 response.setMensaje("El codigo de articulo ya existe ingreso otro.");
             }
@@ -126,12 +120,13 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                 repository.save(articulo);
                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
                 response.setRespuesta(true);
+                response.setMensaje("Se actualizo el articulo");
             } else {
                 response.setMensaje("No se encontro ningun articulo con el codigo enviado");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.setMensaje("Error al actualizar el articulo");
+            response.setMensaje("Error al actualizar el articulo: " + articulo.getCodigo());
         }
         return response;
     }
@@ -155,6 +150,7 @@ public class ArticuloServicioImpl implements ArticuloServicio {
                         repository.save(articulo);
                         this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
                         response.setRespuesta(true);
+                        response.setMensaje("Se elimino el articulo: " + articulo.getCodigo());
                     } else {
                         response.setMensaje("No existe el articulo que quiere eliminar");
                     }
@@ -169,12 +165,6 @@ public class ArticuloServicioImpl implements ArticuloServicio {
             response.setMensaje("Error en el servicio de eliminacion");
         }
         return response;
-    }
-
-    @Override
-    public byte[] reporteListaArticulos(String token, String tipo) {
-
-        return new byte[0];
     }
 
     @Override
