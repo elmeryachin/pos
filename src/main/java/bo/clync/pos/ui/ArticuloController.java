@@ -32,6 +32,13 @@ public class ArticuloController {
     }
 
     @CrossOrigin
+    @GetMapping("/quest/min/{codigo}")
+    public ResponseEntity<?> obtenerMin(@RequestHeader(value="token") String token,
+                                                       @PathVariable("codigo") String codigo) {
+        return new ResponseEntity<>(service.obtenerArticulo(token, codigo), HttpStatus.OK);
+    }
+
+    @CrossOrigin
     @GetMapping("/quest/{codigo}")
     public ResponseEntity<ServObtenerResponse> obtener(@RequestHeader(value="token") String token,
                                                        @PathVariable("codigo") String codigo) {

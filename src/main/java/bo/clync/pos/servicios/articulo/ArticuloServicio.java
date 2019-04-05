@@ -25,4 +25,5 @@ public interface ArticuloServicio {
     ServResponse eliminar(String codigo, String token, HttpServletRequest http);
 
     ArticuloResponseMin obtenerArticulo(String token, String codigo);
+
 }
