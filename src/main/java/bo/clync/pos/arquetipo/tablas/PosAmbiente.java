@@ -8,50 +8,41 @@ package bo.clync.pos.arquetipo.tablas;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 /**
  *
  * @author eyave
  */
 @Entity
-public class Ciclo implements Serializable {
+public class PosAmbiente implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String codigo;
     private String nombre;
-    private Date fechaInicio;
-    private Date fechaFin;
+    private String tipoAmbiente;
     private Date fechaAlta;
     private String operadorAlta;
-    private Date fechaActualizacion;
-    private String operadorActualizacion;
     private Date fechaBaja;
     private String operadorBaja;
 
-    public Ciclo() {
+    public PosAmbiente() {
     }
 
-    public Ciclo(Integer id) {
-        this.id = id;
-    }
-
-    public Ciclo(Integer id, Date fechaInicio, Date fechaAlta, String operadorAlta) {
-        this.id = id;
-        this.fechaInicio = fechaInicio;
+    public PosAmbiente(String codigo, String nombre, Date fechaAlta, String operadorAlta) {
+        this.codigo = codigo;
+        this.nombre = nombre;
         this.fechaAlta = fechaAlta;
         this.operadorAlta = operadorAlta;
     }
 
-    public Integer getId() {
-        return id;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -62,20 +53,12 @@ public class Ciclo implements Serializable {
         this.nombre = nombre;
     }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
+    public String getTipoAmbiente() {
+        return tipoAmbiente;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public Date getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setTipoAmbiente(String tipoAmbiente) {
+        this.tipoAmbiente = tipoAmbiente;
     }
 
     public Date getFechaAlta() {
@@ -92,22 +75,6 @@ public class Ciclo implements Serializable {
 
     public void setOperadorAlta(String operadorAlta) {
         this.operadorAlta = operadorAlta;
-    }
-
-    public Date getFechaActualizacion() {
-        return fechaActualizacion;
-    }
-
-    public void setFechaActualizacion(Date fechaActualizacion) {
-        this.fechaActualizacion = fechaActualizacion;
-    }
-
-    public String getOperadorActualizacion() {
-        return operadorActualizacion;
-    }
-
-    public void setOperadorActualizacion(String operadorActualizacion) {
-        this.operadorActualizacion = operadorActualizacion;
     }
 
     public Date getFechaBaja() {
@@ -129,18 +96,18 @@ public class Ciclo implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (codigo != null ? codigo.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Ciclo)) {
+        if (!(object instanceof PosAmbiente)) {
             return false;
         }
-        Ciclo other = (Ciclo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        PosAmbiente other = (PosAmbiente) object;
+        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
         return true;
@@ -148,7 +115,7 @@ public class Ciclo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.Ciclo[ id=" + id + " ]";
+        return "bo.clync.pos.entity.PosAmbiente[ codigo=" + codigo + " ]";
     }
     
 }

@@ -1,21 +1,31 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package bo.clync.pos.arquetipo.tablas;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
-public class DetalleTransaccionDejado  implements Serializable {
+/**
+ *
+ * @author eyave
+ */
+@Entity
+public class AdmUsuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    //@Id//@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    private String codigoDominio;
-    private String codigoValor;
-
-    private String idTransaccion;
-    private String codigoArticulo;
-    private Integer cantidad;
-    private String observacion;
+    @Id
+    private Long id;
+    private String codigoValorUsuario;
+    private String codigo;
+    private String nombre;
+    private String telefono;
+    private String direccion;
+    private String codigoAmbiente;
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
@@ -23,61 +33,57 @@ public class DetalleTransaccionDejado  implements Serializable {
     private Date fechaBaja;
     private String operadorBaja;
 
-
-    public String getId() {
-        return id;
+    public AdmUsuario() {
     }
 
-    public void setId(String id) {
+    public AdmUsuario(Long id) {
         this.id = id;
     }
 
-    public String getCodigoDominio() {
-        return codigoDominio;
+    public AdmUsuario(Long id, String codigo, Date fechaAlta) {
+        this.id = id;
+        this.codigo = codigo;
+        this.fechaAlta = fechaAlta;
     }
 
-    public void setCodigoDominio(String codigoDominio) {
-        this.codigoDominio = codigoDominio;
+    public Long getId() {
+        return id;
     }
 
-    public String getCodigoValor() {
-        return codigoValor;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setCodigoValor(String codigoValor) {
-        this.codigoValor = codigoValor;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public String getIdTransaccion() {
-        return idTransaccion;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
-    public void setIdTransaccion(String idTransaccion) {
-        this.idTransaccion = idTransaccion;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getCodigoArticulo() {
-        return codigoArticulo;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setCodigoArticulo(String codigoArticulo) {
-        this.codigoArticulo = codigoArticulo;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public String getObservacion() {
-        return observacion;
-    }
-
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public Date getFechaAlta() {
@@ -128,6 +134,22 @@ public class DetalleTransaccionDejado  implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
+    public String getCodigoValorUsuario() {
+        return codigoValorUsuario;
+    }
+
+    public void setCodigoValorUsuario(String codigoDominio) {
+        this.codigoValorUsuario = codigoDominio;
+    }
+
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
+    }
+
+    public void setCodigoAmbiente(String idAmbiente) {
+        this.codigoAmbiente = idAmbiente;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -138,10 +160,10 @@ public class DetalleTransaccionDejado  implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetalleTransaccion)) {
+        if (!(object instanceof AdmUsuario)) {
             return false;
         }
-        DetalleTransaccionDejado other = (DetalleTransaccionDejado) object;
+        AdmUsuario other = (AdmUsuario) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -150,7 +172,7 @@ public class DetalleTransaccionDejado  implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.DetalleTransaccionDejado[ id=" + id + " ]";
+        return "bo.clync.pos.entity.AdmUsuario[ id=" + id + " ]";
     }
 
 }

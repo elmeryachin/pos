@@ -16,12 +16,12 @@ import javax.persistence.Id;
  * @author eyave
  */
 @Entity
-public class Transaccion implements Serializable {
+public class PosTransaccion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     private String id;
-    private Integer idCiclo;
+    private String ciclo;
     private String codigoDominio;
     private Integer nroMovimiento;
     private String codigoValor;
@@ -42,14 +42,14 @@ public class Transaccion implements Serializable {
     private Date fechaBaja;
     private String operadorBaja;
 
-    public Transaccion() {
+    public PosTransaccion() {
     }
 
-    public Transaccion(String id) {
+    public PosTransaccion(String id) {
         this.setId(id);
     }
 
-    public Transaccion(String id, Date fechaInicio, Integer cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
+    public PosTransaccion(String id, Date fechaInicio, Integer cantidad, BigDecimal precio, Date fechaAlta, String operadorAlta) {
         this.setId(id);
         this.setFechaInicio(fechaInicio);
         this.setCantidad(cantidad);
@@ -69,14 +69,6 @@ public class Transaccion implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Integer getIdCiclo() {
-        return idCiclo;
-    }
-
-    public void setIdCiclo(Integer idCiclo) {
-        this.idCiclo = idCiclo;
     }
 
     public String getCodigoDominio() {
@@ -240,10 +232,10 @@ public class Transaccion implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Transaccion)) {
+        if (!(object instanceof PosTransaccion)) {
             return false;
         }
-        Transaccion other = (Transaccion) object;
+        PosTransaccion other = (PosTransaccion) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -252,7 +244,14 @@ public class Transaccion implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.Transaccion[ id=" + id + " ]";
+        return "bo.clync.pos.entity.PosTransaccion[ id=" + id + " ]";
     }
 
+    public String getCiclo() {
+        return ciclo;
+    }
+
+    public void setCiclo(String ciclo) {
+        this.ciclo = ciclo;
+    }
 }

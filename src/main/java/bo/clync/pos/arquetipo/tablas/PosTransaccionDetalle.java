@@ -6,10 +6,9 @@
 package bo.clync.pos.arquetipo.tablas;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -17,16 +16,17 @@ import javax.persistence.Id;
  * @author eyave
  */
 @Entity
-public class UsuarioAmbienteCredencial implements Serializable {
+public class PosTransaccionDetalle implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private Long idUsuario;
-    private String codigoAmbiente;
-    private String usuario;
-    private String contrasenia;
+    private String id;
+    private String idTransaccion;
+    private String codigoArticulo;
+    private Integer cantidad;
+    private BigDecimal precio;
+    private BigDecimal precioSistema;
+    private String observacion;
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
@@ -34,64 +34,59 @@ public class UsuarioAmbienteCredencial implements Serializable {
     private Date fechaBaja;
     private String operadorBaja;
 
-    public UsuarioAmbienteCredencial() {
+    public PosTransaccionDetalle() {
     }
 
-    public UsuarioAmbienteCredencial(Integer id) {
-        this.setId(id);
-    }
-
-    public UsuarioAmbienteCredencial(Integer id, String usuario, String contrasenia, Date fechaAlta, String operadorBaja) {
-        this.setId(id);
-        this.setUsuario(usuario);
-        this.setContrasenia(contrasenia);
-        this.setFechaAlta(fechaAlta);
-        this.setOperadorBaja(operadorBaja);
-    }
-
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
+    public PosTransaccionDetalle(String id) {
         this.id = id;
     }
 
-    public Long getIdUsuario() {
-        return idUsuario;
+    public PosTransaccionDetalle(String id, BigDecimal precioSistema, int cantidad, BigDecimal precio, String operadorBaja) {
+        this.id = id;
+        this.precioSistema = precioSistema;
+        this.cantidad = cantidad;
+        this.precio = precio;
+        this.operadorBaja = operadorBaja;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public String getId() {
+        return id;
     }
 
-    public String getCodigoAmbiente() {
-        return codigoAmbiente;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setCodigoAmbiente(String idAmbiente) {
-        this.codigoAmbiente = idAmbiente;
+    public BigDecimal getPrecioSistema() {
+        return precioSistema;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public void setPrecioSistema(BigDecimal precioSistema) {
+        this.precioSistema = precioSistema;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public Integer getCantidad() {
+        return cantidad;
     }
 
-    public String getContrasenia() {
-        return contrasenia;
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
 
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public String getObservacion() {
+        return observacion;
+    }
+
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
     public Date getFechaAlta() {
@@ -142,6 +137,22 @@ public class UsuarioAmbienteCredencial implements Serializable {
         this.operadorBaja = operadorBaja;
     }
 
+    public String getCodigoArticulo() {
+        return codigoArticulo;
+    }
+
+    public void setCodigoArticulo(String idArticulo) {
+        this.codigoArticulo = idArticulo;
+    }
+
+    public String getIdTransaccion() {
+        return idTransaccion;
+    }
+
+    public void setIdTransaccion(String idTransaccion) {
+        this.idTransaccion = idTransaccion;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -152,10 +163,10 @@ public class UsuarioAmbienteCredencial implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UsuarioAmbienteCredencial)) {
+        if (!(object instanceof PosTransaccionDetalle)) {
             return false;
         }
-        UsuarioAmbienteCredencial other = (UsuarioAmbienteCredencial) object;
+        PosTransaccionDetalle other = (PosTransaccionDetalle) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -164,7 +175,6 @@ public class UsuarioAmbienteCredencial implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.UsuarioAmbienteCredencial[ id=" + id + " ]";
+        return "bo.clync.pos.entity.PosTransaccionDetalle[ id=" + id + " ]";
     }
-
 }

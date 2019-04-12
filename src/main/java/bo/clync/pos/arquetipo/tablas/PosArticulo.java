@@ -15,7 +15,7 @@ import javax.persistence.*;
  * @author eyave
  */
 @Entity
-public class Articulo implements Serializable {
+public class PosArticulo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,10 +36,10 @@ public class Articulo implements Serializable {
     private Date fechaBaja;
     private String operadorBaja;
 
-    public Articulo() {
+    public PosArticulo() {
     }
 
-    public Articulo(String codigo, String nombre, String operadorAlta, Date fechaAlta) {
+    public PosArticulo(String codigo, String nombre, String operadorAlta, Date fechaAlta) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.operadorAlta = operadorAlta;
@@ -184,10 +184,10 @@ public class Articulo implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Articulo)) {
+        if (!(object instanceof PosArticulo)) {
             return false;
         }
-        Articulo other = (Articulo) object;
+        PosArticulo other = (PosArticulo) object;
         if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
@@ -196,7 +196,7 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.Articulo[ codigo=" + codigo + " ]";
+        return "bo.clync.pos.entity.PosArticulo[ codigo=" + codigo + " ]";
     }
 
 }

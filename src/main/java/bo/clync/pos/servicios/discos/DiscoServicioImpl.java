@@ -1,15 +1,15 @@
 package bo.clync.pos.servicios.discos;
 
+import bo.clync.pos.arquetipo.dto.DatosUsuario;
 import bo.clync.pos.arquetipo.objetos.DiscoProcesoResponse;
 import bo.clync.pos.arquetipo.objetos.DiscoResponse;
 import bo.clync.pos.arquetipo.objetos.ProcesoResumen;
-import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
+import bo.clync.pos.arquetipo.tablas.GesOperacion;
+import bo.clync.pos.repository.common.AdmCredencialRepository;
 import bo.clync.pos.repository.disco.AbcOperacionesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class DiscoServicioImpl implements DiscoServicio {
     @Autowired
     private AbcOperacionesRepository operacionesRepository;
     @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
+    private AdmCredencialRepository credencialRepository;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
 
@@ -45,10 +45,10 @@ public class DiscoServicioImpl implements DiscoServicio {
         return response;
     }
 
-    public void guardarOperaciones(AbcOperaciones operaciones) {
-        Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(operaciones.getToken());
-        operaciones.setOperador(String.valueOf(arrayId[0]));
-        operaciones.setCodigoAmbiente((String) arrayId[1]);
+    public void guardarOperaciones(GesOperacion operaciones) {
+        DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(operaciones.getToken());
+        operaciones.setOperador(datosUsuario.getIdUsuario().toString());
+        operaciones.setCodigoAmbiente(datosUsuario.getCodigoAmbiente());
         operaciones.setFechaRegistro(new Date());
         this.operacionesRepository.save(operaciones);
     }
@@ -59,9 +59,9 @@ public class DiscoServicioImpl implements DiscoServicio {
 
         if(nombreEnviado.equals("")) {
 
-            Object[] arrayId = (Object[]) this.credencialRepository.getIdUsuarioByToken(token);
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
 
-            nombreEnviado = sdf.format(new Date()) + "_" + (String) arrayId[1] + "_" + (Long) arrayId[0];
+            nombreEnviado = sdf.format(new Date()) + "_" + datosUsuario.getCodigoAmbiente() + "_" + datosUsuario.getIdUsuario();
 
             response.setList(getGrabarCodigoProceso(token, nombreEnviado, new Date()));
 
@@ -82,15 +82,12 @@ public class DiscoServicioImpl implements DiscoServicio {
     }
 
     @Override
-    public List<AbcOperaciones>  getGrabarCodigoProceso(String token, String proceso, Date fecha) {
-        AbcOperaciones operaciones = null;
-        System.out.println("token:: " + token);
-        List<AbcOperaciones> list = operacionesRepository.findAllByTokenAndProcesoIsNull(token);
+    public List<GesOperacion>  getGrabarCodigoProceso(String token, String proceso, Date fecha) {
 
-        System.out.println("list::::: " + list.size());
+        List<GesOperacion> list = operacionesRepository.findAllByTokenAndProcesoIsNull(token);
 
         for (int i = 0; i < list.size(); i++) {
-            operaciones = list.get(i);
+            GesOperacion operaciones = list.get(i);
             operaciones.setProceso(proceso);
             operaciones.setFecha(fecha);
             operacionesRepository.save(operaciones);

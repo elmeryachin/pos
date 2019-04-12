@@ -1,6 +1,6 @@
 package bo.clync.pos.arquetipo.objetos.articulo.obtener;
 
-import bo.clync.pos.arquetipo.tablas.Articulo;
+import bo.clync.pos.arquetipo.tablas.PosArticulo;
 
 import java.math.BigDecimal;
 
@@ -22,17 +22,17 @@ public class ObjetoArticulo {
 
     public ObjetoArticulo(){}
 
-    public ObjetoArticulo(Articulo articulo){
-        this.codigo = articulo.getCodigo();
-        this.nombre = articulo.getNombre();
-        this.descripcion = articulo.getDescripcion();
-        this.precioKilo = articulo.getPrecioKilo();
-        this.peso = articulo.getPeso();
-        this.precioZonaLibre = articulo.getPrecioZonaLibre();
-        this.porcentajeGasto = articulo.getPorcentajeGasto();
-        this.precioCompra = articulo.getPrecioCompra();
-        this.precioVenta = articulo.getPrecioVenta();
-        this.precioMercado = articulo.getPrecioMercado();
+    public ObjetoArticulo(PosArticulo posArticulo){
+        this.codigo = posArticulo.getCodigo();
+        this.nombre = posArticulo.getNombre();
+        this.descripcion = posArticulo.getDescripcion();
+        this.precioKilo = posArticulo.getPrecioKilo();
+        this.peso = posArticulo.getPeso();
+        this.precioZonaLibre = posArticulo.getPrecioZonaLibre();
+        this.porcentajeGasto = posArticulo.getPorcentajeGasto();
+        this.precioCompra = posArticulo.getPrecioCompra();
+        this.precioVenta = posArticulo.getPrecioVenta();
+        this.precioMercado = posArticulo.getPrecioMercado();
     }
 
     public String getCodigo() {

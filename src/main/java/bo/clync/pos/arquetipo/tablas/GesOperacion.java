@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class AbcOperaciones {
+public class GesOperacion {
 
     private static final long serialVersionUID = 1L;
     @Id

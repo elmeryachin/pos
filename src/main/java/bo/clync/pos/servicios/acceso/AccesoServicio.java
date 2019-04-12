@@ -10,5 +10,4 @@ import bo.clync.pos.arquetipo.objetos.acceso.AccesoResponse;
 public interface AccesoServicio {
 
         public AccesoResponse ingreso(AccesoRequest request);
-        public ServResponse salir(String token);
 }

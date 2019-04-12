@@ -1,6 +1,6 @@
 package bo.clync.pos.arquetipo.objetos.articulo.lista;
 
-import bo.clync.pos.arquetipo.tablas.Articulo;
+import bo.clync.pos.arquetipo.tablas.PosArticulo;
 
 /**
  * Created by eyave on 09-10-17.
@@ -10,10 +10,10 @@ public class ResumenArticulo {
     private String nombre;
     private String descripcion;
 
-    public ResumenArticulo(Articulo articulo) {
-        this.codigo = articulo.getCodigo();
-        this.nombre = articulo.getNombre();
-        this.descripcion = articulo.getDescripcion();
+    public ResumenArticulo(PosArticulo posArticulo) {
+        this.codigo = posArticulo.getCodigo();
+        this.nombre = posArticulo.getNombre();
+        this.descripcion = posArticulo.getDescripcion();
     }
 
     public ResumenArticulo ( String codigo, String nombre, String descripcion){

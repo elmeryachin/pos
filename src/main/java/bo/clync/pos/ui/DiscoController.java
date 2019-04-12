@@ -1,7 +1,7 @@
 package bo.clync.pos.ui;
 
 import bo.clync.pos.arquetipo.objetos.DiscoResponse;
-import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
+import bo.clync.pos.arquetipo.tablas.GesOperacion;
 import bo.clync.pos.servicios.discos.DiscoServicio;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.lingala.zip4j.core.ZipFile;
@@ -99,14 +99,14 @@ public class DiscoController {
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            ArrayList<AbcOperaciones> lst = mapper.readValue(sb.toString(),
-                    mapper.getTypeFactory().constructCollectionType(ArrayList.class, AbcOperaciones.class));
+            ArrayList<GesOperacion> lst = mapper.readValue(sb.toString(),
+                    mapper.getTypeFactory().constructCollectionType(ArrayList.class, GesOperacion.class));
 
             String http = "http://localhost:8080";
             String tokenProceso = null;
             Date fecha = null;
             for (int i = 0; i < lst.size(); i++) {
-                AbcOperaciones operaciones = lst.get(i);
+                GesOperacion operaciones = lst.get(i);
                 tokenProceso = operaciones.getToken();
                 fecha = operaciones.getFecha();
                 String url = http + operaciones.getUrl();

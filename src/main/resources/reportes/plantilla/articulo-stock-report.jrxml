@@ -5,41 +5,41 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConeccionPostgres"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
-	<parameter name="ambiente-codigo" class="java.lang.String"/>
+	<parameter name="posAmbiente-codigo" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[-- stock de mercaderia
   select codigo, precio_zona_libre, peso, precio_mercado, precio_compra, precio_venta, nombre  
-    from articulo
+    from posArticulo
    where fecha_baja is null
 order by codigo asc]]>
 	</queryString>
 	<field name="codigo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="precio_zona_libre" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="precio_zona_libre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="peso" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="peso"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="precio_mercado" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="precio_mercado"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="precio_compra" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="precio_compra"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="precio_venta" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="precio_venta"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -72,7 +72,7 @@ order by codigo asc]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ambiente-codigo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{posAmbiente-codigo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

@@ -1,14 +1,15 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
+import bo.clync.pos.arquetipo.dto.DatosUsuario;
 import bo.clync.pos.arquetipo.objetos.ServResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionResponseList;
-import bo.clync.pos.arquetipo.tablas.DetalleTransaccion;
-import bo.clync.pos.arquetipo.tablas.Inventario;
-import bo.clync.pos.arquetipo.tablas.Transaccion;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
-import bo.clync.pos.repository.common.InventarioRepository;
-import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
+import bo.clync.pos.arquetipo.tablas.PosInventario;
+import bo.clync.pos.arquetipo.tablas.PosTransaccionDetalle;
+import bo.clync.pos.arquetipo.tablas.PosTransaccion;
+import bo.clync.pos.repository.common.AdmCredencialRepository;
+import bo.clync.pos.repository.common.PosInventarioRepository;
+import bo.clync.pos.repository.transaccion.pedido.TransaccionDetalleRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
@@ -31,13 +32,15 @@ public class LlegadaServicioImpl implements LlegadaServicio {
     @Autowired
     private TransaccionRepository transaccionRepository;
     @Autowired
-    private DetalleTransaccionRepository detalleTransaccionRepository;
+    private TransaccionDetalleRepository transaccionDetalleRepository;
     @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
+    private AdmCredencialRepository credencialRepository;
     @Autowired
-    private InventarioRepository inventarioRepository;
+    private PosInventarioRepository posInventarioRepository;
     @Autowired
     private DiscoServicio discoServicio;
+
+    private Date fechaActual = new Date();
     @Override
     public TransaccionResponseList lista(String token) {
         return transaccionServicio.lista(token, UtilsDominio.PEDIDO, UtilsDominio.PEDIDO_LLEGADA, UtilsDominio.TIPO_USUARIO_PROVEEDOR);
@@ -46,57 +49,58 @@ public class LlegadaServicioImpl implements LlegadaServicio {
     @Override
     public ServResponse confirmarLlegada(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
-        Transaccion transaccion = null;
-        Date fecha = null;
+        PosTransaccion posTransaccion = null;
+
         try {
-            fecha = new Date();
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            if (arrayId != null) {
-                Long idUsuario = (Long) arrayId[0];
-                transaccion = transaccionRepository.getTransaccion(id);
-                if (transaccion != null) {
-                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
-                        if(transaccion.getIdUsuarioInicio().equals(idUsuario)) {
-                            transaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
-                            transaccion.setFechaFin(fecha);
-                            transaccion.setFechaActualizacion(fecha);
-                            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-                            transaccionRepository.save(transaccion);
-                            List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
-                            for (DetalleTransaccion dt : detalles) {
-                                dt.setOperadorActualizacion(String.valueOf(idUsuario));
-                                dt.setFechaActualizacion(fecha);
-                                detalleTransaccionRepository.save(dt);
-                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
-                                if (inventario == null) {
-                                    inventario = new Inventario();
-                                    inventario.setCodigoAmbiente(transaccion.getCodigoAmbienteInicio());
-                                    inventario.setCodigoArticulo(dt.getCodigoArticulo());
-                                    inventario.setExistencia(dt.getCantidad());
-                                    inventario.setFechaAlta(fecha);
-                                    inventario.setOperadorAlta(String.valueOf(idUsuario));
-                                } else {
-                                    Integer cantidad = inventario.getExistencia() + dt.getCantidad();
-                                    inventario.setExistencia(cantidad);
-                                    inventario.setPorLlegar(inventario.getPorLlegar() - dt.getCantidad());
-                                    inventario.setFechaActualizacion(fecha);
-                                    inventario.setOperadorActualizacion(String.valueOf(idUsuario));
-                                }
-                                inventarioRepository.save(inventario);
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+
+            posTransaccion = transaccionRepository.getTransaccion(id);
+            if (posTransaccion != null) {
+                if (posTransaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_SOLICITUD)) {
+                    if(posTransaccion.getIdUsuarioInicio().equals(datosUsuario.getIdUsuario())) {
+
+                        posTransaccion.setCodigoValor(UtilsDominio.PEDIDO_LLEGADA);
+                        posTransaccion.setFechaFin(fechaActual);
+                        posTransaccion.setFechaActualizacion(fechaActual);
+                        posTransaccion.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                        transaccionRepository.save(posTransaccion);
+
+                        List<PosTransaccionDetalle> detalles = transaccionDetalleRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+
+                        for (PosTransaccionDetalle dt : detalles) {
+
+                            dt.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                            dt.setFechaActualizacion(fechaActual);
+                            transaccionDetalleRepository.save(dt);
+                            PosInventario posInventario = posInventarioRepository.getInventario(posTransaccion.getCodigoAmbienteInicio(), dt.getCodigoArticulo());
+                            if (posInventario == null) {
+                                posInventario = new PosInventario();
+                                posInventario.setCodigoAmbiente(posTransaccion.getCodigoAmbienteInicio());
+                                posInventario.setCodigoArticulo(dt.getCodigoArticulo());
+                                posInventario.setExistencia(dt.getCantidad());
+                                posInventario.setFechaAlta(fechaActual);
+                                posInventario.setOperadorAlta(datosUsuario.getIdUsuario().toString());
+                            } else {
+                                Integer cantidad = posInventario.getExistencia() + dt.getCantidad();
+                                posInventario.setExistencia(cantidad);
+                                posInventario.setPorLlegar(posInventario.getPorLlegar() - dt.getCantidad());
+                                posInventario.setFechaActualizacion(fechaActual);
+                                posInventario.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
                             }
-                            this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
-                            response.setRespuesta(true);
-                        } else {
-                            response.setMensaje("Solo el usuario que creo la transaccion puede Confirmar la llegada");
+                            posInventarioRepository.save(posInventario);
+
                         }
+
+                        this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                        response.setRespuesta(true);
                     } else {
-                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                        response.setMensaje("Solo el usuario que creo la posTransaccion puede Confirmar la llegada");
                     }
                 } else {
-                    response.setMensaje("No se encontro la transaccion");
+                    response.setMensaje("La posTransaccion se encuentra en estado de " + posTransaccion.getCodigoValor());
                 }
             } else {
-                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+                response.setMensaje("No se encontro la posTransaccion");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,57 +114,46 @@ public class LlegadaServicioImpl implements LlegadaServicio {
     @Override
     public ServResponse cancelarLlegada(String token, String id, HttpServletRequest http) throws Exception {
         ServResponse response = new ServResponse();
-        Transaccion transaccion = null;
-        Date fecha = null;
+        PosTransaccion posTransaccion = null;
+
         try {
-            fecha = new Date();
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            if (arrayId != null) {
-                Long idUsuario = (Long) arrayId[0];
-                transaccion = transaccionRepository.getTransaccion(id);
-                if (transaccion != null) {
-                    if (transaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_LLEGADA)) {
-                        if(transaccion.getIdUsuarioInicio().equals(idUsuario)) {
-                            transaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
-                            transaccion.setFechaActualizacion(fecha);
-                            transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-                            transaccionRepository.save(transaccion);
-                            List<DetalleTransaccion> detalles = detalleTransaccionRepository.findByIdTransaccionAndFechaBajaIsNull(id);
-                            StringBuilder msjProdNegativos = null;
-                            for (DetalleTransaccion detalle : detalles) {
-                                Inventario inventario = inventarioRepository.getInventario(transaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
-                                Integer cantidad = inventario.getExistencia() - detalle.getCantidad();
-                                if ( cantidad < 0 ) {
-                                    if( msjProdNegativos == null ) {
-                                        msjProdNegativos = new StringBuilder("Con Cantidad negativa: ");
-                                    }
-                                    msjProdNegativos.append( detalle.getCodigoArticulo() ) .append( ", ");
-                                }
-                                /*if (cantidad < 0) {
-                                    response.setMensaje("Error no existe suficiente inventario para cancelar esta llegada");
-                                }*/
-                                inventario.setExistencia(cantidad);
-                                inventario.setPorLlegar(detalle.getCantidad());
-                                inventario.setFechaActualizacion(fecha);
-                                inventario.setOperadorActualizacion(String.valueOf(idUsuario));
-                                inventarioRepository.save(inventario);
+
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+
+            posTransaccion = transaccionRepository.getTransaccion(id);
+            if (posTransaccion.getCodigoValor().equals(UtilsDominio.PEDIDO_LLEGADA)) {
+
+                if(posTransaccion.getIdUsuarioInicio().equals(datosUsuario.getIdUsuario())) {
+                    posTransaccion.setCodigoValor(UtilsDominio.PEDIDO_SOLICITUD);
+                    posTransaccion.setFechaActualizacion(fechaActual);
+                    posTransaccion.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                    transaccionRepository.save(posTransaccion);
+                    List<PosTransaccionDetalle> detalles = transaccionDetalleRepository.findByIdTransaccionAndFechaBajaIsNull(id);
+                    StringBuilder msjProdNegativos = null;
+
+                    for (PosTransaccionDetalle detalle : detalles) {
+                        PosInventario posInventario = posInventarioRepository.getInventario(posTransaccion.getCodigoAmbienteInicio(), detalle.getCodigoArticulo());
+                        Integer cantidad = posInventario.getExistencia() - detalle.getCantidad();
+                        if ( cantidad < 0 ) {
+                            if( msjProdNegativos == null ) {
+                                msjProdNegativos = new StringBuilder("Con Cantidad negativa: ");
                             }
-                            //if (response.getMensaje() == null) {
-                                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
-                                response.setRespuesta(true);
-                                if (msjProdNegativos != null ) response.setMensaje(msjProdNegativos.toString());
-                            //}
-                        } else {
-                            response.setMensaje("Solo el usuario que creo la transaccion puede cancelar la llegada");
+                            msjProdNegativos.append( detalle.getCodigoArticulo() ) .append( ", ");
                         }
-                    } else {
-                        response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
+                        posInventario.setExistencia(cantidad);
+                        posInventario.setPorLlegar(detalle.getCantidad());
+                        posInventario.setFechaActualizacion(fechaActual);
+                        posInventario.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                        posInventarioRepository.save(posInventario);
                     }
+                    this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                    response.setRespuesta(true);
+                    if (msjProdNegativos != null ) response.setMensaje(msjProdNegativos.toString());
                 } else {
-                    response.setMensaje("No se encontro la transaccion");
+                    response.setMensaje("Solo el usuario que creo la posTransaccion puede cancelar la llegada");
                 }
             } else {
-                response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+                response.setMensaje("La posTransaccion se encuentra en estado de " + posTransaccion.getCodigoValor());
             }
         } catch (Exception e) {
             e.printStackTrace();

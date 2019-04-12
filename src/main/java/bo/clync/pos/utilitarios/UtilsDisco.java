@@ -1,6 +1,6 @@
 package bo.clync.pos.utilitarios;
 
-import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
+import bo.clync.pos.arquetipo.tablas.GesOperacion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,14 +14,14 @@ import java.util.zip.ZipOutputStream;
 
 public class UtilsDisco {
 
-    public static AbcOperaciones getOperaciones(HttpServletRequest http, Object objecto, String token) throws Exception {
+    public static GesOperacion getOperaciones(HttpServletRequest http, Object objecto, String token) throws Exception {
         String json = null;
-        AbcOperaciones operaciones = null;
+        GesOperacion operaciones = null;
         try {
             if (objecto != null)
                 json = new ObjectMapper().writeValueAsString(objecto);
 
-            operaciones = new AbcOperaciones();
+            operaciones = new GesOperacion();
             //Integer id = 1;
             operaciones.setId(null);
             operaciones.setTipo(http.getMethod());

@@ -5,35 +5,35 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConeccionPostgres"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
-	<parameter name="ambiente-codigo" class="java.lang.String"/>
-	<parameter name="codigo-ambiente" class="java.lang.String"/>
+	<parameter name="posAmbiente-codigo" class="java.lang.String"/>
+	<parameter name="codigo-posAmbiente" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[-- inventario 
+		<![CDATA[-- posInventario
      select nv.codigo_articulo, nv.existencia, ar.precio_compra, (nv.existencia * ar.precio_compra) as subtotal, ar.nombre
-        from inventario nv, articulo ar
-     where nv.codigo_ambiente = '$P!{codigo-ambiente}'
+        from posInventario nv, posArticulo ar
+     where nv.codigo_ambiente = '$P!{codigo-posAmbiente}'
            and nv.codigo_articulo = ar.codigo
            and ar.fecha_baja is null
 order by ar.codigo asc]]>
 	</queryString>
 	<field name="codigo_articulo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="codigo_articulo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="inventario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posInventario"/>
 	</field>
 	<field name="existencia" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="existencia"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="inventario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posInventario"/>
 	</field>
 	<field name="precio_compra" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="precio_compra"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<field name="subtotal" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.label" value="subtotal"/>
 	</field>
 	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posArticulo"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -68,7 +68,7 @@ order by ar.codigo asc]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ambiente-codigo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{posAmbiente-codigo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyy">
 				<reportElement x="60" y="0" width="65" height="20" uuid="fc6a40fd-3208-4e1d-958e-25e8df693eac">

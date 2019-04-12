@@ -1,9 +1,10 @@
 package bo.clync.pos.servicios.ambiente;
 
+import bo.clync.pos.arquetipo.dto.DatosUsuario;
 import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseList;
 import bo.clync.pos.arquetipo.objetos.generic.UsuarioResponseMin;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
-import bo.clync.pos.repository.common.AmbienteRepository;
+import bo.clync.pos.repository.common.AdmCredencialRepository;
+import bo.clync.pos.repository.common.PosAmbienteRepository;
 import bo.clync.pos.utilitarios.UtilsDominio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,15 @@ import java.util.List;
 public class AmbienteServicioImpl implements AmbienteServicio {
 
     @Autowired
-    private AmbienteRepository ambienteRepository;
+    private PosAmbienteRepository posAmbienteRepository;
     @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
+    private AdmCredencialRepository credencialRepository;
 
     private UsuarioResponseMin obtenerAmbiente(String token, String codigo, String valor) {
         UsuarioResponseMin response = new UsuarioResponseMin();
         try {
-            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
-            List<UsuarioResponseMin> list = ambienteRepository.obtenerAmbiente(codigoAmbiente, codigo, valor);
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+            List<UsuarioResponseMin> list = posAmbienteRepository.obtenerAmbiente(datosUsuario.getCodigoAmbiente(), codigo, valor);
             if(list != null && list.size() > 0) {
                 response = list.get(0);
                 response.setRespuesta(true);
@@ -38,12 +39,12 @@ public class AmbienteServicioImpl implements AmbienteServicio {
     private UsuarioResponseList listaAmbiente(String token, String patron, String valor) {
         UsuarioResponseList response = new UsuarioResponseList();
         try {
-            String codigoAmbiente = credencialRepository.getCodigoAmbienteByToken(token);
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
             List<UsuarioResponseMin> list = null;
             if(patron == null) {
-                list = ambienteRepository.listaAmbiente(codigoAmbiente, valor);
+                list = posAmbienteRepository.listaAmbiente(datosUsuario.getCodigoAmbiente(), valor);
             } else {
-                list = ambienteRepository.listaAmbientePorPatron(codigoAmbiente, patron, valor);
+                list = posAmbienteRepository.listaAmbientePorPatron(datosUsuario.getCodigoAmbiente(), patron, valor);
             }
             response.setList(list);
             response.setRespuesta(true);

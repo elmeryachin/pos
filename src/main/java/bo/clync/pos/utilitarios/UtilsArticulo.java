@@ -1,19 +1,19 @@
 package bo.clync.pos.utilitarios;
 
 import bo.clync.pos.arquetipo.objetos.articulo.ArticuloRequest;
-import bo.clync.pos.arquetipo.tablas.Articulo;
+import bo.clync.pos.arquetipo.tablas.PosArticulo;
 
 public class UtilsArticulo {
 
-    public static void getArticulo(Articulo articulo, ArticuloRequest request) {
-        articulo.setNombre(request.getObjetoArticulo().getNombre());
-        articulo.setDescripcion(request.getObjetoArticulo().getDescripcion());
-        articulo.setPrecioKilo(request.getObjetoArticulo().getPrecioKilo());
-        articulo.setPeso(request.getObjetoArticulo().getPeso());
-        articulo.setPrecioZonaLibre(request.getObjetoArticulo().getPrecioZonaLibre());
-        articulo.setPorcentajeGasto(request.getObjetoArticulo().getPorcentajeGasto());
-        articulo.setPrecioCompra(request.getObjetoArticulo().getPrecioCompra());
-        articulo.setPrecioVenta(request.getObjetoArticulo().getPrecioVenta());
-        articulo.setPrecioMercado(request.getObjetoArticulo().getPrecioMercado());
+    public static void getArticulo(PosArticulo posArticulo, ArticuloRequest request) {
+        posArticulo.setNombre(request.getObjetoArticulo().getNombre());
+        posArticulo.setDescripcion(request.getObjetoArticulo().getDescripcion());
+        posArticulo.setPrecioKilo(request.getObjetoArticulo().getPrecioKilo());
+        posArticulo.setPeso(request.getObjetoArticulo().getPeso());
+        posArticulo.setPrecioZonaLibre(request.getObjetoArticulo().getPrecioZonaLibre());
+        posArticulo.setPorcentajeGasto(request.getObjetoArticulo().getPorcentajeGasto());
+        posArticulo.setPrecioCompra(request.getObjetoArticulo().getPrecioCompra());
+        posArticulo.setPrecioVenta(request.getObjetoArticulo().getPrecioVenta());
+        posArticulo.setPrecioMercado(request.getObjetoArticulo().getPrecioMercado());
     }
 }

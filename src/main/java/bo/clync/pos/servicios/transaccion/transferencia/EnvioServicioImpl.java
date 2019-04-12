@@ -1,9 +1,10 @@
 package bo.clync.pos.servicios.transaccion.transferencia;
 
+import bo.clync.pos.arquetipo.dto.DatosUsuario;
 import bo.clync.pos.arquetipo.objetos.ServResponse;
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
-import bo.clync.pos.arquetipo.tablas.Transaccion;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
+import bo.clync.pos.arquetipo.tablas.PosTransaccion;
+import bo.clync.pos.repository.common.AdmCredencialRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -24,7 +24,7 @@ public class EnvioServicioImpl implements EnvioServicio {
     @Autowired
     private TransaccionServicio transaccionServicio;
     @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
+    private AdmCredencialRepository credencialRepository;
     @Autowired
     private TransaccionRepository transaccionRepository;
     @Autowired
@@ -36,8 +36,6 @@ public class EnvioServicioImpl implements EnvioServicio {
 
     @Override
     public TransaccionResponse adicionar(String token, TransaccionRequest request, HttpServletRequest http) throws Exception {
-        //validarLISTA DETALLE DE ARTICULOS POR SUCURSAL
-        String[] codigoArticulo = arrayArticulos(request);
 
         TransaccionResponse response = transaccionServicio.nuevo(token, request, UtilsDominio.TRANSFERENCIA, UtilsDominio.TRANSFERENCIA_ENVIO, UtilsDominio.TIPO_PAGO_NO_REQUERIDO);
 
@@ -45,15 +43,6 @@ public class EnvioServicioImpl implements EnvioServicio {
             this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
 
         return response;
-    }
-
-    public String[] arrayArticulos(TransaccionRequest request) {
-        List<TransaccionDetalle> list = request.getTransaccionObjeto().getLista();
-        String[] array = new String[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i).getCodigoArticulo();
-        }
-        return array;
     }
 
     @Override
@@ -89,27 +78,26 @@ public class EnvioServicioImpl implements EnvioServicio {
     @Override
     public ServResponse reconfirmar(String token, String id, HttpServletRequest http) throws Exception{
         ServResponse response = new ServResponse();
-        Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-        if(arrayId!=null) {
-            Long idUsuario = (Long) arrayId[0];
-            Transaccion transaccion = transaccionRepository.getTransaccion(id);
-            if (transaccion != null) {
-                if (transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)
-                        || transaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
-                    transaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_RECIBIR_CONF);
-                    transaccion.setFechaActualizacion(new Date());
-                    transaccion.setOperadorActualizacion(String.valueOf(idUsuario));
-                    this.transaccionRepository.save(transaccion);
-                    this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
-                    response.setRespuesta(true);
-                } else {
-                    response.setMensaje("La transaccion se encuentra en estado de " + transaccion.getCodigoValor());
-                }
+
+        DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+
+        PosTransaccion posTransaccion = transaccionRepository.getTransaccion(id);
+        if (posTransaccion != null) {
+            if (posTransaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR_EDIT)
+                    || posTransaccion.getCodigoValor().equals(UtilsDominio.TRANSFERENCIA_RECIBIR)) {
+
+                posTransaccion.setCodigoValor(UtilsDominio.TRANSFERENCIA_RECIBIR_CONF);
+                posTransaccion.setFechaActualizacion(new Date());
+                posTransaccion.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                this.transaccionRepository.save(posTransaccion);
+                this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+                response.setRespuesta(true);
+
             } else {
-                response.setMensaje("No se encontro la transaccion");
+                response.setMensaje("La posTransaccion se encuentra en estado de " + posTransaccion.getCodigoValor());
             }
         } else {
-            response.setMensaje("Las credenciales vencieron, inicie session nuevamente.");
+            response.setMensaje("No se encontro la posTransaccion");
         }
         return response;
     }

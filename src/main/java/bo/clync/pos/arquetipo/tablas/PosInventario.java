@@ -6,89 +6,98 @@
 package bo.clync.pos.arquetipo.tablas;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  *
  * @author eyave
  */
 @Entity
-public class DetalleTransaccion implements Serializable {
+@SqlResultSetMapping(name="GetInventarioCantidad", entities={
+        @EntityResult(entityClass = PosInventario.class, fields = {
+                @FieldResult(name="codigoAmbiente", column="codigo_ambiente"),
+                @FieldResult(name="existencia", column="existencia"),
+                @FieldResult(name="porLlegar", column="por_llegar"),
+                @FieldResult(name="porEntregar", column="por_entregar"),
+                @FieldResult(name="porRecibir", column="por_recibir")
+        })
+}
+)
+public class PosInventario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id//@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    private String idTransaccion;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String codigoAmbiente;
     private String codigoArticulo;
-    private Integer cantidad;
-    private BigDecimal precio;
-    private BigDecimal precioSistema;
-    private String observacion;
+    private Integer existencia;
+    private Integer porLlegar;
+    private Integer porEntregar;
+    private Integer porRecibir;
+
     private Date fechaAlta;
     private String operadorAlta;
     private Date fechaActualizacion;
     private String operadorActualizacion;
     private Date fechaBaja;
     private String operadorBaja;
-    private Integer cantidadOficial;
-    private BigDecimal precioOficial;
 
-    public DetalleTransaccion() {
+
+    public PosInventario() {
     }
 
-    public DetalleTransaccion(String id) {
+    public PosInventario(Integer id) {
         this.id = id;
     }
 
-    public DetalleTransaccion(String id, BigDecimal precioSistema, int cantidad, BigDecimal precio, String operadorBaja) {
-        this.id = id;
-        this.precioSistema = precioSistema;
-        this.cantidad = cantidad;
-        this.precio = precio;
-        this.operadorBaja = operadorBaja;
+    public PosInventario(String codigoArticulo, Integer existencia, Integer porLlegar, Integer porEntregar, Integer porRecibir) {
+        this.codigoArticulo = codigoArticulo;
+        this.existencia = existencia;
+        this.porLlegar = porLlegar;
+        this.porEntregar = porEntregar;
+        this.porRecibir = porRecibir;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public BigDecimal getPrecioSistema() {
-        return precioSistema;
+    public Integer getExistencia() {
+        return existencia;
     }
 
-    public void setPrecioSistema(BigDecimal precioSistema) {
-        this.precioSistema = precioSistema;
+    public void setExistencia(Integer existencia) {
+        this.existencia = existencia;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public Integer getPorLlegar() {
+        return porLlegar;
     }
 
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
+    public void setPorLlegar(Integer porLlegar) {
+        this.porLlegar = porLlegar;
     }
 
-    public BigDecimal getPrecio() {
-        return precio;
+    public Integer getPorEntregar() {
+        return porEntregar;
     }
 
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
+    public void setPorEntregar(Integer porEntregar) {
+        this.porEntregar = porEntregar;
     }
 
-    public String getObservacion() {
-        return observacion;
+    public Integer getPorRecibir() {
+        return porRecibir;
     }
 
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
+    public void setPorRecibir(int porRecibir) {
+        this.porRecibir = porRecibir;
     }
 
     public Date getFechaAlta() {
@@ -147,28 +156,12 @@ public class DetalleTransaccion implements Serializable {
         this.codigoArticulo = idArticulo;
     }
 
-    public String getIdTransaccion() {
-        return idTransaccion;
+    public String getCodigoAmbiente() {
+        return codigoAmbiente;
     }
 
-    public void setIdTransaccion(String idTransaccion) {
-        this.idTransaccion = idTransaccion;
-    }
-
-    public Integer getCantidadOficial() {
-        return cantidadOficial;
-    }
-
-    public void setCantidadOficial(Integer cantidadOficial) {
-        this.cantidadOficial = cantidadOficial;
-    }
-
-    public BigDecimal getPrecioOficial() {
-        return precioOficial;
-    }
-
-    public void setPrecioOficial(BigDecimal precioOficial) {
-        this.precioOficial = precioOficial;
+    public void setCodigoAmbiente(String idAmbiente) {
+        this.codigoAmbiente = idAmbiente;
     }
 
     @Override
@@ -181,10 +174,10 @@ public class DetalleTransaccion implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetalleTransaccion)) {
+        if (!(object instanceof PosInventario)) {
             return false;
         }
-        DetalleTransaccion other = (DetalleTransaccion) object;
+        PosInventario other = (PosInventario) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -193,6 +186,8 @@ public class DetalleTransaccion implements Serializable {
 
     @Override
     public String toString() {
-        return "bo.clync.pos.entity.DetalleTransaccion[ id=" + id + " ]";
+        return "bo.clync.pos.entity.PosInventario[ id=" + id + " ]";
     }
+
+
 }

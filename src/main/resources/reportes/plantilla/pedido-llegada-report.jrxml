@@ -5,14 +5,14 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConeccionPostgres"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
-	<parameter name="ambiente-codigo" class="java.lang.String"/>
-	<parameter name="codigo-ambiente" class="java.lang.String"/>
+	<parameter name="posAmbiente-codigo" class="java.lang.String"/>
+	<parameter name="codigo-posAmbiente" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select tra.fecha_fin, usu.codigo, usu.nombre, tra.nro_movimiento, 
 	 sum(det.cantidad) as cantidad , sum(det.cantidad*det.precio) as total
-    from transaccion tra, usuario usu, detalle_transaccion det
+    from posTransaccion tra, admUsuario usu, detalle_transaccion det
    where tra.id_usuario_fin = usu.id
-     and tra.codigo_ambiente_inicio = '$P!{codigo-ambiente}'
+     and tra.codigo_ambiente_inicio = '$P!{codigo-posAmbiente}'
      and tra.codigo_dominio = 'PEDIDO'
      and tra.codigo_valor   = 'LLEGADA'
      and usu.codigo_valor_usuario = 'PROVEEDOR'
@@ -26,19 +26,19 @@ order by tra.fecha_fin asc,
 	</queryString>
 	<field name="fecha_fin" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="fecha_fin"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posTransaccion"/>
 	</field>
 	<field name="codigo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="codigo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="admUsuario"/>
 	</field>
 	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="admUsuario"/>
 	</field>
 	<field name="nro_movimiento" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="nro_movimiento"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="transaccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="posTransaccion"/>
 	</field>
 	<field name="cantidad" class="java.lang.Long">
 		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
@@ -79,7 +79,7 @@ order by tra.fecha_fin asc,
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ambiente-codigo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{posAmbiente-codigo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyy">
 				<reportElement x="60" y="0" width="65" height="20" uuid="fc6a40fd-3208-4e1d-958e-25e8df693eac">

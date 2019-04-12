@@ -1,14 +1,7 @@
 package bo.clync.pos.servicios.transaccion.pedido;
 
 import bo.clync.pos.arquetipo.objetos.transaccion.generic.*;
-import bo.clync.pos.arquetipo.tablas.DetalleTransaccion;
-import bo.clync.pos.arquetipo.tablas.Inventario;
-import bo.clync.pos.arquetipo.tablas.Transaccion;
 import bo.clync.pos.arquetipo.objetos.ServResponse;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
-import bo.clync.pos.repository.common.InventarioRepository;
-import bo.clync.pos.repository.transaccion.pedido.DetalleTransaccionRepository;
-import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;
 import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.servicios.transaccion.generic.TransaccionServicio;
 import bo.clync.pos.utilitarios.UtilsDisco;
@@ -17,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by eyave on 27-10-17.
@@ -31,19 +20,9 @@ import java.util.List;
 public class PedidoServicioImp implements PedidoServicio {
 
     @Autowired
-    private TransaccionRepository transaccionRepository;
-    @Autowired
-    private DetalleTransaccionRepository detalleTransaccionRepository;
-    @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
-    @Autowired
-    private InventarioRepository inventarioRepository;
-    @Autowired
     private TransaccionServicio transaccionServicio;
     @Autowired
     private DiscoServicio discoServicio;
-    @PersistenceContext
-    private EntityManager em;
 
     @Override
     public TransaccionResponseInit init(String token) {

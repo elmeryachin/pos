@@ -24,10 +24,4 @@ public class AccesoController {
     public ResponseEntity<?> ingreso(@RequestBody AccesoRequest request) {
         return new ResponseEntity<>(servicio.ingreso(request), HttpStatus.OK);
     }
-
-    @CrossOrigin
-    @PostMapping("/salir")
-    public ResponseEntity<?> salir(@RequestHeader(value="token") String token){
-        return new ResponseEntity<>(servicio.salir(token), HttpStatus.OK);
-    }
 }

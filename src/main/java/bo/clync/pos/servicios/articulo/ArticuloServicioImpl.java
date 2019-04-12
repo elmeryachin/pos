@@ -1,18 +1,17 @@
 package bo.clync.pos.servicios.articulo;
 
 
-import bo.clync.pos.arquetipo.objetos.articulo.lista.ResumenArticulo;
+import bo.clync.pos.arquetipo.dto.DatosUsuario;
 import bo.clync.pos.arquetipo.objetos.articulo.obtener.ObjetoArticulo;
-import bo.clync.pos.arquetipo.objetos.articulo.ArticuloResponseList;
 import bo.clync.pos.arquetipo.objetos.articulo.ArticuloResponseMin;
-import bo.clync.pos.arquetipo.tablas.Articulo;
+import bo.clync.pos.arquetipo.tablas.PosArticulo;
 import bo.clync.pos.arquetipo.objetos.articulo.ArticuloRequest;
 import bo.clync.pos.arquetipo.objetos.ServResponse;
 import bo.clync.pos.arquetipo.objetos.articulo.lista.ServListaResponse;
 import bo.clync.pos.arquetipo.objetos.articulo.obtener.ServObtenerResponse;
-import bo.clync.pos.repository.acceso.UsuarioAmbienteCredencialRepository;
-import bo.clync.pos.repository.articulo.ArticuloRepository;
-import bo.clync.pos.repository.common.AmbienteRepository;
+import bo.clync.pos.repository.common.AdmCredencialRepository;
+import bo.clync.pos.repository.common.PosArticuloRepository;
+import bo.clync.pos.repository.common.PosAmbienteRepository;
 import bo.clync.pos.servicios.discos.DiscoServicio;
 import bo.clync.pos.utilitarios.UtilsArticulo;
 import bo.clync.pos.utilitarios.UtilsDisco;
@@ -21,14 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by eyave on 05-10-17.
@@ -38,13 +30,13 @@ import java.util.Properties;
 public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Autowired
-    private ArticuloRepository repository;
+    private PosArticuloRepository repository;
     @Autowired
-    private UsuarioAmbienteCredencialRepository credencialRepository;
+    private AdmCredencialRepository credencialRepository;
     @Autowired
-    private ArticuloRepository articuloRepository;
+    private PosArticuloRepository posArticuloRepository;
     @Autowired
-    private AmbienteRepository ambienteRepository;
+    private PosAmbienteRepository posAmbienteRepository;
     @Autowired
     private DiscoServicio discoServicio;
 
@@ -74,26 +66,29 @@ public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Override
     public ServResponse nuevo(ArticuloRequest request, String token, HttpServletRequest http) {
-        String operador = null;
-        Articulo articulo = null;
         ServResponse response = new ServResponse();
         try {
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            operador = String.valueOf(arrayId[0]);
+
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+
             if (repository.getObtenerArticuloPorCodigo(request.getObjetoArticulo().getCodigo()) == null) {
-                articulo = new Articulo();
-                articulo.setCodigo(request.getObjetoArticulo().getCodigo());
 
-                UtilsArticulo.getArticulo(articulo, request);
+                PosArticulo posArticulo = new PosArticulo();
+                posArticulo.setCodigo(request.getObjetoArticulo().getCodigo());
 
-                articulo.setFechaAlta(new Date());
-                articulo.setOperadorAlta(operador);
-                repository.save(articulo);
+                UtilsArticulo.getArticulo(posArticulo, request);
+
+                posArticulo.setFechaAlta(new Date());
+                posArticulo.setOperadorAlta(datosUsuario.getIdUsuario().toString());
+
+                repository.save(posArticulo);
+
                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+
                 response.setRespuesta(true);
-                response.setMensaje("Se guardo el nuevo articulo: " + articulo.getCodigo());
+                response.setMensaje("Se guardo el nuevo posArticulo: " + posArticulo.getCodigo());
             } else {
-                response.setMensaje("El codigo de articulo ya existe ingreso otro.");
+                response.setMensaje("El codigo de posArticulo ya existe ingreso otro.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,61 +99,58 @@ public class ArticuloServicioImpl implements ArticuloServicio {
 
     @Override
     public ServResponse actualizar(String codigo, ArticuloRequest request, String token, HttpServletRequest http) {
-        Articulo articulo = null;
-        String operador = null;
+
         ServResponse response = new ServResponse();
         try {
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            operador = String.valueOf(arrayId[0]);
-            articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
-            if (articulo != null) {
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
 
-                UtilsArticulo.getArticulo(articulo, request);
+            PosArticulo posArticulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
+            if (posArticulo != null) {
 
-                articulo.setFechaActualizacion(new Date());
-                articulo.setOperadorActualizacion(operador);
-                repository.save(articulo);
+                UtilsArticulo.getArticulo(posArticulo, request);
+
+                posArticulo.setFechaActualizacion(new Date());
+                posArticulo.setOperadorActualizacion(datosUsuario.getIdUsuario().toString());
+                repository.save(posArticulo);
+
                 this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, request, token));
+
                 response.setRespuesta(true);
-                response.setMensaje("Se actualizo el articulo");
+                response.setMensaje("Se actualizo el posArticulo");
             } else {
-                response.setMensaje("No se encontro ningun articulo con el codigo enviado");
+                response.setMensaje("No se encontro ningun posArticulo con el codigo enviado");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.setMensaje("Error al actualizar el articulo: " + articulo.getCodigo());
+            response.setMensaje("Error al actualizar el registro ");
         }
         return response;
     }
 
     @Override
     public ServResponse eliminar(String codigo, String token, HttpServletRequest http) {
-        Articulo articulo = null;
-        String operador = null;
-        Object[] arrayId = null;
+
         ServResponse response = new ServResponse();
         try {
-            arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
-            if (arrayId != null) {
-                Integer usoArticulo = repository.getUsoArticulo(codigo);
-                if (usoArticulo == 0) {
-                    operador = String.valueOf(arrayId[0]);
-                    articulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
-                    if (articulo != null) {
-                        articulo.setFechaBaja(new Date());
-                        articulo.setOperadorBaja(operador);
-                        repository.save(articulo);
-                        this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
-                        response.setRespuesta(true);
-                        response.setMensaje("Se elimino el articulo: " + articulo.getCodigo());
-                    } else {
-                        response.setMensaje("No existe el articulo que quiere eliminar");
-                    }
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
+
+            if (repository.getUsoArticulo(codigo) == 0) {
+
+                PosArticulo posArticulo = repository.findByCodigoAndFechaBajaIsNull(codigo);
+                if (posArticulo != null) {
+                    posArticulo.setFechaBaja(new Date());
+                    posArticulo.setOperadorBaja(datosUsuario.getIdUsuario().toString());
+                    repository.save(posArticulo);
+
+                    this.discoServicio.guardarOperaciones(UtilsDisco.getOperaciones(http, null, token));
+
+                    response.setRespuesta(true);
+                    response.setMensaje("Se elimino el posArticulo: " + posArticulo.getCodigo());
                 } else {
-                    response.setMensaje("El articulo se encuentra en uso");
+                    response.setMensaje("No existe el posArticulo que quiere eliminar");
                 }
             } else {
-                response.setMensaje("Su session expiro");
+                    response.setMensaje("El posArticulo se encuentra en uso");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,13 +163,15 @@ public class ArticuloServicioImpl implements ArticuloServicio {
     public ArticuloResponseMin obtenerArticulo(String token, String codigo) {
         ArticuloResponseMin response = new ArticuloResponseMin();
         try {
-            Object[] arrayId = (Object[]) credencialRepository.getIdUsuarioByToken(token);
+            DatosUsuario datosUsuario = credencialRepository.getDatosUsuario(token);
 
-            Integer count = ambienteRepository.verificarSucursal((String) arrayId[1]);
+            Integer count = posAmbienteRepository.verificarSucursal(datosUsuario.getCodigoAmbiente());
 
-            ObjetoArticulo o = articuloRepository.getObtenerArticuloPorCodigo(codigo);
+            ObjetoArticulo o = posArticuloRepository.getObtenerArticuloPorCodigo(codigo);
             if (o == null) {
+
                 response.setMensaje("No se encontro el articulo con el codigo");
+
             } else {
                 response.setCodigo(o.getCodigo());
                 response.setNombre(o.getNombre());

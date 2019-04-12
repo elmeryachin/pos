@@ -1,14 +1,13 @@
 package bo.clync.pos.arquetipo.objetos;
 
-import bo.clync.pos.arquetipo.tablas.AbcOperaciones;
+import bo.clync.pos.arquetipo.tablas.GesOperacion;
 
-import java.util.Date;
 import java.util.List;
 
 public class DiscoResponse {
     private String ruta;
     private String nombre;
-    private List<AbcOperaciones> list;
+    private List<GesOperacion> list;
     private String documento;
     private boolean respuesta;
     private String mensaje;
@@ -29,11 +28,11 @@ public class DiscoResponse {
         this.mensaje = mensaje;
     }
 
-    public List<AbcOperaciones> getList() {
+    public List<GesOperacion> getList() {
         return list;
     }
 
-    public void setList(List<AbcOperaciones> list) {
+    public void setList(List<GesOperacion> list) {
         this.list = list;
     }
 
