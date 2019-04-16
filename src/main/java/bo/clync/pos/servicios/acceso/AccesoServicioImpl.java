@@ -30,6 +30,7 @@ public class AccesoServicioImpl implements AccesoServicio {
                 response.setNombreUsuario(datosUsuario.getNombreUsuario());
                 response.setNombreAmbiente(datosUsuario.getNombreAmbiente());
                 response.setTipo(datosUsuario.getTipoAmbiente());
+                response.setToken(datosUsuario.getToken());
             } else {
                 response.setMensaje("Datos Incorrectos, Intente nuevamente");
             }
