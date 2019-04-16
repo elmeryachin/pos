@@ -53,7 +53,7 @@ public interface PosArticuloRepository extends JpaRepository<PosArticulo, String
     public BigDecimal getPrecioVentaPorCodigo(@Param("codigo") String codigo);
 
     @Query("SELECT count(o) " +
-            " FROM DetalleTransaccion o " +
+            " FROM PosTransaccionDetalle o " +
             "WHERE o.codigoArticulo=:codigo " +
             "  AND o.fechaBaja is null")
     public Integer getUsoArticulo(@Param("codigo") String codigo);

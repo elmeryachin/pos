@@ -12,10 +12,10 @@ import org.springframework.data.repository.query.Param;
 public interface AdmCredencialRepository extends JpaRepository<AdmCredencial, Integer> {
 
 
-    @Query("SELECT new java.clync.pos.arquetipo.dto.DatosUsuario(o.id, o.idUsuario, u.nombre , a.codigo, a.nombre, a.tipoAmbiente, o.contrasenia, o.token) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.dto.DatosUsuario(o.id, o.idUsuario, u.nombre , a.codigo, a.nombre, a.tipoAmbiente, o.contrasenia, o.token) " +
             " FROM AdmCredencial o, AdmUsuario u, PosAmbiente a " +
             "WHERE o.usuario=:usuario " +
-            "  AND o.contrasenia = u.contrasenia " +
+            "  AND o.contrasenia = :contrasenia " +
             "  AND o.idUsuario = u.id " +
             "  AND o.codigoAmbiente = a.codigo " +
             "  AND o.fechaBaja is null " +
@@ -24,7 +24,7 @@ public interface AdmCredencialRepository extends JpaRepository<AdmCredencial, In
     DatosUsuario getDatosUsuario(@Param("usuario") String usuario,
                                  @Param("contrasenia") String contrasenia);
 
-    @Query("SELECT new java.clync.pos.arquetipo.dto.DatosUsuario(o.id, o.idUsuario, u.nombre , a.codigo, a.nombre, a.tipoAmbiente, o.contrasenia, o.token) " +
+    @Query("SELECT new bo.clync.pos.arquetipo.dto.DatosUsuario(o.id, o.idUsuario, u.nombre , a.codigo, a.nombre, a.tipoAmbiente, o.contrasenia, o.token) " +
             " FROM AdmCredencial o, AdmUsuario u, PosAmbiente a " +
             "WHERE o.token =:token " +
             "  AND o.idUsuario = u.id " +

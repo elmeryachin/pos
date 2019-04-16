@@ -26,7 +26,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
 
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion, o.cantidad, o.precio) " +
-            " FROM PosTransaccion o, Usuario u " +
+            " FROM PosTransaccion o, AdmUsuario u " +
             "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
             "  AND o.codigoDominio=:dominio " +
             "  AND o.codigoValor=:codigoValor " +
@@ -110,7 +110,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                                                   @Param("ciclo") String ciclo);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion, o.cantidad, o.precio) " +
-            " FROM PosTransaccion o, Usuario u " +
+            " FROM PosTransaccion o, AdmUsuario u " +
             "WHERE o.codigoAmbienteInicio=:codigoAmbienteInicio" +
             "  AND o.codigoDominio=:dominio " +
             "  AND o.codigoValor=:codigoValor " +
@@ -147,7 +147,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                       @Param("nroMovimiento") Integer nroMovimiento);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Usuario u " +
+            "  FROM PosTransaccion o, AdmUsuario u " +
             " WHERE o.id = :id " +
             "   AND o.idUsuarioFin=u.id " +
             "   AND o.codigoDominio = :dominio " +
@@ -158,7 +158,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                                   @Param("valor") String valor);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Ambiente a " +
+            "  FROM PosTransaccion o, PosAmbiente a " +
             " WHERE o.id = :id " +
             "   AND o.codigoAmbienteFin=a.codigo " +
             "   AND o.codigoDominio = :dominio " +
@@ -169,7 +169,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                                           @Param("valor") String valor);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Ambiente a " +
+            "  FROM PosTransaccion o, PosAmbiente a " +
             " WHERE o.id = :id " +
             "   AND o.codigoAmbienteInicio=a.codigo " +
             "   AND o.codigoDominio = :dominio " +
@@ -180,7 +180,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                                           @Param("valor") String valor);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Ambiente a " +
+            "  FROM PosTransaccion o, PosAmbiente a " +
             " WHERE o.id = :id " +
             "   AND o.codigoAmbienteInicio=a.codigo " +
             "   AND o.codigoDominio = :dominio " +
@@ -191,7 +191,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
                                                                    @Param("valor") String valor);
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, u.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Usuario u " +
+            "  FROM PosTransaccion o, AdmUsuario u " +
             " WHERE o.id = :id " +
             "   AND o.idUsuarioFin=u.id " +
             "   AND o.codigoDominio = :dominio " +
@@ -202,7 +202,7 @@ public interface TransaccionRepository extends JpaRepository<PosTransaccion, Str
 
 
     @Query("SELECT new bo.clync.pos.arquetipo.objetos.transaccion.generic.TransaccionObjeto(o.id, o.fechaInicio, o.nroMovimiento, a.codigo, o.observacion, o.cantidad, o.precio ) " +
-            "  FROM PosTransaccion o, Ambiente a" +
+            "  FROM PosTransaccion o, PosAmbiente a" +
             " WHERE o.id = :id " +
             "   AND o.codigoAmbienteFin=a.codigo " +
             "   AND o.codigoDominio = :dominio " +

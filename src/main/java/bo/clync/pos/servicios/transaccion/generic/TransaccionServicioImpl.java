@@ -7,7 +7,6 @@ import bo.clync.pos.arquetipo.tablas.AdmDominio;
 import bo.clync.pos.arquetipo.tablas.PosInventario;
 import bo.clync.pos.arquetipo.tablas.PosTransaccion;
 import bo.clync.pos.arquetipo.tablas.PosTransaccionDetalle;
-import bo.clync.pos.repository.acceso.ConectadoRepository;
 import bo.clync.pos.repository.common.*;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionDetalleRepository;
 import bo.clync.pos.repository.transaccion.pedido.TransaccionRepository;

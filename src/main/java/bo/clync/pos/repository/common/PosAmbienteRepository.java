@@ -14,10 +14,9 @@ import java.util.List;
 public interface PosAmbienteRepository extends JpaRepository<PosAmbiente, String> {
 
     @Query("SELECT count(d)" +
-            " FROM Dominio d, Valor v, PosAmbiente a " +
-            "WHERE d.dominio = v.codigoDominio " +
-            "  AND v.valor = 'SUCURSAL'" +
-            "  AND a.tipoAmbiente = v.valor " +
+            " FROM AdmDominio d, PosAmbiente a " +
+            "WHERE d.codigo = 'SUCURSAL'" +
+            "  AND a.tipoAmbiente = d.dominio " +
             "  AND a.codigo = :codigo")
     Integer verificarSucursal(@Param("codigo") String codigo);
 

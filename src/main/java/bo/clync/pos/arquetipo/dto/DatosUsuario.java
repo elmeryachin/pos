@@ -4,7 +4,7 @@ public class DatosUsuario {
 
     private static final Long id = 1000l;
 
-    private Long idCredencial;
+    private Integer idCredencial;
     private Long idUsuario;
     private String nombreUsuario;
     private String codigoAmbiente;
@@ -13,7 +13,7 @@ public class DatosUsuario {
     private String contrasenia;
     private String token;
 
-    public DatosUsuario(Long idCredencial, Long idUsuario, String nombreUsuario, String codigoAmbiente, String nombreAmbiente, String tipoAmbiente, String contrasenia, String token) {
+    public DatosUsuario(Integer idCredencial, Long idUsuario, String nombreUsuario, String codigoAmbiente, String nombreAmbiente, String tipoAmbiente, String contrasenia, String token) {
         this.idCredencial = idCredencial;
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
@@ -24,11 +24,11 @@ public class DatosUsuario {
         this.token = token;
     }
 
-    public Long getIdCredencial() {
+    public Integer getIdCredencial() {
         return idCredencial;
     }
 
-    public void setIdCredencial(Long idCredencial) {
+    public void setIdCredencial(Integer idCredencial) {
         this.idCredencial = idCredencial;
     }
 
